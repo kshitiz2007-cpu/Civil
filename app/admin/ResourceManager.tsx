@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { FileText, Plus, Trash2, FolderOpen, Save, Loader2, Link as LinkIcon } from 'lucide-react';
+import { FileText, Plus, Trash2, FolderOpen, Save, Loader2, Link as LinkIcon, Upload } from 'lucide-react';
 
 const SUBJECTS = [
   'History', 'Geography', 'Polity', 'Economy', 
@@ -15,10 +15,11 @@ export default function ResourceManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // FORM STATE (Fixed the default state to match the first dropdown option!)
+  // FORM STATE
   const [title, setTitle] = useState('');
-  const [fileType, setFileType] = useState('pdf');
-  const [fileUrl, setFileUrl] = useState('');
+  const [fileType, setFileType] = useState('pdf'); // 'pdf' or 'link'
+  const [fileUrl, setFileUrl] = useState('');      // Used for raw web links
+  const [localFile, setLocalFile] = useState<File | null>(null); // Used for physical file selections
   const [category, setCategory] = useState('History');
   const [section, setSection] = useState('');
 
@@ -44,27 +45,61 @@ export default function ResourceManager() {
 
   async function handleAddResource(e: React.FormEvent) {
     e.preventDefault();
-    if (!title || !fileUrl) return alert("Title and File URL are required.");
+    
+    // Validation checks matching current active state
+    if (!title) return alert("Title is required.");
+    if (fileType === 'link' && !fileUrl) return alert("Web Link URL is required.");
+    if (fileType === 'pdf' && !localFile) return alert("Please select a local PDF file to upload.");
     
     setSaving(true);
+    let finalUrl = fileUrl;
+
     try {
+      // 1. Handle uploading directly via client-side Supabase Storage bucket if type is 'pdf'
+      if (fileType === 'pdf' && localFile) {
+        const fileExt = localFile.name.split('.').pop();
+        const uniqueFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `uploads/${uniqueFileName}`;
+
+        // Send the binary stream to your storage bucket (Make sure 'resource-vault' bucket exists)
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('resources')
+          .upload(filePath, localFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        // Extract and assign the public access string URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('resources')
+          .getPublicUrl(filePath);
+
+        finalUrl = publicUrl;
+      }
+
+      // 2. Build the exact item payload for database entry
       const newResource = {
         id: `res_${Date.now()}`,
         title,
         file_type: fileType,
-        file_url: fileUrl,
+        file_url: finalUrl,
         category,
-        section: section || category, // Default to category if no subsection
+        section: section || category, 
       };
 
-      const { error } = await supabase.from('resources').insert([newResource]);
-      if (error) throw error;
+      const { error: dbError } = await supabase.from('resources').insert([newResource]);
+      if (dbError) throw dbError;
 
-      alert("Resource added successfully!");
+      alert("Resource successfully synced!");
+      
+      // Reset state properties cleanly
       setTitle('');
       setFileUrl('');
+      setLocalFile(null);
       setSection('');
-      fetchResources(); // Refresh list
+      fetchResources(); 
     } catch (error: any) {
       alert("Error adding resource: " + error.message);
     } finally {
@@ -127,7 +162,12 @@ export default function ResourceManager() {
           <div className="md:col-span-1">
             <label className="block text-[10px] font-bold text-white/50 uppercase tracking-widest mb-2 ml-1">Type</label>
             <select 
-              value={fileType} onChange={(e) => setFileType(e.target.value)}
+              value={fileType} 
+              onChange={(e) => {
+                setFileType(e.target.value);
+                setFileUrl('');
+                setLocalFile(null);
+              }}
               className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none"
             >
               <option value="pdf" className="bg-gray-900">PDF Document</option>
@@ -144,13 +184,34 @@ export default function ResourceManager() {
             />
           </div>
 
+          {/* DYNAMIC FIELD: Renders upload area for PDF or URL field for general Links */}
           <div className="md:col-span-1">
-            <label className="block text-[10px] font-bold text-white/50 uppercase tracking-widest mb-2 ml-1">File URL</label>
-            <input 
-              type="url" required placeholder="https://..."
-              value={fileUrl} onChange={(e) => setFileUrl(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 text-white placeholder-white/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-            />
+            {fileType === 'pdf' ? (
+              <div>
+                <label className="block text-[10px] font-bold text-white/50 uppercase tracking-widest mb-2 ml-1">Choose File</label>
+                <div className="relative w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-emerald-500/50 flex items-center justify-between cursor-pointer group hover:bg-white/10 transition-all">
+                  <span className="text-sm truncate text-white/60 max-w-[80%]">
+                    {localFile ? localFile.name : 'Select PDF...'}
+                  </span>
+                  <Upload className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+                  <input 
+                    type="file" 
+                    accept=".pdf"
+                    onChange={(e) => setLocalFile(e.target.files?.[0] || null)}
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-[10px] font-bold text-white/50 uppercase tracking-widest mb-2 ml-1">File URL</label>
+                <input 
+                  type="url" required placeholder="https://..."
+                  value={fileUrl} onChange={(e) => setFileUrl(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 text-white placeholder-white/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                />
+              </div>
+            )}
           </div>
 
           <div className="md:col-span-1">
@@ -228,7 +289,6 @@ export default function ResourceManager() {
                     placeholder="Subsection..."
                     onBlur={(e) => handleUpdateCategory(res.id, res.category, e.target.value)}
                     onChange={(e) => {
-                      // Optimistic UI update locally so they can type
                       const updated = resources.map(r => r.id === res.id ? {...r, section: e.target.value} : r);
                       setResources(updated);
                     }}
