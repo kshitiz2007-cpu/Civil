@@ -38,6 +38,11 @@ export default function StudentResourcesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSubject, setActiveSubject] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+const toggleSection = (sectionName: string) => {
+  setOpenSections(prev => ({ ...prev, [sectionName]: !prev[sectionName] }));
+};
 
   useEffect(() => {
     async function loadData() {
@@ -248,6 +253,48 @@ export default function StudentResourcesPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
+// ... inside your VIEW 2 render area:
+<div className="flex flex-col gap-4">
+  {Object.entries(groupedResources).map(([subsection, sectionResources]) => {
+    const isOpen = !!openSections[subsection];
+    
+    return (
+      <div key={subsection} className="space-y-2">
+        {/* Clickable Accordion Header */}
+        <button 
+          onClick={() => toggleSection(subsection)}
+          className="w-full flex items-center justify-between bg-white/10 p-5 rounded-2xl border border-white/10 hover:bg-white/20 transition-all"
+        >
+          <h2 className="text-lg font-black text-white flex items-center gap-3">
+            <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
+          </h2>
+          <ChevronRight className={`w-5 h-5 text-white/50 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
+        </button>
+        
+        {/* Collapsible Content */}
+        {isOpen && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300 p-2">
+            {sectionResources.map((resource) => (
+              <div key={resource.id} className="bg-white/10 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/20 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4 overflow-hidden">
+                  <div className={`p-3 rounded-xl shrink-0 ${resource.file_type === 'pdf' ? 'bg-rose-500/20 text-rose-400' : 'bg-indigo-500/20 text-indigo-400'}`}>
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div className="overflow-hidden">
+                    <h3 className="font-bold text-white truncate">{resource.title}</h3>
+                  </div>
+                </div>
+                <a href={resource.file_url} target="_blank" className="p-3 bg-white/5 hover:bg-emerald-500 text-white rounded-xl transition-all">
+                  <Download className="w-4 h-4" />
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  })}
+</div>
 
               <div className="flex flex-col gap-8">
                 {Object.keys(groupedResources).length === 0 ? (
