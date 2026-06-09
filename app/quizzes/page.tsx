@@ -8,7 +8,7 @@ import {
   FolderOpen, ChevronLeft, Loader2, Search, Landmark, Globe, 
   Scale, TrendingUp, Microscope, Leaf, Newspaper, Calculator, 
   Lightbulb, PlayCircle, Clock, FileText, Award, Layers,
-  LayoutDashboard, History, LogOut, Sparkles
+  LayoutDashboard, History, LogOut, Sparkles, ChevronRight // <-- FIXED: Added missing ChevronRight
 } from 'lucide-react';
 
 interface Quiz {
@@ -46,8 +46,14 @@ export default function StudentQuizzesPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<any>(null);
-  
   const [activeSubject, setActiveSubject] = useState<string | null>(null);
+  
+  // Accordion open/close state tracking
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = (sectionName: string) => {
+    setOpenSections(prev => ({ ...prev, [sectionName]: !prev[sectionName] }));
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -94,9 +100,11 @@ export default function StudentQuizzesPage() {
     return matchesSubject && matchesSearch;
   });
 
-  // GROUP QUIZZES BY SUBSECTION
+  // GROUP QUIZZES BY SUBSECTION Safely
   const groupedQuizzes = filteredQuizzes.reduce((acc, quiz) => {
-    const subsection = quiz.section && quiz.section !== quiz.category ? quiz.section : 'General Topics';
+    const subsection = quiz.section && quiz.section.trim() !== "" && quiz.section !== quiz.category 
+      ? quiz.section 
+      : 'General Topics';
     if (!acc[subsection]) acc[subsection] = [];
     acc[subsection].push(quiz);
     return acc;
@@ -134,7 +142,6 @@ export default function StudentQuizzesPage() {
             <LayoutDashboard className="w-5 h-5 group-hover:text-emerald-300 transition-colors" /> Dashboard
           </button>
           
-          {/* Active Tab */}
           <button className="w-full flex items-center gap-4 px-4 py-4 bg-white/10 text-emerald-300 border border-white/10 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.15)] font-bold transition-all">
             <Layers className="w-5 h-5" /> Mock Tests
           </button>
@@ -215,7 +222,7 @@ export default function StudentQuizzesPage() {
                   <FolderOpen className="w-5 h-5 text-emerald-400" /> General Studies Sections
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                  {SUBJECT_CONFIG.filter(s => s.group === 'GS').map((subject) => {
+                  {SUBJECT_CONFIG.map((subject) => {
                     const Icon = subject.icon;
                     const count = getQuizCount(subject.id);
                     return (
@@ -245,7 +252,7 @@ export default function StudentQuizzesPage() {
             </div>
           )}
 
-          {/* VIEW 2: SUBSECTIONS & MODULES */}
+          {/* VIEW 2: SUBSECTIONS & MODULES (ACCORDIONS) */}
           {activeSubject && (
             <div className="animate-fade-in space-y-8">
               
@@ -261,7 +268,8 @@ export default function StudentQuizzesPage() {
                 />
               </div>
 
-              <div className="flex flex-col gap-8">
+              {/* Accordion Container Wrapper */}
+              <div className="flex flex-col gap-4">
                 {Object.keys(groupedQuizzes).length === 0 ? (
                   <div className="bg-white/5 backdrop-blur-xl p-12 text-center border-dashed border-2 border-white/20 rounded-[2rem]">
                     <FileText className="w-12 h-12 text-white/30 mx-auto mb-4" />
@@ -269,55 +277,67 @@ export default function StudentQuizzesPage() {
                     <p className="text-sm text-white/50">Check back soon for new {activeSubject} tests.</p>
                   </div>
                 ) : (
-                  Object.entries(groupedQuizzes).map(([subsection, sectionQuizzes]) => (
-                    <div key={subsection} className="space-y-5">
-                      
-                      {/* Subsection Header */}
-                      <h2 className="text-xl font-black text-white/90 flex items-center gap-3 border-b border-white/10 pb-3">
-                        <Layers className="w-6 h-6 text-emerald-400" /> {subsection}
-                      </h2>
-                      
-                      {/* Quizzes in this subsection */}
-                      <div className="flex flex-col gap-4">
-                        {sectionQuizzes.map((quiz) => {
-                          const pastAttempt = getAttempt(quiz.id);
-                          return (
-                            <div key={quiz.id} className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/15 transition-all group">
-                              
-                              <div className="flex-1">
-                                <h3 className="text-xl font-bold text-white mb-4 group-hover:text-emerald-300 transition-colors tracking-tight">
-                                  {quiz.title}
-                                </h3>
-                                <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-white/50">
-                                  <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
-                                    <Clock className="w-4 h-4 text-emerald-400" /> {quiz.time_limit}m
-                                  </span>
-                                  <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
-                                    <FileText className="w-4 h-4 text-blue-400" /> {quiz.questions?.length || 0} Qs
-                                  </span>
-                                </div>
-                              </div>
-                              
-                              <div className="shrink-0 w-full md:w-auto">
-                                {pastAttempt ? (
-                                  <div className="w-full px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    <Award className="w-5 h-5" /> Score: {pastAttempt.score}%
+                  Object.entries(groupedQuizzes).map(([subsection, sectionQuizzes]) => {
+                    const isOpen = !!openSections[subsection];
+                    
+                    return (
+                      <div key={subsection} className="space-y-4">
+                        {/* Interactive Accordion Tab Controller */}
+                        <button 
+                          onClick={() => toggleSection(subsection)}
+                          className="w-full flex items-center justify-between bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/10 hover:bg-white/15 transition-all shadow-md group text-left"
+                        >
+                          <h2 className="text-lg font-bold text-white flex items-center gap-3 tracking-tight group-hover:text-emerald-300 transition-colors">
+                            <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
+                          </h2>
+                          <ChevronRight className={`w-5 h-5 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-90 text-emerald-400' : ''}`} />
+                        </button>
+                        
+                        {/* Collapsible Widescreen Test Modules */}
+                        {isOpen && (
+                          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300 p-1">
+                            {sectionQuizzes.map((quiz) => {
+                              const pastAttempt = getAttempt(quiz.id);
+                              return (
+                                <div key={quiz.id} className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/15 transition-all group">
+                                  
+                                  <div className="flex-1">
+                                    <h3 className="text-xl font-bold text-white mb-4 group-hover:text-emerald-300 transition-colors tracking-tight">
+                                      {quiz.title}
+                                    </h3>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-white/50">
+                                      <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
+                                        <Clock className="w-4 h-4 text-emerald-400" /> {quiz.time_limit}m
+                                      </span>
+                                      <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
+                                        <FileText className="w-4 h-4 text-blue-400" /> {quiz.questions?.length || 0} Qs
+                                      </span>
+                                    </div>
                                   </div>
-                                ) : (
-                                  <button 
-                                    onClick={() => router.push(`/quiz/${quiz.id}`)}
-                                    className="w-full px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                                  >
-                                    <PlayCircle className="w-5 h-5" /> Start Module
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
+                                  
+                                  <div className="shrink-0 w-full md:w-auto">
+                                    {pastAttempt ? (
+                                      <div className="w-full px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-inner">
+                                        <Award className="w-5 h-5" /> Score: {pastAttempt.score}%
+                                      </div>
+                                    ) : (
+                                      <button 
+                                        onClick={() => router.push(`/quiz/${quiz.id}`)}
+                                        className="w-full px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                                      >
+                                        <PlayCircle className="w-5 h-5" /> Start Module
+                                      </button>
+                                    )}
+                                  </div>
+
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>

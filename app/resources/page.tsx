@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import { 
   FolderOpen, ChevronLeft, Loader2, Search, Landmark, Globe, 
   Scale, TrendingUp, Microscope, Leaf, Newspaper, Calculator, 
-  Lightbulb, FileText, Layers, ExternalLink, Download, LayoutDashboard, History, LogOut, Sparkles
+  Lightbulb, FileText, Layers, ExternalLink, Download, LayoutDashboard, 
+  History, LogOut, Sparkles, ChevronRight // <-- Added explicitly to imports
 } from 'lucide-react';
 
 interface Resource {
@@ -40,9 +41,9 @@ export default function StudentResourcesPage() {
   const [user, setUser] = useState<any>(null);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
-const toggleSection = (sectionName: string) => {
-  setOpenSections(prev => ({ ...prev, [sectionName]: !prev[sectionName] }));
-};
+  const toggleSection = (sectionName: string) => {
+    setOpenSections(prev => ({ ...prev, [sectionName]: !prev[sectionName] }));
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -50,7 +51,6 @@ const toggleSection = (sectionName: string) => {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return router.push('/');
 
-        // Fetch User Profile for the Sidebar
         const { data: profile } = await supabase
           .from('profiles')
           .select('*')
@@ -87,9 +87,10 @@ const toggleSection = (sectionName: string) => {
     return matchesSubject && matchesSearch;
   });
 
-  // GROUP RESOURCES BY SUBSECTION
   const groupedResources = filteredResources.reduce((acc, resource) => {
-    const subsection = resource.section && resource.section !== resource.category ? resource.section : 'General Materials';
+    const subsection = resource.section && resource.section.trim() !== "" && resource.section !== resource.category 
+      ? resource.section 
+      : 'General Materials';
     if (!acc[subsection]) acc[subsection] = [];
     acc[subsection].push(resource);
     return acc;
@@ -106,12 +107,12 @@ const toggleSection = (sectionName: string) => {
   return (
     <div className="min-h-screen bg-[#020617] relative overflow-hidden flex selection:bg-emerald-500/30">
       
-      {/* 1. GLOWING AURORA BACKGROUND */}
+      {/* GLOWING AURORA BACKGROUND */}
       <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[35rem] h-[35rem] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute top-[30%] left-[20%] w-[25rem] h-[25rem] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-      {/* 2. DESKTOP GLASS SIDEBAR */}
+      {/* DESKTOP GLASS SIDEBAR */}
       <aside className="hidden md:flex w-72 h-screen flex-col bg-white/[0.02] border-r border-white/10 backdrop-blur-2xl relative z-20 shadow-[4px_0_24px_rgba(0,0,0,0.2)]">
         <div className="p-8 pb-6">
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 font-serif">
@@ -126,16 +127,12 @@ const toggleSection = (sectionName: string) => {
           <button onClick={() => router.push('/dashboard')} className="w-full flex items-center gap-4 px-4 py-4 text-white/50 hover:bg-white/5 hover:text-white rounded-2xl font-bold transition-all group">
             <LayoutDashboard className="w-5 h-5 group-hover:text-emerald-300 transition-colors" /> Dashboard
           </button>
-          
           <button onClick={() => router.push('/quizzes')} className="w-full flex items-center gap-4 px-4 py-4 text-white/50 hover:bg-white/5 hover:text-white rounded-2xl font-bold transition-all group">
             <Layers className="w-5 h-5 group-hover:text-emerald-300 transition-colors" /> Mock Tests
           </button>
-          
-          {/* Active Tab */}
           <button className="w-full flex items-center gap-4 px-4 py-4 bg-white/10 text-emerald-300 border border-white/10 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.15)] font-bold transition-all">
             <FileText className="w-5 h-5" /> Study Files
           </button>
-          
           <button onClick={() => router.push('/history')} className="w-full flex items-center gap-4 px-4 py-4 text-white/50 hover:bg-white/5 hover:text-white rounded-2xl font-bold transition-all group">
             <History className="w-5 h-5 group-hover:text-emerald-300 transition-colors" /> My Results
           </button>
@@ -157,7 +154,7 @@ const toggleSection = (sectionName: string) => {
         </div>
       </aside>
 
-      {/* 3. MOBILE FLOATING GLASS DOCK */}
+      {/* MOBILE FLOATING GLASS DOCK */}
       <nav className="md:hidden fixed bottom-6 left-4 right-4 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl z-50 flex justify-between px-2 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
         <button onClick={() => router.push('/dashboard')} className="flex flex-col items-center p-2 text-white/50 hover:text-white transition-colors">
           <LayoutDashboard className="w-6 h-6 mb-1" />
@@ -178,7 +175,7 @@ const toggleSection = (sectionName: string) => {
         </button>
       </nav>
 
-      {/* 4. MAIN CONTENT AREA */}
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
         <div className="max-w-5xl mx-auto p-5 md:p-8 pb-32 space-y-8 animate-fade-in text-white">
           
@@ -238,7 +235,7 @@ const toggleSection = (sectionName: string) => {
             </div>
           )}
 
-          {/* VIEW 2: SUBSECTIONS & RESOURCES */}
+          {/* VIEW 2: SUBSECTIONS & RESOURCES (ACCORDIONS) */}
           {activeSubject && (
             <div className="animate-fade-in space-y-8">
               
@@ -253,50 +250,9 @@ const toggleSection = (sectionName: string) => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-// ... inside your VIEW 2 render area:
-<div className="flex flex-col gap-4">
-  {Object.entries(groupedResources).map(([subsection, sectionResources]) => {
-    const isOpen = !!openSections[subsection];
-    
-    return (
-      <div key={subsection} className="space-y-2">
-        {/* Clickable Accordion Header */}
-        <button 
-          onClick={() => toggleSection(subsection)}
-          className="w-full flex items-center justify-between bg-white/10 p-5 rounded-2xl border border-white/10 hover:bg-white/20 transition-all"
-        >
-          <h2 className="text-lg font-black text-white flex items-center gap-3">
-            <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
-          </h2>
-          <ChevronRight className={`w-5 h-5 text-white/50 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
-        </button>
-        
-        {/* Collapsible Content */}
-        {isOpen && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300 p-2">
-            {sectionResources.map((resource) => (
-              <div key={resource.id} className="bg-white/10 backdrop-blur-xl rounded-[1.5rem] p-5 border border-white/20 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4 overflow-hidden">
-                  <div className={`p-3 rounded-xl shrink-0 ${resource.file_type === 'pdf' ? 'bg-rose-500/20 text-rose-400' : 'bg-indigo-500/20 text-indigo-400'}`}>
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div className="overflow-hidden">
-                    <h3 className="font-bold text-white truncate">{resource.title}</h3>
-                  </div>
-                </div>
-                <a href={resource.file_url} target="_blank" className="p-3 bg-white/5 hover:bg-emerald-500 text-white rounded-xl transition-all">
-                  <Download className="w-4 h-4" />
-                </a>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  })}
-</div>
 
-              <div className="flex flex-col gap-8">
+              {/* Accordion List wrapper */}
+              <div className="flex flex-col gap-4">
                 {Object.keys(groupedResources).length === 0 ? (
                   <div className="bg-white/5 backdrop-blur-xl p-12 text-center border-dashed border-2 border-white/20 rounded-[2rem]">
                     <FileText className="w-12 h-12 text-white/30 mx-auto mb-4" />
@@ -304,50 +260,60 @@ const toggleSection = (sectionName: string) => {
                     <p className="text-sm text-white/50">Check back soon for new {activeSubject} resources.</p>
                   </div>
                 ) : (
-                  Object.entries(groupedResources).map(([subsection, sectionResources]) => (
-                    <div key={subsection} className="space-y-5">
-                      
-                      {/* Subsection Header */}
-                      <h2 className="text-xl font-black text-white/90 flex items-center gap-3 border-b border-white/10 pb-3">
-                        <Layers className="w-6 h-6 text-emerald-400" /> {subsection}
-                      </h2>
-                      
-                      {/* Resource Cards */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {sectionResources.map((resource) => (
-                          <div key={resource.id} className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 shadow-lg flex items-center justify-between gap-4 hover:bg-white/15 transition-all group">
-                            
-                            <div className="flex items-center gap-4 overflow-hidden">
-                              <div className={`p-4 rounded-2xl shrink-0 shadow-inner border border-white/10 ${
-                                resource.file_type === 'pdf' ? 'bg-rose-500/20 text-rose-400' : 'bg-indigo-500/20 text-indigo-400'
-                              }`}>
-                                {resource.file_type === 'pdf' ? <FileText className="w-6 h-6" /> : <ExternalLink className="w-6 h-6" />}
-                              </div>
-                              <div className="overflow-hidden">
-                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors truncate">
-                                  {resource.title}
-                                </h3>
-                                <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] bg-white/5 px-2 py-1 rounded-md border border-white/10">
-                                  {(resource.file_type || 'LINK').toUpperCase()}
-                                </span>
-                              </div>
-                            </div>
+                  Object.entries(groupedResources).map(([subsection, sectionResources]) => {
+                    const isOpen = !!openSections[subsection];
+                    
+                    return (
+                      <div key={subsection} className="space-y-4">
+                        {/* Clickable Accordion Header */}
+                        <button 
+                          onClick={() => toggleSection(subsection)}
+                          className="w-full flex items-center justify-between bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/10 hover:bg-white/15 transition-all shadow-md group text-left"
+                        >
+                          <h2 className="text-lg font-bold text-white flex items-center gap-3 tracking-tight group-hover:text-emerald-300 transition-colors">
+                            <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
+                          </h2>
+                          <ChevronRight className={`w-5 h-5 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-90 text-emerald-400' : ''}`} />
+                        </button>
+                        
+                        {/* Collapsible Content Grid */}
+                        {isOpen && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300 p-1">
+                            {sectionResources.map((resource) => (
+                              <div key={resource.id} className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 shadow-lg flex items-center justify-between gap-4 hover:bg-white/15 transition-all group">
+                                
+                                <div className="flex items-center gap-4 overflow-hidden">
+                                  <div className={`p-4 rounded-2xl shrink-0 shadow-inner border border-white/10 ${
+                                    resource.file_type === 'pdf' ? 'bg-rose-500/20 text-rose-400' : 'bg-indigo-500/20 text-indigo-400'
+                                  }`}>
+                                    {resource.file_type === 'pdf' ? <FileText className="w-6 h-6" /> : <ExternalLink className="w-6 h-6" />}
+                                  </div>
+                                  <div className="overflow-hidden">
+                                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors truncate">
+                                      {resource.title}
+                                    </h3>
+                                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] bg-white/5 px-2 py-1 rounded-md border border-white/10">
+                                      {(resource.file_type || 'LINK').toUpperCase()}
+                                    </span>
+                                  </div>
+                                </div>
 
-                            <a 
-                              href={resource.file_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="shrink-0 p-4 bg-white/10 hover:bg-emerald-500 text-white rounded-2xl transition-all shadow-md border border-white/10 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
-                            >
-                              {resource.file_type === 'pdf' ? <Download className="w-5 h-5" /> : <ExternalLink className="w-5 h-5" />}
-                            </a>
+                                <a 
+                                  href={resource.file_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="shrink-0 p-4 bg-white/10 hover:bg-emerald-500 text-white rounded-2xl transition-all shadow-md border border-white/10 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                >
+                                  {resource.file_type === 'pdf' ? <Download className="w-5 h-5" /> : <ExternalLink className="w-5 h-5" />}
+                                </a>
 
+                              </div>
+                            ))}
                           </div>
-                        ))}
+                        )}
                       </div>
-
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
