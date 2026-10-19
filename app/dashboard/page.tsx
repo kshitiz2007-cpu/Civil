@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { Activity, ArrowRight, Award, BookOpen, CheckCircle2, Clock3, FileText, History, Layers, Loader2, LogOut, Sparkles, Target, TrendingUp } from 'lucide-react';
 import StudentChatWidget from '@/components/StudentChatWidget';
+import ThemeSelector from '@/components/ThemeSelector';
 
 type Attempt = { id: string; quiz_id: string; quiz_title?: string; score: number; completed_at?: string };
 type Quiz = { id: string; title: string; description?: string; duration?: number; questions?: unknown[] };
@@ -51,7 +52,7 @@ export default function DashboardPage() {
 
   if (loading) return <div className="grid min-h-screen place-items-center bg-[#07111f]"><Loader2 className="h-9 w-9 animate-spin text-emerald-300"/></div>;
 
-  return <div className="min-h-screen bg-[#07111f] text-slate-100 selection:bg-emerald-300/30">
+  return <div className="app-theme text-[var(--app-text)]">
     <div className="pointer-events-none fixed inset-0 overflow-hidden"><div className="absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full bg-emerald-500/[.08] blur-[120px]"/><div className="absolute -bottom-48 -left-40 h-[30rem] w-[30rem] rounded-full bg-cyan-500/[.06] blur-[120px]"/></div>
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-white/[.07] bg-[#091523]/90 px-5 py-6 backdrop-blur-xl md:flex">
       <div className="flex items-center gap-3 px-2"><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-300 text-slate-950"><Sparkles className="h-5 w-5"/></span><div><p className="font-bold tracking-tight">Gyankunj</p><p className="text-xs text-slate-500">Learning space</p></div></div>
@@ -65,7 +66,7 @@ export default function DashboardPage() {
       <div className="mt-5 flex items-center gap-3 border-t border-white/[.07] pt-5"><div className="grid h-9 w-9 place-items-center rounded-full bg-slate-700 font-semibold">{firstName.slice(0,1).toUpperCase()}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{user?.name||firstName}</p><p className="truncate text-xs text-slate-500">Student account</p></div><button onClick={logout} title="Sign out" className="rounded-lg p-2 text-slate-500 hover:bg-white/5 hover:text-white"><LogOut className="h-4 w-4"/></button></div>
     </aside>
     <main className="relative z-10 mx-auto max-w-7xl px-5 pb-28 pt-7 md:ml-64 md:px-10 md:py-10">
-      <header className="mb-8 flex items-center justify-between gap-4"><div><p className="text-sm text-slate-400">Your learning overview</p><h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Welcome back, {firstName}<span className="text-emerald-300">.</span></h1><p className="mt-2 text-sm text-slate-400">A clear view of your progress and what to work on next.</p></div><button onClick={logout} className="rounded-xl border border-white/10 p-3 text-slate-400 hover:bg-white/5 md:hidden" aria-label="Sign out"><LogOut className="h-5 w-5"/></button></header>
+      <header className="mb-8 flex items-center justify-between gap-4"><ThemeSelector compact /><div><p className="text-sm text-slate-400">Your learning overview</p><h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Welcome back, {firstName}<span className="text-emerald-300">.</span></h1><p className="mt-2 text-sm text-slate-400">A clear view of your progress and what to work on next.</p></div><button onClick={logout} className="rounded-xl border border-white/10 p-3 text-slate-400 hover:bg-white/5 md:hidden" aria-label="Sign out"><LogOut className="h-5 w-5"/></button></header>
       <section className="relative overflow-hidden rounded-[2rem] border border-emerald-200/10 bg-gradient-to-br from-emerald-300/[.12] via-cyan-300/[.05] to-transparent p-6 sm:p-8"><div className="absolute -right-10 -top-24 h-64 w-64 rounded-full border border-emerald-200/10"/><div className="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center"><div className="max-w-xl"><span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/15 bg-emerald-200/[.08] px-3 py-1.5 text-xs font-medium text-emerald-100"><Sparkles className="h-3.5 w-3.5"/> Your next milestone awaits</span><h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Build confidence, one test at a time.</h2><p className="mt-2 text-sm leading-6 text-slate-300/75">Practice with a mock test, review what you’ve learned, and keep your preparation moving.</p><button onClick={()=>router.push('/quizzes')} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-emerald-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200">Explore mock tests <ArrowRight className="h-4 w-4"/></button></div><div className="grid grid-cols-2 gap-3 md:w-64"><div className="rounded-2xl border border-white/10 bg-[#07111f]/40 p-4"><BookOpen className="h-5 w-5 text-emerald-200"/><p className="mt-4 text-2xl font-semibold">{attempts.length}</p><p className="mt-1 text-xs text-slate-400">Tests completed</p></div><div className="rounded-2xl border border-white/10 bg-[#07111f]/40 p-4"><Target className="h-5 w-5 text-cyan-200"/><p className="mt-4 text-2xl font-semibold">{attempts.length?`${average}%`:'—'}</p><p className="mt-1 text-xs text-slate-400">Average score</p></div></div></div></section>
       <section className="mt-6 grid gap-4 sm:grid-cols-3"><StatCard icon={Layers} label="Available tests" value={quizzes.length} hint="Ready when you are"/><StatCard icon={FileText} label="Study resources" value={resourceCount} hint="Materials to explore"/><StatCard icon={Award} label="Recent result" value={attempts.length?`${attempts[0].score}%`:'—'} hint={attempts[0]?.quiz_title||'Complete a test to get started'}/></section>
       <div className="mt-8 grid gap-6 xl:grid-cols-[1.35fr_.85fr]">
@@ -76,7 +77,7 @@ export default function DashboardPage() {
       <footer className="mt-8 flex items-center justify-between text-xs text-slate-600"><span>Stay curious. Keep learning.</span><span>{quizzes.length} tests · {resourceCount} resources</span></footer>
     </main>
     <nav className="fixed inset-x-3 bottom-3 z-30 flex justify-around rounded-2xl border border-white/10 bg-[#0a1726]/95 p-2 shadow-2xl backdrop-blur-xl md:hidden"><MobileItem icon={Activity} label="Home" active onClick={()=>window.scrollTo({top:0,behavior:'smooth'})}/><MobileItem icon={Layers} label="Tests" onClick={()=>router.push('/quizzes')}/><MobileItem icon={FileText} label="Files" onClick={()=>router.push('/resources')}/><MobileItem icon={History} label="Results" onClick={()=>router.push('/history')}/></nav>
-    <StudentChatWidget/>
+    <StudentChatWidget user={user}/>
   </div>;
 }
 
