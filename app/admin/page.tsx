@@ -15,6 +15,7 @@ import PaymentsManager from './PaymentsManager';
 import StudentsManager from './StudentsManager';
 import QuizManager from './QuizManager';
 import AdminAnalytics from './AdminAnalytics';
+import ThemeSelector from '@/components/ThemeSelector';
 
 
 import {
@@ -99,7 +100,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] relative overflow-hidden flex flex-col md:flex-row w-full selection:bg-emerald-500/30 font-sans">
+    <div className="app-theme relative flex min-h-screen w-full flex-col font-sans md:flex-row">
 
       {/* 1. GLOWING AURORA BACKGROUND */}
       <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -107,10 +108,10 @@ export default function AdminPage() {
       <div className="absolute top-[30%] left-[20%] w-[25rem] h-[25rem] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       {/* 2. SIDEBAR NAVIGATION (Glassmorphism) */}
-      <aside className="w-full md:w-72 md:h-screen flex-col bg-white/[0.02] border-b md:border-b-0 md:border-r border-white/10 backdrop-blur-2xl relative z-20 shadow-[4px_0_24px_rgba(0,0,0,0.2)] flex shrink-0">
+      <aside className="theme-surface-solid relative z-20 flex w-full shrink-0 flex-col border-b md:h-screen md:w-72 md:border-b-0 md:border-r">
         
         {/* Header - Stays left on mobile, block on desktop */}
-        <div className="p-4 md:p-8 md:pb-6 flex justify-between items-center md:block animate-fade-in">
+        <div className="flex items-center justify-between p-4 md:block md:p-8 md:pb-6"><div className="absolute right-4 top-4 hidden md:block"><ThemeSelector compact /></div>
           <div>
             <h1 className="text-xl md:text-2xl font-black text-white font-serif tracking-tight flex items-center gap-3">
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-white/20">
@@ -168,7 +169,7 @@ export default function AdminPage() {
       </aside>
 
       {/* 3. MAIN CONTENT AREA */}
-      <main className="flex-1 w-full h-screen overflow-y-auto relative z-10 p-4 md:p-8">
+      <main className="relative z-10 h-screen w-full flex-1 overflow-y-auto p-4 md:p-8">
         
         {/* Limit max width on large screens to keep content readable */}
         <div className="max-w-7xl mx-auto w-full text-white">
