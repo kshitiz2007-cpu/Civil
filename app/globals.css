@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/*
+ * GYANKUNJ CIVIL SERVICES ACADEMY — SOOTHING & CALMING ACADEMIC DESIGN SYSTEM
+ * Engineered for low eye strain during 8–10 hour UPSC Prelims & Mains study sessions.
+ */
+:root,
+[data-theme="sage"],
+[data-theme="ocean"],
+[data-theme="forest"] {
+  --app-bg: #0b1513;
+  --app-bg-elevated: #101f1c;
+  --app-panel: rgba(17, 33, 29, 0.84);
+  --app-panel-strong: #132621;
+  --app-surface-muted: rgba(255, 255, 255, 0.04);
+  --app-text: #eaf4f0;
+  --app-muted: #9bb3aa;
+  --app-border: rgba(167, 212, 195, 0.14);
+  --app-accent: #6ee7b7;
+  --app-accent-strong: #10b981;
+  --app-accent-soft: rgba(110, 231, 183, 0.12);
+  --app-secondary: #7dd3fc;
+  --app-warning: #fbbf24;
+  --app-danger: #fb7185;
+  --app-glow-1: rgba(52, 211, 153, 0.14);
+  --app-glow-2: rgba(56, 189, 248, 0.10);
+  --app-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="parchment"] {
+  --app-bg: #f5f1e6;
+  --app-bg-elevated: #ece6d6;
+  --app-panel: rgba(255, 252, 245, 0.90);
+  --app-panel-strong: #ffffff;
+  --app-surface-muted: rgba(24, 38, 34, 0.045);
+  --app-text: #1c2925;
+  --app-muted: #5c6e67;
+  --app-border: rgba(28, 41, 37, 0.12);
+  --app-accent: #0f766e;
+  --app-accent-strong: #0d9488;
+  --app-accent-soft: rgba(15, 118, 110, 0.10);
+  --app-secondary: #0369a1;
+  --app-warning: #d97706;
+  --app-danger: #e11d48;
+  --app-glow-1: rgba(15, 118, 110, 0.08);
+  --app-glow-2: rgba(180, 83, 9, 0.06);
+  --app-shadow: 0 12px 32px rgba(28, 41, 37, 0.07);
+}
+
+[data-theme="mussoorie"],
+[data-theme="orchid"] {
+  --app-bg: #0c1522;
+  --app-bg-elevated: #111e30;
+  --app-panel: rgba(18, 31, 49, 0.84);
+  --app-panel-strong: #15253b;
+  --app-surface-muted: rgba(255, 255, 255, 0.04);
+  --app-text: #edf5ff;
+  --app-muted: #9cb0c9;
+  --app-border: rgba(186, 214, 247, 0.14);
+  --app-accent: #7dd3fc;
+  --app-accent-strong: #38bdf8;
+  --app-accent-soft: rgba(125, 211, 252, 0.12);
+  --app-secondary: #a5b4fc;
+  --app-warning: #fbbf24;
+  --app-danger: #fb7185;
+  --app-glow-1: rgba(56, 189, 248, 0.14);
+  --app-glow-2: rgba(129, 140, 248, 0.11);
+  --app-shadow: 0 16px 44px rgba(0, 0, 0, 0.26);
+}
+
+[data-theme="sandstone"],
+[data-theme="sunrise"] {
+  --app-bg: #171311;
+  --app-bg-elevated: #211b18;
+  --app-panel: rgba(34, 28, 24, 0.85);
+  --app-panel-strong: #261f1b;
+  --app-surface-muted: rgba(255, 255, 255, 0.04);
+  --app-text: #f9f3ec;
+  --app-muted: #bba99b;
+  --app-border: rgba(235, 210, 186, 0.14);
+  --app-accent: #f5b971;
+  --app-accent-strong: #d97706;
+  --app-accent-soft: rgba(245, 185, 113, 0.12);
+  --app-secondary: #6ee7b7;
+  --app-warning: #fbbf24;
+  --app-danger: #fb7185;
+  --app-glow-1: rgba(245, 158, 11, 0.13);
+  --app-glow-2: rgba(16, 185, 129, 0.09);
+  --app-shadow: 0 16px 44px rgba(0, 0, 0, 0.28);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--app-bg);
+}
+
+html[data-font-scale="large"] {
+  font-size: 17px;
+}
+
+html[data-font-scale="compact"] {
+  font-size: 15px;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--app-text);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--app-bg);
+  line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-serif-academic {
+  font-family: 'Instrument Serif', 'Noto Serif Devanagari', Georgia, serif;
+}
+
+.font-hindi {
+  font-family: 'Noto Serif Devanagari', 'DM Sans', serif;
+  line-height: 1.75;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--app-accent-strong);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--app-accent);
+  outline-offset: 2px;
+}
+
+.app-theme {
+  min-height: 100vh;
+  color: var(--app-text);
+  background:
+    radial-gradient(circle at 10% 0%, var(--app-glow-1), transparent 38%),
+    radial-gradient(circle at 90% 6%, var(--app-glow-2), transparent 36%),
+    var(--app-bg);
+}
+
+.app-theme::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(var(--app-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--app-border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 75%);
+}
+
+.theme-surface {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.theme-surface-solid {
+  background: var(--app-panel-strong);
+  border: 1px solid var(--app-border);
+}
+
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  background: var(--app-panel);
+  color: var(--app-text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.theme-control:hover {
+  transform: translateY(-1px);
+  background: var(--app-panel-strong);
+  border-color: var(--app-accent);
+}
+
+.theme-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.55rem);
+  z-index: 70;
+  width: 248px;
+  padding: 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1.15rem;
+  background: var(--app-panel-strong);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+}
+
+.theme-choice {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.75rem;
+  color: var(--app-text);
+  transition: background 0.15s ease;
+}
+
+.theme-choice:hover {
+  background: var(--app-surface-muted);
+}
+
+.glass-card {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(16px);
+}
+
+.glass-input {
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  padding: 0.72rem 1rem;
+  color: var(--app-text);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.glass-input::placeholder {
+  color: var(--app-muted);
+}
+
+.glass-input:focus {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--app-border);
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
