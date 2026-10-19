@@ -75,7 +75,7 @@ export default function QuizPlayerPage() {
         const choice = answers[item.id];
         const isCorrect = choice === item.correct;
         if (choice === undefined) skipped += 1; else if (isCorrect) correct += 1; else wrong += 1;
-        return { question: item.text, selected_answer: choice === undefined ? 'Skipped' : item.options[choice], correct_answer: item.options[item.correct], isCorrect, explanation: item.explanation || null };
+        return { question: item.text, question_hi: item.textHi || null, selected_answer: choice === undefined ? 'Skipped' : item.options[choice], selected_answer_hi: choice === undefined ? null : item.optionsHi?.[choice] || null, correct_answer: item.options[item.correct], correct_answer_hi: item.optionsHi?.[item.correct] || null, isCorrect, explanation: item.explanation || null, explanation_hi: item.explanationHi || null };
       });
       const attempt = { id: `a_${Date.now()}`, user_id: user.id, user_name: user.name || user.email || 'Student', quiz_id: quiz.id, quiz_title: quiz.title, quiz_title_hi: quiz.titleHi || '', category: quiz.category || 'General', score: questions.length ? Math.round((correct / questions.length) * 100) : 0, correct, wrong, skipped, total: questions.length, details, completed_at: new Date().toISOString() };
       const { error } = await supabase.from('attempts').insert([attempt]);
