@@ -34,7 +34,7 @@ export default function QuizPlayerPage() {
       if (error || !quizData) { alert('This quiz is no longer available.'); router.replace('/quizzes'); return; }
       setUser(profile || { id: session.user.id, email: session.user.email });
       setQuiz(quizData);
-      setTimeLeft((quizData.time_limit || 0) * 60);
+      setTimeLeft((quizData.time_limit || 30) * 60);
       setLoading(false);
     }
     loadQuiz();
