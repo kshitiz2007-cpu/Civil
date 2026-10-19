@@ -95,7 +95,10 @@ export default function QuizManager() {
            </h3>
            <p className="text-sm text-gray-600 mt-1 font-medium">Instantly move old quizzes to valid subject folders and toggle their visibility.</p>
         </div>
-        
+        <div className="flex flex-col gap-3 border-b border-white/40 p-4 sm:flex-row">
+          <label className="relative flex-1"><Search className="absolute left-3 top-3 h-4 w-4 text-gray-400"/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search quizzes or subjects" className="w-full rounded-xl border border-gray-200 bg-white px-10 py-2.5 text-sm text-gray-800 outline-none focus:border-emerald-500"/></label>
+          <select value={visibility} onChange={(e) => setVisibility(e.target.value as typeof visibility)} className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700"><option value="all">All quizzes ({quizzes.length})</option><option value="active">Visible</option><option value="hidden">Hidden</option></select>
+        </div>
         <div className="overflow-x-auto">
           {loading ? (
              <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
