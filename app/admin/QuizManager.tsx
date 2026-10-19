@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { 
-  FileQuestion, Loader2, Trash2, Save, 
-  CheckCircle, ToggleLeft, ToggleRight
+  FileQuestion, Loader2, Trash2, ToggleLeft, ToggleRight, Search
 } from 'lucide-react';
 
 interface Quiz {
@@ -27,21 +26,28 @@ export default function QuizManager() {
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [successId, setSuccessId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [visibility, setVisibility] = useState<'all' | 'active' | 'hidden'>('all');
+  const filteredQuizzes = quizzes.filter((quiz) => {
+    const matchesQuery = quiz.title.toLowerCase().includes(query.toLowerCase()) || quiz.category?.toLowerCase().includes(query.toLowerCase());
+    const matchesVisibility = visibility === 'all' || (visibility === 'active' ? quiz.active : !quiz.active);
+    return matchesQuery && matchesVisibility;
+  });
 
   useEffect(() => {
+    let active = true;
+    async function fetchQuizzes() {
+      setLoading(true);
+      const { data } = await supabase
+        .from('quizzes')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (active && data) setQuizzes(data as Quiz[]);
+      if (active) setLoading(false);
+    }
     fetchQuizzes();
+    return () => { active = false; };
   }, []);
-
-  const fetchQuizzes = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('quizzes')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (data) setQuizzes(data);
-    setLoading(false);
-  };
 
   const handleUpdateCategory = async (id: string, newCat: string) => {
     setActionLoadingId(id);
@@ -88,7 +94,10 @@ export default function QuizManager() {
            </h3>
            <p className="text-sm text-gray-600 mt-1 font-medium">Instantly move old quizzes to valid subject folders and toggle their visibility.</p>
         </div>
-        
+        <div className="flex flex-col gap-3 border-b border-white/40 p-4 sm:flex-row">
+          <label className="relative flex-1"><Search className="absolute left-3 top-3 h-4 w-4 text-gray-400"/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search quizzes or subjects" className="w-full rounded-xl border border-gray-200 bg-white px-10 py-2.5 text-sm text-gray-800 outline-none focus:border-emerald-500"/></label>
+          <select value={visibility} onChange={(e) => setVisibility(e.target.value as typeof visibility)} className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700"><option value="all">All quizzes ({quizzes.length})</option><option value="active">Visible</option><option value="hidden">Hidden</option></select>
+        </div>
         <div className="overflow-x-auto">
           {loading ? (
              <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
@@ -103,7 +112,7 @@ export default function QuizManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 bg-white/20">
-                {quizzes.map((q) => (
+                {filteredQuizzes.map((q) => (
                   <tr key={q.id} className="hover:bg-white/60 transition-colors">
                     
                     <td className="px-6 py-4">

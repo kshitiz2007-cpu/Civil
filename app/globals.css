@@ -1,48 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+:root, [data-theme="ocean"] {
+  --app-bg: #061321; --app-panel: rgba(9, 29, 48, .78); --app-panel-strong: #0a1d31; --app-text: #effbff; --app-muted: #a5b7c8; --app-border: rgba(190, 231, 255, .15); --app-accent: #62e6e4; --app-accent-strong: #28a9d1; --app-glow-1: rgba(34, 211, 238, .30); --app-glow-2: rgba(99, 102, 241, .26);
+}
+[data-theme="sunrise"] {
+  --app-bg: #24100c; --app-panel: rgba(57, 24, 18, .78); --app-panel-strong: #35150f; --app-text: #fff7ed; --app-muted: #ddbbb0; --app-border: rgba(255, 225, 198, .16); --app-accent: #fcd34d; --app-accent-strong: #f97316; --app-glow-1: rgba(251, 146, 60, .30); --app-glow-2: rgba(244, 63, 94, .24);
+}
+[data-theme="orchid"] {
+  --app-bg: #17102c; --app-panel: rgba(37, 20, 65, .78); --app-panel-strong: #251440; --app-text: #fbf7ff; --app-muted: #cdbfe4; --app-border: rgba(233, 213, 255, .16); --app-accent: #e9a8ff; --app-accent-strong: #a855f7; --app-glow-1: rgba(217, 70, 239, .27); --app-glow-2: rgba(99, 102, 241, .24);
+}
+[data-theme="forest"] {
+  --app-bg: #071b16; --app-panel: rgba(11, 43, 33, .78); --app-panel-strong: #0b2b21; --app-text: #f0fff8; --app-muted: #b4d0c2; --app-border: rgba(204, 251, 232, .15); --app-accent: #7cebb8; --app-accent-strong: #14b878; --app-glow-1: rgba(16, 185, 129, .27); --app-glow-2: rgba(6, 182, 212, .20);
+}
+html { scroll-behavior: smooth; background: var(--app-bg); }
+body { min-height: 100vh; color: var(--app-text); font-family: 'DM Sans', sans-serif; background: var(--app-bg); }
+h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+::selection { background: var(--app-accent-strong); color: white; }
+:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px; }
 
-body {
-  font-family: 'Inter', sans-serif;
-}
-/* A modern, subtle moving gradient background suitable for education platforms */
-body {
-  background: linear-gradient(-45deg, #fcfbf9, #edf5f0, #fdf0ef, #fef9ec);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
-  min-height: 100vh;
-  color: #1a1814;
-}
-
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Base utility for glass cards - converted to pure CSS to fix build error */
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 1rem;
-}
-
-/* Glass input base and focus states */
-.glass-input {
-  background-color: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  outline: none;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.glass-input:focus {
-  border-color: #059669; 
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2); 
-}
+.app-theme { min-height: 100vh; color: var(--app-text); background: radial-gradient(circle at 8% 0%, var(--app-glow-1), transparent 34%), radial-gradient(circle at 92% 5%, var(--app-glow-2), transparent 32%), var(--app-bg); }
+.app-theme::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .38; background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(to bottom, black, transparent 70%); }
+.theme-surface { background: var(--app-panel); border: 1px solid var(--app-border); box-shadow: 0 18px 60px rgba(0,0,0,.18); }
+.theme-surface-solid { background: var(--app-panel-strong); border: 1px solid var(--app-border); }
+.theme-control { display: inline-flex; align-items: center; gap: .45rem; padding: .68rem .85rem; border: 1px solid var(--app-border); border-radius: .8rem; background: var(--app-panel); color: var(--app-text); font-size: .82rem; font-weight: 600; transition: transform .18s ease, background .18s ease; }
+.theme-control:hover { transform: translateY(-1px); background: var(--app-panel-strong); }
+.theme-menu { position: absolute; right: 0; top: calc(100% + .6rem); z-index: 60; width: 210px; padding: .75rem; border: 1px solid var(--app-border); border-radius: 1rem; background: var(--app-panel-strong); box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.theme-choice { display: flex; width: 100%; align-items: center; gap: .7rem; padding: .55rem; border-radius: .7rem; color: var(--app-text); }
+.theme-choice:hover { background: rgba(255,255,255,.08); }
+.glass-card { background: var(--app-panel); border: 1px solid var(--app-border); box-shadow: 0 12px 36px rgba(0,0,0,.14); border-radius: 1.25rem; }
+.glass-input { background: rgba(255,255,255,.08); border: 1px solid var(--app-border); border-radius: .85rem; padding: .75rem 1rem; color: var(--app-text); outline: none; }
+.glass-input::placeholder { color: var(--app-muted); }
+.glass-input:focus { border-color: var(--app-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 18%, transparent); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }

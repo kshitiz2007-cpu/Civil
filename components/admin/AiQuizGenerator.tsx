@@ -45,8 +45,7 @@ export default function AiQuizBuilder() {
       `;
 
       const result = await model.generateContent(prompt);
-      const responseText = result.response.text().replace(/```json/g, '').replace(/
-```/g, '').trim();
+      const responseText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
       
       const parsedQuestions = JSON.parse(responseText);
       setGeneratedQuestions(parsedQuestions);

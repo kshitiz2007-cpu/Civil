@@ -1,6 +1,7 @@
 'use client';
 export const dynamic = "force-dynamic";
 
+import ThemeSelector from '@/components/ThemeSelector';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -119,7 +120,7 @@ export default function StudentQuizzesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] relative overflow-hidden flex selection:bg-emerald-500/30">
+    <div className="app-theme relative flex min-h-screen overflow-hidden">
       
       {/* 1. GLOWING AURORA BACKGROUND */}
       <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -128,7 +129,7 @@ export default function StudentQuizzesPage() {
 
       {/* 2. DESKTOP GLASS SIDEBAR */}
       <aside className="hidden md:flex w-72 h-screen flex-col bg-white/[0.02] border-r border-white/10 backdrop-blur-2xl relative z-20 shadow-[4px_0_24px_rgba(0,0,0,0.2)]">
-        <div className="p-8 pb-6">
+        <div className="relative p-8 pb-6"><div className="absolute right-4 top-4"><ThemeSelector compact /></div>
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 font-serif">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-white/20">
               <Sparkles className="w-5 h-5 text-white" />
