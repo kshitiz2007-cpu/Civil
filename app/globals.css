@@ -1,48 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
-
-body {
-  font-family: 'Inter', sans-serif;
+:root {
+  color-scheme: light;
+  --brand-ink: #10241e;
+  --brand-green: #0e8064;
+  --brand-mint: #c7f3df;
+  --surface: rgba(255, 255, 255, .78);
 }
-/* A modern, subtle moving gradient background suitable for education platforms */
+html { scroll-behavior: smooth; }
 body {
-  background: linear-gradient(-45deg, #fcfbf9, #edf5f0, #fdf0ef, #fef9ec);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
   min-height: 100vh;
-  color: #1a1814;
+  color: var(--brand-ink);
+  font-family: 'DM Sans', sans-serif;
+  background: #f4f7f5;
+  background-image: radial-gradient(ellipse at 10% 0%, rgba(190, 235, 213, .32), transparent 38%), radial-gradient(ellipse at 100% 20%, rgba(205, 225, 250, .28), transparent 36%);
 }
-
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Base utility for glass cards - converted to pure CSS to fix build error */
+h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+::selection { background: rgba(16, 128, 100, .22); }
+:focus-visible { outline: 3px solid rgba(52, 211, 153, .8); outline-offset: 3px; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
 .glass-card {
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 1rem;
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, .78);
+  box-shadow: 0 12px 36px rgba(16, 42, 32, .07);
+  border-radius: 1.25rem;
 }
-
-/* Glass input base and focus states */
 .glass-input {
-  background-color: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid rgba(15, 45, 34, .12);
+  border-radius: .85rem;
+  padding: .75rem 1rem;
+  color: #10241e;
   outline: none;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
-
-.glass-input:focus {
-  border-color: #059669; 
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2); 
+.glass-input::placeholder { color: #83918b; }
+.glass-input:focus { border-color: #0e8064; box-shadow: 0 0 0 3px rgba(14, 128, 100, .14); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
