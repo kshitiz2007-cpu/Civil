@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { 
   FileQuestion, Loader2, Trash2, Save, 
-  CheckCircle, ToggleLeft, ToggleRight
+  CheckCircle, ToggleLeft, ToggleRight, Search
 } from 'lucide-react';
 
 interface Quiz {
@@ -27,6 +27,13 @@ export default function QuizManager() {
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [successId, setSuccessId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [visibility, setVisibility] = useState<'all' | 'active' | 'hidden'>('all');
+  const filteredQuizzes = quizzes.filter((quiz) => {
+    const matchesQuery = quiz.title.toLowerCase().includes(query.toLowerCase()) || quiz.category?.toLowerCase().includes(query.toLowerCase());
+    const matchesVisibility = visibility === 'all' || (visibility === 'active' ? quiz.active : !quiz.active);
+    return matchesQuery && matchesVisibility;
+  });
 
   useEffect(() => {
     fetchQuizzes();
@@ -103,7 +110,7 @@ export default function QuizManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 bg-white/20">
-                {quizzes.map((q) => (
+                {filteredQuizzes.map((q) => (
                   <tr key={q.id} className="hover:bg-white/60 transition-colors">
                     
                     <td className="px-6 py-4">
