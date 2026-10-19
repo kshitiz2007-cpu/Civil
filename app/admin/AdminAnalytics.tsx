@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Activity, Award, BookOpen, Search, TrendingUp, Users } from 'lucide-react';
+import { Activity, Award, BookOpen, Download, Search, TrendingUp, Users } from 'lucide-react';
 
 type Student = { id: string; name: string; email: string; created_at: string };
 type Attempt = { id: string; user_id: string; score: number; quiz_title: string | null; completed_at: string | null };
@@ -39,12 +39,23 @@ export default function AdminAnalytics() {
   const average = results.length ? Math.round(results.reduce((sum, a) => sum + Number(a.score || 0), 0) / results.length) : 0;
   const recent = results.slice(0, 8);
   const completedLast30 = attempts.filter((a) => a.completed_at && Date.now() - new Date(a.completed_at).getTime() < 30 * 86400000).length;
+  const exportCsv = () => {
+    const rows = [['Student', 'Email', 'Attempts', 'Average score', 'Latest score']];
+    students.forEach((student) => {
+      const scores = attempts.filter((a) => a.user_id === student.id).map((a) => Number(a.score || 0));
+      const mean = scores.length ? Math.round(scores.reduce((sum, value) => sum + value, 0) / scores.length) : '';
+      rows.push([student.name || 'Student', student.email || '', String(scores.length), String(mean), scores.length ? String(scores[0]) : '']);
+    });
+    const csv = rows.map((row) => row.map((cell) => JSON.stringify(String(cell))).join(',')).join('\\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a'); link.href = url; link.download = 'student-performance.csv'; link.click(); URL.revokeObjectURL(url);
+  };
 
   return (
     <section className="space-y-6 text-white">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div><p className="text-xs font-bold uppercase tracking-[.18em] text-emerald-300">Insights</p><h2 className="mt-2 text-3xl font-bold tracking-tight">Student performance</h2><p className="mt-2 text-sm text-white/60">Spot progress, consistency, and students who may need support.</p></div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70"><Activity className="mr-2 inline h-4 w-4 text-emerald-300" /> Refreshes every minute</div>
+        <div className="flex flex-wrap items-center gap-2"><div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70"><Activity className="mr-2 inline h-4 w-4 text-emerald-300" /> Refreshes every minute</div><button onClick={exportCsv} className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium hover:bg-white/10"><Download className="h-4 w-4"/> Export CSV</button></div>
       </header>
       <div className="grid gap-4 sm:grid-cols-3">
         <Metric icon={Users} label="Learners" value={students.length} />
