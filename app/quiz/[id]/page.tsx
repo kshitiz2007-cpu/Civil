@@ -66,7 +66,7 @@ export default function QuizPlayerPage() {
   const goPrevious = () => setCurrent((value) => Math.max(value - 1, 0));
   const skip = () => { if (current < questions.length - 1) goNext(); };
 
-  const submit = async () => {
+  async function submit() {
     if (!quiz || !user || submitting) return;
     setSubmitting(true);
     try {
