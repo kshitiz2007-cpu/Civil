@@ -15,17 +15,9 @@ export default function ThemeSelector({ compact = false }: { compact?: boolean }
   const [theme, setTheme] = useState('ocean');
 
   useEffect(() => {
-    const saved = window.localStorage.getItem('gyankunj-theme') || 'ocean';
-    setTheme(saved);
-    document.documentElement.dataset.theme = saved;
-  }, []);
-
-  const choose = (id: string) => {
-    setTheme(id);
-    document.documentElement.dataset.theme = id;
-    window.localStorage.setItem('gyankunj-theme', id);
-    setOpen(false);
-  };
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('gyankunj-theme', theme);
+  }, [theme]);
 
   return (
     <div className="relative">
@@ -37,7 +29,7 @@ export default function ThemeSelector({ compact = false }: { compact?: boolean }
         <div className="theme-menu">
           <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-[.14em] text-[var(--app-muted)]">Choose your theme</p>
           {THEMES.map((item) => (
-            <button key={item.id} onClick={() => choose(item.id)} className="theme-choice">
+            <button key={item.id} onClick={() => { setTheme(item.id); setOpen(false); }} className="theme-choice">
               <span className={`h-7 w-7 rounded-full bg-gradient-to-br ${item.swatch}`} />
               <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
               {theme === item.id && <Check className="h-4 w-4 text-[var(--app-accent)]" />}
