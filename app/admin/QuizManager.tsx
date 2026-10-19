@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { 
-  FileQuestion, Loader2, Trash2, Save, 
-  CheckCircle, ToggleLeft, ToggleRight, Search
+  FileQuestion, Loader2, Trash2, ToggleLeft, ToggleRight, Search
 } from 'lucide-react';
 
 interface Quiz {
@@ -36,19 +35,19 @@ export default function QuizManager() {
   });
 
   useEffect(() => {
+    let active = true;
+    async function fetchQuizzes() {
+      setLoading(true);
+      const { data } = await supabase
+        .from('quizzes')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (active && data) setQuizzes(data as Quiz[]);
+      if (active) setLoading(false);
+    }
     fetchQuizzes();
+    return () => { active = false; };
   }, []);
-
-  const fetchQuizzes = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('quizzes')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (data) setQuizzes(data);
-    setLoading(false);
-  };
 
   const handleUpdateCategory = async (id: string, newCat: string) => {
     setActionLoadingId(id);
