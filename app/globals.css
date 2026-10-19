@@ -1,0 +1,307 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/*
+ * GYANKUNJ CIVIL SERVICES ACADEMY — HYPER-PROFESSIONAL ACADEMIC DESIGN SYSTEM v3.0
+ * Engineered for zero ocular fatigue during 8–10 hour UPSC CSE Prelims & Mains sessions.
+ */
+:root,
+[data-theme="sage"],
+[data-theme="ocean"],
+[data-theme="forest"] {
+  --app-bg: #08110f;
+  --app-bg-elevated: #0d1a17;
+  --app-panel: rgba(14, 28, 25, 0.86);
+  --app-panel-strong: #10211d;
+  --app-surface-muted: rgba(255, 255, 255, 0.045);
+  --app-surface-hover: rgba(110, 231, 183, 0.07);
+  --app-text: #eef7f4;
+  --app-muted: #94afa6;
+  --app-border: rgba(167, 218, 200, 0.14);
+  --app-border-strong: rgba(110, 231, 183, 0.34);
+  --app-accent: #34d399;
+  --app-accent-strong: #10b981;
+  --app-accent-soft: rgba(52, 211, 153, 0.13);
+  --app-secondary: #38bdf8;
+  --app-warning: #fbbf24;
+  --app-danger: #fb7185;
+  --app-glow-1: rgba(52, 211, 153, 0.15);
+  --app-glow-2: rgba(56, 189, 248, 0.10);
+  --app-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.42), 0 0 1px 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+[data-theme="parchment"] {
+  --app-bg: #f6f2e8;
+  --app-bg-elevated: #ede7d8;
+  --app-panel: rgba(255, 253, 248, 0.92);
+  --app-panel-strong: #ffffff;
+  --app-surface-muted: rgba(24, 38, 34, 0.048);
+  --app-surface-hover: rgba(15, 118, 110, 0.07);
+  --app-text: #16231f;
+  --app-muted: #566861;
+  --app-border: rgba(22, 35, 31, 0.12);
+  --app-border-strong: rgba(15, 118, 110, 0.35);
+  --app-accent: #0f766e;
+  --app-accent-strong: #0d9488;
+  --app-accent-soft: rgba(15, 118, 110, 0.11);
+  --app-secondary: #0284c7;
+  --app-warning: #d97706;
+  --app-danger: #e11d48;
+  --app-glow-1: rgba(15, 118, 110, 0.08);
+  --app-glow-2: rgba(180, 83, 9, 0.06);
+  --app-shadow: 0 16px 38px -10px rgba(22, 35, 31, 0.08), 0 0 1px 1px rgba(255, 255, 255, 0.7) inset;
+}
+
+[data-theme="mussoorie"],
+[data-theme="orchid"] {
+  --app-bg: #09111d;
+  --app-bg-elevated: #0e1929;
+  --app-panel: rgba(15, 27, 44, 0.86);
+  --app-panel-strong: #122136;
+  --app-surface-muted: rgba(255, 255, 255, 0.045);
+  --app-surface-hover: rgba(56, 189, 248, 0.08);
+  --app-text: #f0f6ff;
+  --app-muted: #93a8c4;
+  --app-border: rgba(186, 214, 247, 0.14);
+  --app-border-strong: rgba(56, 189, 248, 0.35);
+  --app-accent: #38bdf8;
+  --app-accent-strong: #0ea5e9;
+  --app-accent-soft: rgba(56, 189, 248, 0.13);
+  --app-secondary: #818cf8;
+  --app-warning: #fbbf24;
+  --app-danger: #fb7185;
+  --app-glow-1: rgba(56, 189, 248, 0.15);
+  --app-glow-2: rgba(129, 140, 248, 0.11);
+  --app-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.45), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+[data-theme="sandstone"],
+[data-theme="sunrise"] {
+  --app-bg: #130f0d;
+  --app-bg-elevated: #1c1613;
+  --app-panel: rgba(30, 24, 20, 0.87);
+  --app-panel-strong: #231c18;
+  --app-surface-muted: rgba(255, 255, 255, 0.045);
+  --app-surface-hover: rgba(245, 185, 113, 0.08);
+  --app-text: #faf4ed;
+  --app-muted: #b5a395;
+  --app-border: rgba(235, 210, 186, 0.14);
+  --app-border-strong: rgba(245, 185, 113, 0.35);
+  --app-accent: #f59e0b;
+  --app-accent-strong: #d97706;
+  --app-accent-soft: rgba(245, 158, 11, 0.13);
+  --app-secondary: #34d399;
+  --app-warning: #fbbf24;
+  --app-danger: #fb7185;
+  --app-glow-1: rgba(245, 158, 11, 0.14);
+  --app-glow-2: rgba(16, 185, 129, 0.09);
+  --app-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.48), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--app-bg);
+}
+
+html[data-font-scale="large"] {
+  font-size: 17px;
+}
+
+html[data-font-scale="compact"] {
+  font-size: 14.5px;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--app-text);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--app-bg);
+  line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: -0.024em;
+}
+
+.font-serif-academic {
+  font-family: 'Instrument Serif', 'Noto Serif Devanagari', Georgia, serif;
+}
+
+.font-hindi {
+  font-family: 'Noto Serif Devanagari', 'DM Sans', serif;
+  line-height: 1.78;
+}
+
+.font-mono-tabular {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--app-accent-strong);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--app-accent);
+  outline-offset: 2px;
+}
+
+.app-theme {
+  min-height: 100vh;
+  color: var(--app-text);
+  background:
+    radial-gradient(circle at 12% 0%, var(--app-glow-1), transparent 40%),
+    radial-gradient(circle at 88% 4%, var(--app-glow-2), transparent 38%),
+    var(--app-bg);
+}
+
+.app-theme::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(var(--app-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--app-border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.65), transparent 78%);
+}
+
+.theme-surface {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.theme-surface-solid {
+  background: var(--app-panel-strong);
+  border: 1px solid var(--app-border);
+}
+
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  background: var(--app-panel);
+  color: var(--app-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.theme-control:hover {
+  transform: translateY(-1px);
+  background: var(--app-panel-strong);
+  border-color: var(--app-accent);
+}
+
+.theme-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.55rem);
+  z-index: 70;
+  width: 260px;
+  padding: 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1.2rem;
+  background: var(--app-panel-strong);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.42);
+}
+
+.theme-choice {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.75rem;
+  color: var(--app-text);
+  transition: background 0.15s ease;
+}
+
+.theme-choice:hover {
+  background: var(--app-surface-muted);
+}
+
+.glass-card {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(18px);
+}
+
+.glass-input {
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  padding: 0.7rem 0.95rem;
+  color: var(--app-text);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.glass-input::placeholder {
+  color: var(--app-muted);
+}
+
+.glass-input:focus {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
+}
+
+.kbd-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.45rem;
+  height: 1.4rem;
+  padding: 0 0.38rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 0.42rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface-muted);
+  color: var(--app-muted);
+  box-shadow: 0 1px 0 var(--app-border);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--app-border);
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
