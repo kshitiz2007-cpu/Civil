@@ -14,12 +14,13 @@ import CsvImporter from './CsvImporter';
 import PaymentsManager from './PaymentsManager';
 import StudentsManager from './StudentsManager';
 import QuizManager from './QuizManager';
+import AdminAnalytics from './AdminAnalytics';
 
 
 import {
   LayoutDashboard, FileQuestion, Users, FileText,
   CreditCard, Sparkles, CalendarClock, TableProperties,
-  LogOut,MessageSquare
+  LogOut,MessageSquare,Activity
 } from 'lucide-react';
 
 // Sidebar Navigation Configuration
@@ -30,6 +31,7 @@ const ADMIN_TABS = [
   { id: 'aigen', label: 'AI Generate', icon: Sparkles },
   { id: 'resources', label: 'Resources', icon: FileText },
   { id: 'students', label: 'Students', icon: Users },
+  { id: 'analytics', label: 'Performance', icon: Activity },
   { id: 'payments', label: 'Payments', icon: CreditCard },
   { id: 'scheduled', label: 'Scheduled', icon: CalendarClock },
   { id: 'csvimport', label: 'CSV Import', icon: TableProperties },
@@ -188,6 +190,7 @@ export default function AdminPage() {
 
           {/* STUDENTS TAB */}
           {activeTab === 'students' && <StudentsManager />}
+          {activeTab === 'analytics' && <AdminAnalytics />}
 
           {/* PAYMENTS TAB */}
           {activeTab === 'payments' && <PaymentsManager />}
