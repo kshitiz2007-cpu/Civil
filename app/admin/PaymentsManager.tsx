@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { 
-  CreditCard, CheckCircle, XCircle, Clock, 
-  Search, Loader2, ShieldCheck, AlertCircle 
+  CreditCard, CheckCircle, XCircle, Search, Loader2, ShieldCheck 
 } from 'lucide-react';
 
 interface Payment {
@@ -26,25 +25,23 @@ export default function PaymentsManager() {
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
 
   useEffect(() => {
+    let active = true;
+    async function fetchPayments() {
+      setLoading(true);
+      const { data } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          profiles:user_id (name, email),
+          quizzes:quiz_id (title)
+        `)
+        .order('created_at', { ascending: false });
+      if (active && data) setPayments(data as unknown as Payment[]);
+      if (active) setLoading(false);
+    }
     fetchPayments();
+    return () => { active = false; };
   }, []);
-
-  const fetchPayments = async () => {
-    setLoading(true);
-    // Assuming you have a 'transactions' or 'payments' table linked to profiles and quizzes
-    // For now, we will fetch standard data. (If this table doesn't exist yet, it will return empty safely).
-    const { data, error } = await supabase
-      .from('transactions')
-      .select(`
-        *,
-        profiles:user_id (name, email),
-        quizzes:quiz_id (title)
-      `)
-      .order('created_at', { ascending: false });
-
-    if (data) setPayments(data as any);
-    setLoading(false);
-  };
 
   const updateStatus = async (paymentId: string, newStatus: 'approved' | 'rejected') => {
     const originalPayments = [...payments];
