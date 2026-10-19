@@ -13,6 +13,7 @@ export default function AdminAnalytics() {
   const [selectedId, setSelectedId] = useState('');
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [referenceTime, setReferenceTime] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -26,6 +27,7 @@ export default function AdminAnalytics() {
       setStudents(roster);
       setAttempts((results || []) as Attempt[]);
       setSelectedId(roster[0]?.id || '');
+      setReferenceTime(Date.now());
       setLoading(false);
     }
     load();
@@ -38,7 +40,7 @@ export default function AdminAnalytics() {
   const results = attempts.filter((a) => a.user_id === selectedId);
   const average = results.length ? Math.round(results.reduce((sum, a) => sum + Number(a.score || 0), 0) / results.length) : 0;
   const recent = results.slice(0, 8);
-  const completedLast30 = attempts.filter((a) => a.completed_at && Date.now() - new Date(a.completed_at).getTime() < 30 * 86400000).length;
+  const completedLast30 = referenceTime ? attempts.filter((a) => a.completed_at && referenceTime - new Date(a.completed_at).getTime() < 30 * 86400000).length : 0;
   const exportCsv = () => {
     const rows = [['Student', 'Email', 'Attempts', 'Average score', 'Latest score']];
     students.forEach((student) => {
