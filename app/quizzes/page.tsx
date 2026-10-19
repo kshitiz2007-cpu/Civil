@@ -4,7 +4,10 @@ export const dynamic = 'force-dynamic';
 import ThemeSelector from '@/components/ThemeSelector';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+<<<<<<< HEAD
 import { FALLBACK_QUIZZES } from '@/lib/mockData';
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 import { useRouter } from 'next/navigation';
 import {
   FolderOpen,
@@ -37,11 +40,19 @@ interface Quiz {
   id: string;
   title: string;
   category: string;
+<<<<<<< HEAD
   section?: string;
   time_limit: number;
   questions: any[];
   is_paid?: boolean;
   price?: number;
+=======
+  section: string;
+  time_limit: number;
+  questions: any[];
+  is_paid: boolean;
+  price: number;
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   negative_marking?: number;
   cutoff?: number;
 }
@@ -83,6 +94,7 @@ export default function StudentQuizzesPage() {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+<<<<<<< HEAD
 
         let qData: any[] | null = null;
         let aData: any[] | null = null;
@@ -125,12 +137,43 @@ export default function StudentQuizzesPage() {
         if (aData) setAttempts(aData);
       } catch {
         setQuizzes(FALLBACK_QUIZZES as unknown as Quiz[]);
+=======
+        if (!session) return router.push('/');
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        if (profile) setUser(profile);
+
+        const [{ data: qData }, { data: aData }] = await Promise.all([
+          supabase
+            .from('quizzes')
+            .select('*')
+            .eq('active', true)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('attempts')
+            .select('quiz_id, score')
+            .eq('user_id', session.user.id),
+        ]);
+
+        if (qData) setQuizzes(qData);
+        if (aData) setAttempts(aData);
+      } catch (err) {
+        console.error('Error loading quizzes:', err);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       } finally {
         setLoading(false);
       }
     }
     loadData();
+<<<<<<< HEAD
   }, []);
+=======
+  }, [router]);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -260,9 +303,13 @@ export default function StudentQuizzesPage() {
                   : 'UPSC CSE Prelims & CSAT Repository'}
               </p>
               <h1 className="mt-0.5 text-2xl font-bold tracking-tight sm:text-3xl">
+<<<<<<< HEAD
                 {activeSubject
                   ? `${activeSubject} Modules`
                   : 'Institutional Test Series'}
+=======
+                {activeSubject ? `${activeSubject} Modules` : 'Institutional Test Series'}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               </h1>
             </div>
           </div>
@@ -345,8 +392,13 @@ export default function StudentQuizzesPage() {
                     No papers published in {activeSubject} yet
                   </h3>
                   <p className="text-xs text-[var(--app-muted)] mt-1">
+<<<<<<< HEAD
                     Select Polity, Economy, Environment, or History for immediate
                     full-length simulator papers.
+=======
+                    Select another GS subject or check back after the next
+                    faculty upload.
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   </p>
                 </div>
               ) : (
@@ -401,7 +453,11 @@ export default function StudentQuizzesPage() {
                                     <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--app-muted)]">
                                       <span className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--app-surface-muted)] px-2.5 py-1">
                                         <Clock className="w-3.5 h-3.5 text-[var(--app-accent)]" />
+<<<<<<< HEAD
                                         {quiz.time_limit || 20} mins
+=======
+                                        {quiz.time_limit || 30} mins
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                                       </span>
                                       <span className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--app-surface-muted)] px-2.5 py-1">
                                         <FileText className="w-3.5 h-3.5 text-[var(--app-secondary)]" />

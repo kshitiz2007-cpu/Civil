@@ -1,6 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
+<<<<<<< HEAD
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
@@ -8,6 +9,12 @@ import {
   Bookmark,
   BookOpen,
   Calculator,
+=======
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import {
+  AlertCircle,
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -15,6 +22,7 @@ import {
   Eye,
   EyeOff,
   Flag,
+<<<<<<< HEAD
   HelpCircle,
   Keyboard,
   Languages,
@@ -38,12 +46,29 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { FALLBACK_QUIZZES } from '@/lib/mockData';
+=======
+  Languages,
+  Loader2,
+  Maximize2,
+  Minimize2,
+  Scissors,
+  Send,
+  ShieldCheck,
+  SkipForward,
+  Sparkles,
+  XCircle,
+} from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 import ThemeSelector from '@/components/ThemeSelector';
 
 type ConfidenceLevel = 'sure' | 'fifty' | 'guess';
 type LanguageMode = 'en' | 'hi' | 'split';
+<<<<<<< HEAD
 type EngineMode = 'exam' | 'tutor';
 type PaletteFilter = 'all' | 'answered' | 'unanswered' | 'marked' | 'bookmarked';
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
 export default function QuizPlayerPage() {
   const router = useRouter();
@@ -53,6 +78,7 @@ export default function QuizPlayerPage() {
   const [user, setUser] = useState<any>(null);
   const [quiz, setQuiz] = useState<any>(null);
   const [current, setCurrent] = useState(0);
+<<<<<<< HEAD
 
   // Core OMR & Telemetry States
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -84,10 +110,26 @@ export default function QuizPlayerPage() {
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [tabWarnings, setTabWarnings] = useState(0);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+=======
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [marked, setMarked] = useState<string[]>([]);
+  const [visited, setVisited] = useState<Record<string, boolean>>({});
+  const [eliminated, setEliminated] = useState<Record<string, number[]>>({});
+  const [confidence, setConfidence] = useState<Record<string, ConfidenceLevel>>({});
+  const [timeSpentMap, setTimeSpentMap] = useState<Record<string, number>>({});
+
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [calmTimerMode, setCalmTimerMode] = useState(false); // Hides ticking seconds to reduce anxiety
+  const [zenMode, setZenMode] = useState(false); // Distraction-free reading focus mode
+  const [fontSize, setFontSize] = useState<'base' | 'lg' | 'xl'>('lg');
+  const [language, setLanguage] = useState<LanguageMode>('en');
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+<<<<<<< HEAD
   const triggerToast = useCallback((msg: string) => {
     setToastMsg(msg);
     window.setTimeout(() => {
@@ -176,13 +218,51 @@ export default function QuizPlayerPage() {
       } finally {
         if (alive) setLoading(false);
       }
+=======
+  useEffect(() => {
+    let alive = true;
+    async function loadQuiz() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/';
+        return;
+      }
+      const [{ data: profile }, { data: quizData, error }] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle(),
+        supabase.from('quizzes').select('*').eq('id', quizId).single(),
+      ]);
+      if (!alive) return;
+      if (error || !quizData) {
+        alert('This test paper is no longer available.');
+        router.replace('/quizzes');
+        return;
+      }
+      setUser(profile || { id: session.user.id, email: session.user.email });
+      setQuiz(quizData);
+      const firstId = quizData.questions?.[0]?.id;
+      if (firstId) setVisited({ [firstId]: true });
+      setTimeLeft((quizData.time_limit || 30) * 60);
+      setLoading(false);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
     }
     loadQuiz();
     return () => {
       alive = false;
     };
+<<<<<<< HEAD
   }, [quizId]);
 
+=======
+  }, [quizId, router]);
+
+  // Countdown + Per-Question Time Telemetry
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   const questions = quiz?.questions || [];
   const question = questions[current];
 
@@ -192,6 +272,7 @@ export default function QuizPlayerPage() {
     }
   }, [current, question?.id]);
 
+<<<<<<< HEAD
   // Tab-Focus Integrity Monitor (in Strict Exam Mode)
   useEffect(() => {
     if (engineMode !== 'exam' || loading || submitting) return;
@@ -214,6 +295,10 @@ export default function QuizPlayerPage() {
   // Countdown + Per-Question Time Telemetry
   useEffect(() => {
     if (loading || submitting || isPaused || timeLeft <= 0) return;
+=======
+  useEffect(() => {
+    if (loading || submitting || timeLeft <= 0) return;
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
     const timer = window.setInterval(() => {
       setTimeLeft((value) => (value <= 1 ? 0 : value - 1));
       if (question?.id) {
@@ -224,7 +309,16 @@ export default function QuizPlayerPage() {
       }
     }, 1000);
     return () => window.clearInterval(timer);
+<<<<<<< HEAD
   }, [loading, submitting, isPaused, timeLeft, question?.id]);
+=======
+  }, [loading, submitting, timeLeft, question?.id]);
+
+  useEffect(() => {
+    if (!loading && timeLeft === 0 && quiz) submit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, loading, quiz]);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   const positiveMarks = Number(quiz?.positive_marks || 2.0);
   const negativeMarks =
@@ -245,6 +339,7 @@ export default function QuizPlayerPage() {
 
   const currentQuestionTime = question?.id ? timeSpentMap[question.id] || 0 : 0;
 
+<<<<<<< HEAD
   const toggleEliminateOption = useCallback(
     (qId: string, optIndex: number) => {
       setEliminated((prev) => {
@@ -267,12 +362,35 @@ export default function QuizPlayerPage() {
   );
 
   const clearResponse = useCallback(() => {
+=======
+  const toggleEliminateOption = (qId: string, optIndex: number) => {
+    setEliminated((prev) => {
+      const existing = prev[qId] || [];
+      const isEliminated = existing.includes(optIndex);
+      const next = isEliminated
+        ? existing.filter((i) => i !== optIndex)
+        : [...existing, optIndex];
+      return { ...prev, [qId]: next };
+    });
+    // If the option was selected and just got eliminated, clear selection
+    if (answers[qId] === optIndex) {
+      setAnswers((prev) => {
+        const copy = { ...prev };
+        delete copy[qId];
+        return copy;
+      });
+    }
+  };
+
+  const clearResponse = () => {
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
     if (!question?.id) return;
     setAnswers((prev) => {
       const copy = { ...prev };
       delete copy[question.id];
       return copy;
     });
+<<<<<<< HEAD
   }, [question?.id]);
 
   const selectOption = useCallback(
@@ -386,6 +504,26 @@ export default function QuizPlayerPage() {
     clearResponse,
     question?.id,
   ]);
+=======
+  };
+
+  const selectOption = (optIndex: number) => {
+    if (!question?.id) return;
+    // If option is struck out, unstrike it first or ignore
+    if ((eliminated[question.id] || []).includes(optIndex)) return;
+    setAnswers((prev) => ({ ...prev, [question.id]: optIndex }));
+    if (!confidence[question.id]) {
+      setConfidence((prev) => ({ ...prev, [question.id]: 'sure' }));
+    }
+  };
+
+  const goNext = () =>
+    setCurrent((value) => Math.min(value + 1, questions.length - 1));
+  const goPrevious = () => setCurrent((value) => Math.max(value - 1, 0));
+  const skip = () => {
+    if (current < questions.length - 1) goNext();
+  };
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   async function submit() {
     if (!quiz || !user || submitting) return;
@@ -417,12 +555,15 @@ export default function QuizPlayerPage() {
           question_id: item.id,
           question: item.text,
           question_hi: item.textHi || null,
+<<<<<<< HEAD
           subject: item.subject || quiz.category || 'General Studies',
           topic: item.topic || null,
           options: item.options,
           options_hi: item.optionsHi || null,
           selected_index: choice !== undefined ? choice : null,
           correct_index: item.correct,
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
           selected_answer:
             choice === undefined ? 'Skipped' : item.options[choice],
           selected_answer_hi:
@@ -431,11 +572,17 @@ export default function QuizPlayerPage() {
           correct_answer_hi: item.optionsHi?.[item.correct] || null,
           isCorrect,
           marks_awarded: +marksAwarded.toFixed(2),
+<<<<<<< HEAD
           confidence:
             confidence[item.id] || (choice !== undefined ? 'sure' : null),
           eliminated_count: (eliminated[item.id] || []).length,
           time_spent: timeSpentMap[item.id] || 0,
           bookmarked: Boolean(bookmarked[item.id]),
+=======
+          confidence: confidence[item.id] || (choice !== undefined ? 'sure' : null),
+          eliminated_count: (eliminated[item.id] || []).length,
+          time_spent: timeSpentMap[item.id] || 0,
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
           explanation: item.explanation || null,
           explanation_hi: item.explanationHi || null,
         };
@@ -462,6 +609,7 @@ export default function QuizPlayerPage() {
         completed_at: new Date().toISOString(),
       };
 
+<<<<<<< HEAD
       // Save locally first so result page ALWAYS works even in offline/demo mode
       try {
         window.localStorage.setItem(
@@ -497,6 +645,17 @@ export default function QuizPlayerPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, loading, quiz, engineMode]);
 
+=======
+      const { error } = await supabase.from('attempts').insert([attempt]);
+      if (error) throw error;
+      window.location.href = `/quiz/${quiz.id}/result`;
+    } catch (error: any) {
+      alert(error.message || 'Could not submit your test paper. Please retry.');
+      setSubmitting(false);
+    }
+  }
+
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   // 5-State UPSC Question Palette Status
   const paletteStatus = useMemo(
     () =>
@@ -516,6 +675,7 @@ export default function QuizPlayerPage() {
   const counts = useMemo(() => {
     return {
       answered: paletteStatus.filter((s: string) => s === 'answered').length,
+<<<<<<< HEAD
       answeredMarked: paletteStatus.filter(
         (s: string) => s === 'answered-marked'
       ).length,
@@ -546,6 +706,15 @@ export default function QuizPlayerPage() {
     ).toFixed(1);
     return { sureCount, fiftyCount, guessCount, projectedMarks };
   }, [answers, confidence]);
+=======
+      answeredMarked: paletteStatus.filter((s: string) => s === 'answered-marked')
+        .length,
+      marked: paletteStatus.filter((s: string) => s === 'marked').length,
+      visited: paletteStatus.filter((s: string) => s === 'visited').length,
+      unvisited: paletteStatus.filter((s: string) => s === 'unvisited').length,
+    };
+  }, [paletteStatus]);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   if (loading)
     return (
@@ -559,6 +728,7 @@ export default function QuizPlayerPage() {
     fontSize === 'xl'
       ? 'text-xl sm:text-2xl leading-relaxed'
       : fontSize === 'lg'
+<<<<<<< HEAD
       ? 'text-base sm:text-lg leading-relaxed'
       : 'text-sm sm:text-base leading-relaxed';
 
@@ -660,11 +830,29 @@ export default function QuizPlayerPage() {
             <button
               onClick={() => router.push('/quizzes')}
               className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 py-1.5 text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] transition"
+=======
+      ? 'text-lg sm:text-xl leading-relaxed'
+      : 'text-base sm:text-lg leading-relaxed';
+
+  const currentEliminated = eliminated[question.id] || [];
+  const currentConfidence = confidence[question.id] || 'sure';
+
+  return (
+    <div className="app-theme min-h-screen flex flex-col">
+      {/* Calming Examination Header */}
+      <header className="theme-surface-solid sticky top-0 z-30 border-b border-[var(--app-border)]">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/quizzes')}
+              className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-3 py-1.5 text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             >
               ← Exit Hall
             </button>
             <div className="hidden sm:block">
               <div className="flex items-center gap-2">
+<<<<<<< HEAD
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-accent)]">
                   {quiz.category || 'UPSC Prelims'}
                 </span>
@@ -677,11 +865,22 @@ export default function QuizPlayerPage() {
                     Tab Alerts: {tabWarnings}/3
                   </span>
                 )}
+=======
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-accent)]">
+                  {quiz.category || 'UPSC Prelims'}
+                </span>
+                <span className="text-xs text-[var(--app-muted)]">·</span>
+                <span className="text-[11px] font-semibold text-[var(--app-muted)]">
+                  +{positiveMarks.toFixed(1)} Correct / -{negativeMarks.toFixed(2)}{' '}
+                  Negative
+                </span>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               </div>
               <h1 className="line-clamp-1 text-sm font-bold">{quiz.title}</h1>
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Right Engine Controls */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Exam Mode vs Interactive Tutor Mode Switcher */}
@@ -735,6 +934,12 @@ export default function QuizPlayerPage() {
 
             {/* Font scale pills */}
             <div className="hidden xl:flex items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-0.5 text-xs">
+=======
+          {/* Right Controls: Font Size, Zen Focus, Theme, Calm Timer */}
+          <div className="flex items-center gap-2">
+            {/* Font scale pills */}
+            <div className="hidden md:flex items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-0.5 text-xs">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               {(['base', 'lg', 'xl'] as const).map((sz, i) => (
                 <button
                   key={sz}
@@ -753,11 +958,16 @@ export default function QuizPlayerPage() {
             {/* Zen Focus Toggle */}
             <button
               onClick={() => setZenMode((z) => !z)}
+<<<<<<< HEAD
               className={`inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition ${
+=======
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 zenMode
                   ? 'border-[var(--app-accent)] bg-[var(--app-accent-soft)] text-[var(--app-accent)]'
                   : 'border-[var(--app-border)] bg-[var(--app-panel)] text-[var(--app-muted)] hover:text-[var(--app-text)]'
               }`}
+<<<<<<< HEAD
               title="Toggle Zen Focus Mode (Z)"
             >
               {zenMode ? (
@@ -768,10 +978,24 @@ export default function QuizPlayerPage() {
               <span className="hidden md:inline">
                 {zenMode ? 'Standard' : 'Focus'}
               </span>
+=======
+              title="Toggle Zen Focus Mode (hides side palette for calm reading)"
+            >
+              {zenMode ? (
+                <>
+                  <Minimize2 className="h-3.5 w-3.5" /> Standard View
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="h-3.5 w-3.5" /> Calm Focus
+                </>
+              )}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </button>
 
             <ThemeSelector compact />
 
+<<<<<<< HEAD
             {/* Timer + Pause Control */}
             <div className="inline-flex items-center rounded-xl border border-[var(--app-border)] bg-[var(--app-panel)] p-0.5">
               <button
@@ -807,6 +1031,30 @@ export default function QuizPlayerPage() {
         </div>
 
         {/* Progress Strip */}
+=======
+            {/* Calm Timer Pill */}
+            <button
+              onClick={() => setCalmTimerMode((c) => !c)}
+              title="Click to toggle seconds display for reduced timer anxiety"
+              className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 font-mono text-xs sm:text-sm font-bold transition ${
+                timeLeft <= 180
+                  ? 'border-rose-400/40 bg-rose-500/10 text-rose-300'
+                  : 'border-[var(--app-border)] bg-[var(--app-panel)] text-[var(--app-text)]'
+              }`}
+            >
+              <Clock3 className="h-4 w-4 text-[var(--app-accent)]" />
+              <span>{formattedTime}</span>
+              {calmTimerMode ? (
+                <EyeOff className="h-3.5 w-3.5 opacity-60" />
+              ) : (
+                <Eye className="h-3.5 w-3.5 opacity-60" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Soft Progress Strip */}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
         <div className="h-1 w-full bg-[var(--app-surface-muted)]">
           <div
             className="h-full bg-[var(--app-accent)] transition-all duration-300"
@@ -820,6 +1068,7 @@ export default function QuizPlayerPage() {
         className={`relative z-10 mx-auto w-full flex-1 px-4 py-6 sm:px-6 ${
           zenMode
             ? 'max-w-4xl'
+<<<<<<< HEAD
             : 'grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_320px]'
         }`}
       >
@@ -851,6 +1100,22 @@ export default function QuizPlayerPage() {
                   title="UPSC Ideal Target: ≤72s per question"
                 >
                   ⏱ {currentQuestionTime}s {currentQuestionTime <= 72 ? '(Optimal)' : '(Slow)'}
+=======
+            : 'grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_300px]'
+        }`}
+      >
+        {/* Question Canvas */}
+        <section className="flex flex-col justify-between">
+          <div>
+            {/* Question Metadata & Controls Bar */}
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] px-3 py-1.5 text-xs font-bold text-[var(--app-accent)]">
+                  Question {current + 1} of {questions.length}
+                </span>
+                <span className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-2.5 py-1.5 text-xs font-medium text-[var(--app-muted)]">
+                  Time on Q: {currentQuestionTime}s
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 </span>
               </div>
 
@@ -868,7 +1133,11 @@ export default function QuizPlayerPage() {
                       <button
                         key={m.id}
                         onClick={() => setLanguage(m.id)}
+<<<<<<< HEAD
                         className={`rounded-lg px-2 py-1 text-xs font-bold transition ${
+=======
+                        className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                           language === m.id
                             ? 'bg-[var(--app-accent)] text-slate-950'
                             : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
@@ -881,6 +1150,7 @@ export default function QuizPlayerPage() {
                 )}
 
                 <button
+<<<<<<< HEAD
                   onClick={() => toggleBookmark('Revision Vault')}
                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
                     bookmarked[question.id]
@@ -897,23 +1167,41 @@ export default function QuizPlayerPage() {
 
                 <button
                   onClick={toggleMarkReview}
+=======
+                  onClick={() =>
+                    setMarked((items) =>
+                      items.includes(question.id)
+                        ? items.filter((id) => id !== question.id)
+                        : [...items, question.id]
+                    )
+                  }
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
                     marked.includes(question.id)
                       ? 'border-amber-400/50 bg-amber-400/15 text-amber-300'
                       : 'border-[var(--app-border)] bg-[var(--app-panel)] text-[var(--app-muted)] hover:text-[var(--app-text)]'
                   }`}
+<<<<<<< HEAD
                   title="Mark for Review (M)"
                 >
                   <Flag className="h-3.5 w-3.5" />
                   <span>
                     {marked.includes(question.id) ? 'Marked' : 'Review'}
                   </span>
+=======
+                >
+                  <Flag className="h-3.5 w-3.5" />
+                  {marked.includes(question.id)
+                    ? 'Marked for Review'
+                    : 'Mark for Review'}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 </button>
               </div>
             </div>
 
             {/* Question Statement & Options Card */}
             <article className="theme-surface rounded-3xl p-5 sm:p-8">
+<<<<<<< HEAD
               {/* Interactive Statement Parser */}
               {language === 'split' && hasHindi ? (
                 <div className="grid gap-5 md:grid-cols-2 border-b border-[var(--app-border)] pb-6">
@@ -986,12 +1274,59 @@ export default function QuizPlayerPage() {
                   )}
                 </div>
 
+=======
+              {/* Statement Text */}
+              {language === 'split' && hasHindi ? (
+                <div className="grid gap-4 md:grid-cols-2 border-b border-[var(--app-border)] pb-6">
+                  <div>
+                    <span className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[var(--app-accent)]">
+                      English Version
+                    </span>
+                    <h2 className={`font-semibold whitespace-pre-line ${fontSizeClass}`}>
+                      {question.text}
+                    </h2>
+                  </div>
+                  <div className="border-t pt-4 md:border-l md:border-t-0 md:pl-5 md:pt-0 border-[var(--app-border)]">
+                    <span className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[var(--app-secondary)]">
+                      हिन्दी संस्करण
+                    </span>
+                    <h2
+                      className={`font-hindi font-medium whitespace-pre-line ${fontSizeClass}`}
+                    >
+                      {question.textHi}
+                    </h2>
+                  </div>
+                </div>
+              ) : (
+                <h2
+                  className={`font-semibold whitespace-pre-line border-b border-[var(--app-border)] pb-6 ${fontSizeClass} ${
+                    language === 'hi' ? 'font-hindi' : ''
+                  }`}
+                >
+                  {language === 'hi' && question.textHi
+                    ? question.textHi
+                    : question.text}
+                </h2>
+              )}
+
+              {/* Helper instruction bar for UPSC Option Elimination */}
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--app-muted)]">
+                <span>
+                  Select the most appropriate option below. Use{' '}
+                  <strong className="text-[var(--app-text)]">Eliminate</strong>{' '}
+                  to strike out ruled-out choices.
+                </span>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 {answers[question.id] !== undefined && (
                   <button
                     onClick={clearResponse}
                     className="inline-flex items-center gap-1 text-xs font-semibold text-rose-400 hover:underline"
                   >
+<<<<<<< HEAD
                     <XCircle className="h-3.5 w-3.5" /> Clear Response (C)
+=======
+                    <XCircle className="h-3.5 w-3.5" /> Clear Response
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   </button>
                 )}
               </div>
@@ -1002,6 +1337,7 @@ export default function QuizPlayerPage() {
                   const optHi = question.optionsHi?.[index];
                   const selected = answers[question.id] === index;
                   const isStruck = currentEliminated.includes(index);
+<<<<<<< HEAD
                   const isCorrectChoice = question.correct === index;
 
                   let cardStyle =
@@ -1021,11 +1357,23 @@ export default function QuizPlayerPage() {
                     cardStyle =
                       'border-[var(--app-accent)] bg-[var(--app-accent-soft)] shadow-[0_0_0_1px_var(--app-accent)]';
                   }
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
                   return (
                     <div
                       key={index}
+<<<<<<< HEAD
                       className={`group relative flex items-center justify-between gap-3 rounded-2xl border p-4 transition ${cardStyle}`}
+=======
+                      className={`group relative flex items-center justify-between gap-3 rounded-2xl border p-4 transition sm:p-4.5 ${
+                        isStruck
+                          ? 'border-[var(--app-border)] bg-[var(--app-surface-muted)] opacity-45'
+                          : selected
+                          ? 'border-[var(--app-accent)] bg-[var(--app-accent-soft)] shadow-[0_0_0_1px_var(--app-accent)]'
+                          : 'border-[var(--app-border)] bg-[var(--app-surface-muted)] hover:border-[var(--app-accent)]/60'
+                      }`}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                     >
                       <button
                         type="button"
@@ -1035,11 +1383,15 @@ export default function QuizPlayerPage() {
                       >
                         <span
                           className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg text-xs font-bold transition ${
+<<<<<<< HEAD
                             isTutorRevealed && isCorrectChoice
                               ? 'bg-emerald-500 text-slate-950'
                               : isTutorRevealed && selected && !isCorrectChoice
                               ? 'bg-rose-500 text-white'
                               : selected
+=======
+                            selected
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                               ? 'bg-[var(--app-accent)] text-slate-950'
                               : 'border border-[var(--app-border)] bg-[var(--app-panel)] text-[var(--app-muted)]'
                           }`}
@@ -1074,7 +1426,11 @@ export default function QuizPlayerPage() {
                         title={
                           isStruck
                             ? 'Restore this option'
+<<<<<<< HEAD
                             : 'Strike out / Eliminate this option (Shift + 1-4)'
+=======
+                            : 'Strike out / Eliminate this option'
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                         }
                         className={`shrink-0 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition ${
                           isStruck
@@ -1084,7 +1440,11 @@ export default function QuizPlayerPage() {
                       >
                         <Scissors className="h-3 w-3" />
                         <span className="hidden sm:inline">
+<<<<<<< HEAD
                           {isStruck ? 'Restore' : 'Eliminate'}
+=======
+                          {isStruck ? 'Restored' : 'Eliminate'}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                         </span>
                       </button>
                     </div>
@@ -1092,6 +1452,7 @@ export default function QuizPlayerPage() {
                 })}
               </div>
 
+<<<<<<< HEAD
               {/* Conviction Tagging & Tutor Instant Explanation Controls */}
               <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-4 py-3">
                 <div className="flex flex-wrap items-center gap-2">
@@ -1202,6 +1563,42 @@ export default function QuizPlayerPage() {
                     placeholder="Jot down chronology, article numbers, CSAT equations, or statement elimination notes here..."
                     className="glass-input w-full font-mono text-xs"
                   />
+=======
+              {/* Conviction / Attempt Strategy Tagging */}
+              {answers[question.id] !== undefined && (
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-4 py-3">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[var(--app-muted)]">
+                    <Sparkles className="h-3.5 w-3.5 text-[var(--app-accent)]" />
+                    <span>Tag your attempt conviction (for post-test analytics):</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(
+                      [
+                        { id: 'sure', label: '100% Sure' },
+                        { id: 'fifty', label: '50-50 Elimination' },
+                        { id: 'guess', label: 'Calculated Guess' },
+                      ] as const
+                    ).map((tag) => (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() =>
+                          setConfidence((prev) => ({
+                            ...prev,
+                            [question.id]: tag.id,
+                          }))
+                        }
+                        className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
+                          currentConfidence === tag.id
+                            ? 'bg-[var(--app-accent)] text-slate-950'
+                            : 'border border-[var(--app-border)] bg-[var(--app-panel)] text-[var(--app-muted)] hover:text-[var(--app-text)]'
+                        }`}
+                      >
+                        {tag.label}
+                      </button>
+                    ))}
+                  </div>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 </div>
               )}
             </article>
@@ -1217,11 +1614,19 @@ export default function QuizPlayerPage() {
               <ChevronLeft className="mr-1 inline h-4 w-4" /> Previous
             </button>
             <button
+<<<<<<< HEAD
               onClick={goNext}
               disabled={current === questions.length - 1}
               className="theme-surface rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] disabled:cursor-not-allowed disabled:opacity-40 transition"
             >
               <SkipForward className="mr-1 inline h-4 w-4" /> Skip
+=======
+              onClick={skip}
+              disabled={current === questions.length - 1}
+              className="theme-surface rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] disabled:cursor-not-allowed disabled:opacity-40 transition"
+            >
+              <SkipForward className="mr-1 inline h-4 w-4" /> Skip Question
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </button>
             {current === questions.length - 1 ? (
               <button
@@ -1242,12 +1647,21 @@ export default function QuizPlayerPage() {
           </div>
         </section>
 
+<<<<<<< HEAD
         {/* Right UPSC 6-State Smart Question Palette */}
         {!zenMode && (
           <aside className="theme-surface h-fit rounded-3xl p-5 lg:sticky lg:top-20 space-y-4">
             <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
               <div>
                 <h2 className="text-sm font-bold">Smart OMR Palette</h2>
+=======
+        {/* Right UPSC 5-State Question Palette (Hidden in Zen Focus Mode) */}
+        {!zenMode && (
+          <aside className="theme-surface h-fit rounded-3xl p-5 lg:sticky lg:top-20">
+            <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+              <div>
+                <h2 className="text-sm font-bold">UPSC Question Palette</h2>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 <p className="text-[11px] text-[var(--app-muted)]">
                   {answeredCount} of {questions.length} attempted
                 </p>
@@ -1257,6 +1671,7 @@ export default function QuizPlayerPage() {
               </span>
             </div>
 
+<<<<<<< HEAD
             {/* Palette Filter Pills */}
             <div className="flex flex-wrap gap-1">
               {(
@@ -1295,6 +1710,12 @@ export default function QuizPlayerPage() {
                   return null;
                 if (paletteFilter === 'bookmarked' && !isBm) return null;
 
+=======
+            {/* Question Grid */}
+            <div className="mt-4 grid grid-cols-5 gap-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+              {questions.map((item: any, index: number) => {
+                const st = paletteStatus[index];
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 let styleClass =
                   'bg-[var(--app-surface-muted)] text-[var(--app-muted)] border border-[var(--app-border)]';
                 if (st === 'answered') {
@@ -1312,21 +1733,29 @@ export default function QuizPlayerPage() {
                   <button
                     key={item.id}
                     onClick={() => setCurrent(index)}
+<<<<<<< HEAD
                     className={`relative grid aspect-square place-items-center rounded-xl text-xs transition ${
+=======
+                    className={`grid aspect-square place-items-center rounded-xl text-xs transition ${
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                       index === current
                         ? 'ring-2 ring-[var(--app-accent)] ring-offset-2 ring-offset-[var(--app-bg)]'
                         : ''
                     } ${styleClass}`}
                   >
                     {index + 1}
+<<<<<<< HEAD
                     {isBm && (
                       <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-sky-400" />
                     )}
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   </button>
                 );
               })}
             </div>
 
+<<<<<<< HEAD
             {/* Live Conviction & EV Telemetry Box */}
             <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3.5 text-xs space-y-2">
               <div className="flex items-center justify-between font-bold text-[var(--app-accent)]">
@@ -1357,6 +1786,10 @@ export default function QuizPlayerPage() {
 
             {/* 5-State Legend */}
             <div className="space-y-1.5 border-t border-[var(--app-border)] pt-3 text-xs text-[var(--app-muted)]">
+=======
+            {/* 5-State Legend */}
+            <div className="mt-5 space-y-2 border-t border-[var(--app-border)] pt-4 text-xs text-[var(--app-muted)]">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />
@@ -1393,19 +1826,38 @@ export default function QuizPlayerPage() {
                   {counts.visited}
                 </span>
               </div>
+<<<<<<< HEAD
+=======
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-sm border border-[var(--app-border)] bg-[var(--app-surface-muted)]" />
+                  Not Visited
+                </span>
+                <span className="font-bold text-[var(--app-text)]">
+                  {counts.unvisited}
+                </span>
+              </div>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </div>
 
             <button
               onClick={() => setShowSubmitModal(true)}
               disabled={submitting}
+<<<<<<< HEAD
               className="w-full rounded-xl bg-[var(--app-accent)] px-4 py-3 text-xs font-bold text-slate-950 transition hover:opacity-90 disabled:opacity-50"
             >
               {submitting ? 'Submitting Evaluation…' : 'Finish & Submit OMR'}
+=======
+              className="mt-5 w-full rounded-xl bg-[var(--app-accent)] px-4 py-3 text-xs font-bold text-slate-950 transition hover:opacity-90 disabled:opacity-50"
+            >
+              {submitting ? 'Submitting Evaluation…' : 'Finish & Submit Paper'}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </button>
           </aside>
         )}
       </main>
 
+<<<<<<< HEAD
       {/* Keyboard Shortcuts Modal */}
       {showShortcutsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm">
@@ -1442,6 +1894,8 @@ export default function QuizPlayerPage() {
         </div>
       )}
 
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       {/* Pre-Submission Summary Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm">
@@ -1449,6 +1903,7 @@ export default function QuizPlayerPage() {
             <div className="flex items-center gap-3 text-[var(--app-accent)]">
               <ShieldCheck className="h-6 w-6" />
               <h3 className="text-xl font-bold text-[var(--app-text)]">
+<<<<<<< HEAD
                 Confirm OMR Examination Submission
               </h3>
             </div>
@@ -1459,16 +1914,35 @@ export default function QuizPlayerPage() {
             </p>
 
             <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+=======
+                Confirm Examination Submission
+              </h3>
+            </div>
+            <p className="mt-2 text-xs sm:text-sm text-[var(--app-muted)]">
+              Please verify your attempt summary before locking your OMR
+              response sheet. Answered & Marked for Review questions will be
+              counted toward your final evaluation.
+            </p>
+
+            <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3 text-center">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
                 <p className="text-xl font-bold text-emerald-400">
                   {answeredCount}
                 </p>
+<<<<<<< HEAD
                 <p className="text-[10px] text-[var(--app-muted)]">Answered</p>
+=======
+                <p className="text-[11px] text-[var(--app-muted)]">
+                  Total Answered
+                </p>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               </div>
               <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
                 <p className="text-xl font-bold text-amber-300">
                   {marked.length}
                 </p>
+<<<<<<< HEAD
                 <p className="text-[10px] text-[var(--app-muted)]">
                   For Review
                 </p>
@@ -1487,6 +1961,18 @@ export default function QuizPlayerPage() {
                 </p>
                 <p className="text-[10px] text-[var(--app-muted)]">
                   Expected EV
+=======
+                <p className="text-[11px] text-[var(--app-muted)]">
+                  Marked for Review
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 col-span-2 sm:col-span-1">
+                <p className="text-xl font-bold text-[var(--app-text)]">
+                  {unansweredCount}
+                </p>
+                <p className="text-[11px] text-[var(--app-muted)]">
+                  Unanswered (0 Marks)
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 </p>
               </div>
             </div>
@@ -1513,7 +1999,11 @@ export default function QuizPlayerPage() {
                 disabled={submitting}
                 className="flex-1 rounded-xl bg-[var(--app-accent)] py-3 text-xs sm:text-sm font-bold text-slate-950 hover:opacity-90 flex items-center justify-center gap-2"
               >
+<<<<<<< HEAD
                 <CheckCircle2 className="h-4 w-4" /> Lock & Generate Scorecard
+=======
+                <CheckCircle2 className="h-4 w-4" /> Final Submit
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               </button>
             </div>
           </div>

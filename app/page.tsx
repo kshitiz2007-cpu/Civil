@@ -2,7 +2,10 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { useRouter } from 'next/navigation';
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 import { supabase } from '@/lib/supabaseClient';
 import {
   Loader2,
@@ -12,18 +15,26 @@ import {
   CheckCircle2,
   Scale,
   Compass,
+<<<<<<< HEAD
   Sparkles,
   ArrowRight,
   Layers,
   Target,
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 } from 'lucide-react';
 import ThemeSelector from '@/components/ThemeSelector';
 
 export default function LoginPage() {
+<<<<<<< HEAD
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+=======
+  const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   useEffect(() => {
     let mounted = true;
@@ -103,19 +114,30 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
+<<<<<<< HEAD
       setAuthError(null);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo:
             typeof window !== 'undefined' ? window.location.origin : '',
+=======
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : '',
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
         },
       });
       if (error) throw error;
     } catch (error: any) {
+<<<<<<< HEAD
       setAuthError(
         error?.message || 'Unable to connect to Google Auth. Use Instant Sandbox Access below.'
       );
+=======
+      alert('Authentication error: ' + error.message);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       setLoading(false);
     }
   };
@@ -141,6 +163,7 @@ export default function LoginPage() {
               Gyankunj IAS
             </span>
             <span className="text-[11px] text-[var(--app-muted)] tracking-wider uppercase">
+<<<<<<< HEAD
               Civil Services Evaluation Suite v3.0
             </span>
           </div>
@@ -158,10 +181,22 @@ export default function LoginPage() {
 
       {/* Main Content */}
       <main className="relative z-10 max-w-6xl w-full mx-auto my-auto grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center py-8">
+=======
+              Civil Services Portal
+            </span>
+          </div>
+        </div>
+        <ThemeSelector />
+      </header>
+
+      {/* Main Content */}
+      <main className="relative z-10 max-w-5xl w-full mx-auto my-auto grid gap-8 lg:grid-cols-[1.15fr_0.85fr] items-center py-8">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
         {/* Left Institutional Overview */}
         <section className="space-y-6 pr-0 lg:pr-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-panel)] px-3.5 py-1.5 text-xs font-semibold text-[var(--app-accent)]">
             <Compass className="w-3.5 h-3.5" />
+<<<<<<< HEAD
             <span>UPSC CSE Prelims & CSAT Computer-Based Evaluation System</span>
           </div>
 
@@ -208,11 +243,48 @@ export default function LoginPage() {
               <p className="mt-1.5 text-xs text-[var(--app-muted)] leading-relaxed">
                 Switch between Ashram Sage, Vedic Parchment, LBSNAA Mist, and
                 Dholpur Dusk for 10-hour study blocks.
+=======
+            <span>UPSC CSE Prelims & Mains Evaluation System</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.15]">
+            Calm, disciplined preparation for the{' '}
+            <span className="text-[var(--app-accent)]">Civil Services Examination.</span>
+          </h1>
+
+          <p className="text-sm sm:text-base text-[var(--app-muted)] leading-relaxed max-w-xl">
+            Designed around leading national civil services standards—featuring
+            realistic Prelims negative-marking simulation, statement-level option
+            elimination, bilingual English & Hindi papers, and deep cohort
+            analytics.
+          </p>
+
+          <div className="grid sm:grid-cols-2 gap-3.5 pt-2">
+            <div className="theme-surface rounded-2xl p-4">
+              <div className="flex items-center gap-2.5 text-sm font-semibold">
+                <Scale className="w-4 h-4 text-[var(--app-accent)]" />
+                <span>UPSC Marking Discipline</span>
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--app-muted)] leading-relaxed">
+                Practice with +2.00 / -0.66 (1/3rd penalty) scoring, option
+                strike-through, and conviction tagging.
+              </p>
+            </div>
+            <div className="theme-surface rounded-2xl p-4">
+              <div className="flex items-center gap-2.5 text-sm font-semibold">
+                <BookOpen className="w-4 h-4 text-[var(--app-secondary)]" />
+                <span>Low-Fatigue Reading UI</span>
+              </div>
+              <p className="mt-1.5 text-xs text-[var(--app-muted)] leading-relaxed">
+                Switch between Ashram Sage, Vedic Parchment, and Mussoorie Mist
+                for zero-glare long study sessions.
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               </p>
             </div>
           </div>
         </section>
 
+<<<<<<< HEAD
         {/* Right Sign-In & Instant Simulator Card */}
         <section className="theme-surface rounded-3xl p-7 sm:p-9 w-full max-w-md mx-auto">
           <div className="w-13 h-13 rounded-2xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] flex items-center justify-center mb-5 text-[var(--app-accent)]">
@@ -237,12 +309,36 @@ export default function LoginPage() {
             onClick={handleGoogleLogin}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 bg-[var(--app-text)] text-[var(--app-bg)] font-bold py-3.5 px-6 rounded-xl shadow-md hover:opacity-95 transition-all disabled:opacity-60 text-sm"
+=======
+        {/* Right Sign-In Card */}
+        <section className="theme-surface rounded-3xl p-7 sm:p-9 w-full max-w-md mx-auto">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] flex items-center justify-center mb-5 text-[var(--app-accent)]">
+            <Landmark className="w-7 h-7" />
+          </div>
+
+          <h2 className="text-2xl font-bold tracking-tight">
+            Aspirant & Faculty Sign In
+          </h2>
+          <p className="text-sm text-[var(--app-muted)] mt-1.5 mb-7 leading-relaxed">
+            Access your All-India Mock Tests, GS sectional diagnostics, and
+            curated study compendiums.
+          </p>
+
+          <button
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 bg-[var(--app-text)] text-[var(--app-bg)] font-bold py-3.5 px-6 rounded-xl shadow-md hover:opacity-95 transition-all disabled:opacity-60"
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
+<<<<<<< HEAD
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
+=======
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -265,6 +361,7 @@ export default function LoginPage() {
             )}
           </button>
 
+<<<<<<< HEAD
           <div className="my-4 flex items-center gap-3 text-[11px] uppercase tracking-wider text-[var(--app-muted)]">
             <span className="h-px flex-1 bg-[var(--app-border)]" />
             <span>Instant Evaluation Access</span>
@@ -296,6 +393,16 @@ export default function LoginPage() {
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[var(--app-accent)] shrink-0" />
               <span>Full Keyboard Navigation (1–4, Shift+1–4, N/P, M, Z)</span>
+=======
+          <div className="mt-6 space-y-2.5 border-t border-[var(--app-border)] pt-5 text-xs text-[var(--app-muted)]">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[var(--app-accent)] shrink-0" />
+              <span>Automatic role routing for Aspirants & Faculty Mentors</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[var(--app-accent)] shrink-0" />
+              <span>Encrypted session management via Supabase Auth</span>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </div>
           </div>
         </section>
@@ -304,7 +411,11 @@ export default function LoginPage() {
       {/* Footer */}
       <footer className="relative z-10 max-w-6xl w-full mx-auto text-center sm:text-left flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--app-muted)] py-2 gap-2">
         <span>Gyankunj Civil Services Institution · Academic Evaluation Suite</span>
+<<<<<<< HEAD
         <span>GS Paper I–IV · CSAT · All-India Prelims Simulator</span>
+=======
+        <span>GS Paper I–IV · CSAT · All-India Test Series</span>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       </footer>
     </div>
   );

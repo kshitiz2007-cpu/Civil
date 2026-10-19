@@ -3,7 +3,10 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+<<<<<<< HEAD
 import { FALLBACK_ATTEMPTS, FALLBACK_QUIZZES } from '@/lib/mockData';
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 import { useRouter } from 'next/navigation';
 import {
   Activity,
@@ -23,13 +26,19 @@ import {
   Play,
   RotateCcw,
   ShieldAlert,
+<<<<<<< HEAD
   Sliders,
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   Sparkles,
   Target,
   TrendingUp,
   Trophy,
+<<<<<<< HEAD
   X,
   Zap,
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 } from 'lucide-react';
 import StudentChatWidget from '@/components/StudentChatWidget';
 import ThemeSelector from '@/components/ThemeSelector';
@@ -55,7 +64,11 @@ type Quiz = {
   description?: string;
   duration?: number;
   time_limit?: number;
+<<<<<<< HEAD
   questions?: any[];
+=======
+  questions?: unknown[];
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 };
 
 const GS_PILLARS = [
@@ -73,6 +86,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
+<<<<<<< HEAD
   const [resourceCount, setResourceCount] = useState(4);
   const [loading, setLoading] = useState(true);
   const [broadcastNotice, setBroadcastNotice] = useState<string>('');
@@ -82,6 +96,12 @@ export default function DashboardPage() {
   const [drillSubject, setDrillSubject] = useState('All Subjects');
   const [drillCount, setDrillCount] = useState(5);
 
+=======
+  const [resourceCount, setResourceCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [broadcastNotice, setBroadcastNotice] = useState<string>('');
+
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   // Calm Pomodoro / Deep Study Timer (25 min default)
   const [focusSeconds, setFocusSeconds] = useState(25 * 60);
   const [focusRunning, setFocusRunning] = useState(false);
@@ -93,6 +113,7 @@ export default function DashboardPage() {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+<<<<<<< HEAD
 
         let profile: any = null;
         let quizData: any[] | null = null;
@@ -173,6 +194,57 @@ export default function DashboardPage() {
 
         setAttempts(mergedAttempts);
         setResourceCount(count || 4);
+=======
+        if (!session) {
+          window.location.href = '/';
+          return;
+        }
+        const [
+          { data: profile },
+          { data: quizData },
+          { data: attemptData },
+          { count },
+        ] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .maybeSingle(),
+          supabase
+            .from('quizzes')
+            .select('*')
+            .eq('active', true)
+            .order('created_at', { ascending: false })
+            .limit(6),
+          supabase
+            .from('attempts')
+            .select(
+              'id,quiz_id,quiz_title,category,score,correct,wrong,skipped,total,completed_at'
+            )
+            .eq('user_id', session.user.id)
+            .order('completed_at', { ascending: false }),
+          supabase.from('resources').select('*', { count: 'exact', head: true }),
+        ]);
+        if (!active) return;
+        if (
+          profile?.role === 'admin' ||
+          session.user.email === 'kshitiz2007@gmail.com' ||
+          session.user.email === 'admin@civilprep.in'
+        ) {
+          window.location.href = '/admin';
+          return;
+        }
+        setUser(
+          profile || {
+            id: session.user.id,
+            name: session.user.user_metadata?.full_name,
+            email: session.user.email,
+          }
+        );
+        setQuizzes((quizData || []) as Quiz[]);
+        setAttempts((attemptData || []) as Attempt[]);
+        setResourceCount(count || 0);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
         try {
           const savedNotice = window.localStorage.getItem(
@@ -182,6 +254,7 @@ export default function DashboardPage() {
         } catch {
           // ignore
         }
+<<<<<<< HEAD
       } catch {
         if (active) {
           setUser({
@@ -192,6 +265,10 @@ export default function DashboardPage() {
           setQuizzes(FALLBACK_QUIZZES as unknown as Quiz[]);
           setAttempts(FALLBACK_ATTEMPTS as unknown as Attempt[]);
         }
+=======
+      } catch (error) {
+        console.error('Dashboard data could not be loaded:', error);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       } finally {
         if (active) setLoading(false);
       }
@@ -221,6 +298,7 @@ export default function DashboardPage() {
     window.location.href = '/';
   };
 
+<<<<<<< HEAD
   const launchCustomDrill = () => {
     const pool: any[] = [];
     const sourceList =
@@ -264,6 +342,8 @@ export default function DashboardPage() {
     router.push(`/quiz/${drillId}`);
   };
 
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   const average = attempts.length
     ? Math.round(
         attempts.reduce((sum, item) => sum + Number(item.score || 0), 0) /
@@ -271,6 +351,10 @@ export default function DashboardPage() {
       )
     : 0;
 
+<<<<<<< HEAD
+=======
+  // Calculate UPSC Accuracy & Negative Bleed across attempts
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   const accuracyStats = useMemo(() => {
     let totalCorrect = 0;
     let totalWrong = 0;
@@ -295,6 +379,10 @@ export default function DashboardPage() {
     };
   }, [attempts, average]);
 
+<<<<<<< HEAD
+=======
+  // Subject-wise mastery breakdown
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   const subjectMastery = useMemo(() => {
     return GS_PILLARS.map((subject) => {
       const subAttempts = attempts.filter(
@@ -357,11 +445,14 @@ export default function DashboardPage() {
             onClick={() => router.push('/quizzes')}
           />
           <NavItem
+<<<<<<< HEAD
             icon={Zap}
             label="Custom Smart Drill"
             onClick={() => setShowDrillModal(true)}
           />
           <NavItem
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             icon={FileText}
             label="Study Compendiums"
             onClick={() => router.push('/resources')}
@@ -386,7 +477,11 @@ export default function DashboardPage() {
             </span>
             <Clock3 className="h-3.5 w-3.5 text-[var(--app-muted)]" />
           </div>
+<<<<<<< HEAD
           <p className="mt-2 font-mono-tabular text-2xl font-bold tracking-tight">
+=======
+          <p className="mt-2 font-mono text-2xl font-bold tracking-tight">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             {focusFormatted}
           </p>
           <p className="mt-0.5 text-[11px] text-[var(--app-muted)]">
@@ -459,6 +554,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-2.5">
+<<<<<<< HEAD
             <button
               onClick={() => setShowDrillModal(true)}
               className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--app-accent)] px-3.5 py-2 text-xs font-bold text-slate-950 hover:opacity-90 transition"
@@ -466,6 +562,16 @@ export default function DashboardPage() {
               <Sliders className="h-3.5 w-3.5" /> Custom Smart Drill
             </button>
             <ThemeSelector />
+=======
+            <ThemeSelector />
+            <button
+              onClick={logout}
+              className="rounded-xl border border-[var(--app-border)] bg-[var(--app-panel)] p-2.5 text-[var(--app-muted)] md:hidden"
+              aria-label="Sign out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
           </div>
         </header>
 
@@ -486,6 +592,7 @@ export default function DashboardPage() {
           <div className="relative grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--app-accent)]">
+<<<<<<< HEAD
                 <Compass className="h-3.5 w-3.5" /> UPSC CSE Prelims CBT Engine v3.0
               </span>
               <h2 className="mt-3.5 text-2xl font-bold tracking-tight sm:text-3xl">
@@ -510,6 +617,31 @@ export default function DashboardPage() {
                 >
                   <Zap className="h-4 w-4 text-[var(--app-accent)]" /> Build
                   Custom Drill
+=======
+                <Compass className="h-3.5 w-3.5" /> UPSC CSE Prelims Readiness
+              </span>
+              <h2 className="mt-3.5 text-2xl font-bold tracking-tight sm:text-3xl">
+                Master accuracy and elimination before speed.
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--app-muted)]">
+                In UPSC Prelims, avoiding 6 unnecessary negative guesses saves 4
+                full marks. Use our calm examination engine with option
+                strike-through and conviction tagging on every test.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <button
+                  onClick={() => router.push('/quizzes')}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[var(--app-accent)] px-4 py-2.5 text-sm font-bold text-slate-950 transition hover:opacity-90"
+                >
+                  Enter Prelims Test Series <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => router.push('/leaderboard')}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-4 py-2.5 text-sm font-semibold hover:border-[var(--app-accent)]"
+                >
+                  <Trophy className="h-4 w-4 text-[var(--app-accent)]" /> All-India
+                  Merit List
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 </button>
               </div>
             </div>
@@ -518,7 +650,11 @@ export default function DashboardPage() {
               <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--app-muted)]">
+<<<<<<< HEAD
                     Strike Accuracy
+=======
+                    Net Accuracy
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   </span>
                   <Target className="h-4 w-4 text-[var(--app-accent)]" />
                 </div>
@@ -590,8 +726,12 @@ export default function DashboardPage() {
                   Recommended GS & CSAT Papers
                 </h2>
                 <p className="mt-0.5 text-xs text-[var(--app-muted)]">
+<<<<<<< HEAD
                   Structured practice with UPSC 1/3rd negative marking & Tutor
                   mode
+=======
+                  Structured practice with UPSC 1/3rd negative marking enabled
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 </p>
               </div>
               <button
@@ -605,7 +745,11 @@ export default function DashboardPage() {
             <div className="mt-5 grid gap-3.5 sm:grid-cols-2">
               {quizzes.map((quiz) => {
                 const done = completedIds.has(quiz.id);
+<<<<<<< HEAD
                 const mins = quiz.time_limit || quiz.duration || 20;
+=======
+                const mins = quiz.time_limit || quiz.duration || 30;
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 const qCount = Array.isArray(quiz.questions)
                   ? quiz.questions.length
                   : 0;
@@ -650,6 +794,15 @@ export default function DashboardPage() {
                   </article>
                 );
               })}
+<<<<<<< HEAD
+=======
+              {quizzes.length === 0 && (
+                <p className="col-span-2 rounded-2xl border border-dashed border-[var(--app-border)] p-8 text-center text-sm text-[var(--app-muted)]">
+                  New Prelims and Sectional mock papers will appear here once
+                  published by Faculty.
+                </p>
+              )}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </div>
           </section>
 
@@ -684,7 +837,11 @@ export default function DashboardPage() {
                           className="w-full rounded-t-lg bg-[var(--app-accent)] transition-all group-hover:opacity-80"
                           style={{
                             height: `${Math.max(
+<<<<<<< HEAD
                               12,
+=======
+                              10,
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                               Math.min(100, Number(a.score) || 0)
                             )}%`,
                           }}
@@ -698,14 +855,29 @@ export default function DashboardPage() {
                     <span>Latest Evaluation</span>
                   </div>
                 </div>
+<<<<<<< HEAD
               ) : null}
+=======
+              ) : (
+                <div className="mt-4 rounded-2xl border border-dashed border-[var(--app-border)] p-6 text-center text-xs text-[var(--app-muted)]">
+                  Complete your first test paper to unlock your score trajectory
+                  and cutoff comparison.
+                </div>
+              )}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </section>
 
             {/* GS Pillar Balance */}
             <section className="theme-surface rounded-3xl p-5 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div>
+<<<<<<< HEAD
                   <h2 className="text-base font-bold">GS Syllabus Coverage</h2>
+=======
+                  <h2 className="text-base font-bold">
+                    GS Syllabus Coverage
+                  </h2>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   <p className="text-xs text-[var(--app-muted)]">
                     Subject-wise average across UPSC pillars
                   </p>
@@ -720,16 +892,24 @@ export default function DashboardPage() {
                       <span className="text-[var(--app-muted)]">
                         {item.avg !== null
                           ? `${item.avg}% (${item.count} tests)`
+<<<<<<< HEAD
                           : 'Ready for drill'}
+=======
+                          : 'Not attempted'}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                       </span>
                     </div>
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--app-surface-muted)]">
                       <div
                         className="h-full rounded-full bg-[var(--app-accent)] transition-all"
+<<<<<<< HEAD
                         style={{
                           width: `${item.avg ?? 12}%`,
                           opacity: item.avg !== null ? 1 : 0.25,
                         }}
+=======
+                        style={{ width: `${item.avg ?? 6}%`, opacity: item.avg !== null ? 1 : 0.25 }}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                       />
                     </div>
                   </div>
@@ -738,6 +918,7 @@ export default function DashboardPage() {
             </section>
           </div>
         </div>
+<<<<<<< HEAD
       </main>
 
       {/* Custom Smart Drill Builder Modal */}
@@ -812,6 +993,80 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+=======
+
+        {/* Recent Evaluations Table */}
+        <section className="theme-surface mt-6 rounded-3xl overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[var(--app-border)] p-5 sm:px-6">
+            <div>
+              <h2 className="font-bold">Recent Evaluation Log</h2>
+              <p className="mt-0.5 text-xs text-[var(--app-muted)]">
+                Review detailed solutions and bilingual faculty explanations
+              </p>
+            </div>
+            <button
+              onClick={() => router.push('/history')}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--app-accent)] hover:underline"
+            >
+              Complete Archive <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {attempts.length ? (
+            <div className="divide-y divide-[var(--app-border)]">
+              {attempts.slice(0, 5).map((a) => (
+                <div
+                  key={a.id}
+                  className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-6 hover:bg-[var(--app-surface-muted)] transition"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[var(--app-accent-soft)] text-[var(--app-accent)]">
+                      <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">
+                        {a.quiz_title || 'Mock Evaluation'}
+                      </p>
+                      <p className="mt-0.5 text-xs text-[var(--app-muted)]">
+                        {a.completed_at
+                          ? new Date(a.completed_at).toLocaleDateString(
+                              'en-IN',
+                              {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              }
+                            )
+                          : 'Recently evaluated'}
+                        {a.correct !== undefined &&
+                          ` · ${a.correct} Correct · ${a.wrong || 0} Wrong`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-full bg-[var(--app-accent-soft)] px-3 py-1 text-xs font-bold text-[var(--app-accent)]">
+                      {a.score}%
+                    </span>
+                    <button
+                      onClick={() => router.push(`/quiz/${a.quiz_id}/result`)}
+                      className="rounded-xl border border-[var(--app-border)] px-3 py-1.5 text-xs font-semibold hover:border-[var(--app-accent)]"
+                    >
+                      Review Paper
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="p-8 text-center text-sm text-[var(--app-muted)]">
+              No evaluations recorded yet. Attempt a sectional or full-length
+              paper to generate your diagnostic profile.
+            </p>
+          )}
+        </section>
+      </main>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
       {/* Mobile Bottom Navigation */}
       <nav className="theme-surface-solid fixed inset-x-3 bottom-3 z-30 flex justify-around rounded-2xl p-2 shadow-2xl md:hidden">
@@ -827,9 +1082,15 @@ export default function DashboardPage() {
           onClick={() => router.push('/quizzes')}
         />
         <MobileItem
+<<<<<<< HEAD
           icon={Zap}
           label="Drill"
           onClick={() => setShowDrillModal(true)}
+=======
+          icon={FileText}
+          label="Notes"
+          onClick={() => router.push('/resources')}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
         />
         <MobileItem
           icon={History}

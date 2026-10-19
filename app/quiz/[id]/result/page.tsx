@@ -15,6 +15,7 @@ import {
   Languages,
   Target,
   Clock3,
+<<<<<<< HEAD
   Sparkles,
   Filter,
   Zap,
@@ -23,6 +24,13 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { FALLBACK_ATTEMPTS, FALLBACK_QUIZZES } from '@/lib/mockData';
+=======
+  ShieldAlert,
+  Sparkles,
+  Filter,
+} from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 import ThemeSelector from '@/components/ThemeSelector';
 
 type ReviewLanguage = 'en' | 'hi' | 'both';
@@ -36,11 +44,15 @@ export default function QuizResultPage() {
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<ReviewLanguage>('both');
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
+<<<<<<< HEAD
   const [searchQuery, setSearchQuery] = useState('');
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   useEffect(() => {
     async function fetchResult() {
       try {
+<<<<<<< HEAD
         // 1. Check local storage first for immediate post-test evaluation
         try {
           const localAttempt = window.localStorage.getItem(
@@ -81,6 +93,27 @@ export default function QuizResultPage() {
         setAttempt(FALLBACK_ATTEMPTS[0]);
       } catch {
         setAttempt(FALLBACK_ATTEMPTS[0]);
+=======
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = '/';
+          return;
+        }
+        const { data, error } = await supabase
+          .from('attempts')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('quiz_id', quizId)
+          .order('completed_at', { ascending: false })
+          .limit(1)
+          .single();
+        if (error || !data) console.error('Could not fetch result:', error);
+        else setAttempt(data);
+      } catch (err) {
+        console.error('Error loading result:', err);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       } finally {
         setLoading(false);
       }
@@ -101,11 +134,20 @@ export default function QuizResultPage() {
     const negativeLost = +(wrong * 0.66).toFixed(2);
     const netMarks = Math.max(0, +(positiveEarned - negativeLost).toFixed(2));
 
+<<<<<<< HEAD
     const details: any[] = attempt.details || [];
     const byConfidence = {
       sure: { total: 0, correct: 0, netMarks: 0 },
       fifty: { total: 0, correct: 0, netMarks: 0 },
       guess: { total: 0, correct: 0, netMarks: 0 },
+=======
+    // Confidence breakdown
+    const details: any[] = attempt.details || [];
+    const byConfidence = {
+      sure: { total: 0, correct: 0 },
+      fifty: { total: 0, correct: 0 },
+      guess: { total: 0, correct: 0 },
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
     };
     let totalTimeSeconds = 0;
 
@@ -114,12 +156,16 @@ export default function QuizResultPage() {
       const c = d.confidence as 'sure' | 'fifty' | 'guess' | undefined;
       if (c && byConfidence[c]) {
         byConfidence[c].total += 1;
+<<<<<<< HEAD
         if (d.isCorrect) {
           byConfidence[c].correct += 1;
           byConfidence[c].netMarks = +(byConfidence[c].netMarks + 2.0).toFixed(2);
         } else if (d.selected_answer !== 'Skipped') {
           byConfidence[c].netMarks = +(byConfidence[c].netMarks - 0.66).toFixed(2);
         }
+=======
+        if (d.isCorrect) byConfidence[c].correct += 1;
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       }
     });
 
@@ -139,6 +185,7 @@ export default function QuizResultPage() {
     };
   }, [attempt]);
 
+<<<<<<< HEAD
   const launchErrorRemediationDrill = () => {
     if (!attempt?.details) return;
     const missedDetails = attempt.details.filter((d: any) => !d.isCorrect);
@@ -190,6 +237,8 @@ export default function QuizResultPage() {
     router.push(`/quiz/${drillId}`);
   };
 
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
   if (loading)
     return (
       <div className="app-theme grid min-h-screen place-items-center">
@@ -197,7 +246,27 @@ export default function QuizResultPage() {
       </div>
     );
 
+<<<<<<< HEAD
   if (!attempt || !analytics) return null;
+=======
+  if (!attempt || !analytics)
+    return (
+      <main className="app-theme grid min-h-screen place-items-center p-4 text-center">
+        <div className="theme-surface w-full max-w-md rounded-3xl p-8">
+          <h1 className="mb-2 text-2xl font-bold">Evaluation Not Found</h1>
+          <p className="mb-6 text-sm text-[var(--app-muted)]">
+            We could not load your examination response sheet.
+          </p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="rounded-xl bg-[var(--app-accent)] px-6 py-3 font-bold text-slate-950"
+          >
+            Return to Sanctuary
+          </button>
+        </div>
+      </main>
+    );
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   const isPassing = attempt.score >= 50;
   const text = (en?: string | null, hi?: string | null) => {
@@ -206,9 +275,15 @@ export default function QuizResultPage() {
     if (language === 'en') return en || hindi || '—';
     return (
       <>
+<<<<<<< HEAD
         {en && <span className="block whitespace-pre-line">{en}</span>}
         {hi && (
           <span className="mt-1.5 block font-hindi text-[var(--app-muted)] whitespace-pre-line">
+=======
+        {en && <span className="block">{en}</span>}
+        {hi && (
+          <span className="mt-1.5 block font-hindi text-[var(--app-muted)]">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             {hi}
           </span>
         )}
@@ -218,6 +293,7 @@ export default function QuizResultPage() {
 
   const filteredDetails = (attempt.details || []).filter((item: any) => {
     const skipped = item.selected_answer === 'Skipped';
+<<<<<<< HEAD
     if (filterMode === 'correct' && !item.isCorrect) return false;
     if (filterMode === 'wrong' && (item.isCorrect || skipped)) return false;
     if (filterMode === 'skipped' && !skipped) return false;
@@ -229,6 +305,11 @@ export default function QuizResultPage() {
     ) {
       return false;
     }
+=======
+    if (filterMode === 'correct') return item.isCorrect;
+    if (filterMode === 'wrong') return !item.isCorrect && !skipped;
+    if (filterMode === 'skipped') return skipped;
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
     return true;
   });
 
@@ -236,13 +317,18 @@ export default function QuizResultPage() {
     <main className="app-theme min-h-screen px-4 py-6 sm:px-6 md:py-10 text-[var(--app-text)]">
       <div className="mx-auto max-w-5xl pb-12">
         {/* Top Bar */}
+<<<<<<< HEAD
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+=======
+        <div className="mb-6 flex items-center justify-between">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
           <button
             onClick={() => router.push('/dashboard')}
             className="inline-flex items-center gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-panel)] px-4 py-2.5 text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)]"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Sanctuary
           </button>
+<<<<<<< HEAD
           <div className="flex items-center gap-2.5">
             {analytics.wrong + analytics.skipped > 0 && (
               <button
@@ -255,6 +341,9 @@ export default function QuizResultPage() {
             )}
             <ThemeSelector />
           </div>
+=======
+          <ThemeSelector />
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
         </div>
 
         {/* UPSC Prelims Analytical Scorecard */}
@@ -271,7 +360,11 @@ export default function QuizResultPage() {
                 <Trophy className="h-3.5 w-3.5" />
                 {isPassing
                   ? 'Cleared Institutional Cutoff (≥50%)'
+<<<<<<< HEAD
                   : 'Below Cutoff — Focus on Elimination & Negative Control'}
+=======
+                  : 'Below Cutoff — Focus on Negative Control'}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               </span>
               <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-4xl">
                 {attempt.quiz_title}
@@ -287,7 +380,11 @@ export default function QuizResultPage() {
               <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-muted)]">
                 Net UPSC Marks
               </p>
+<<<<<<< HEAD
               <p className="mt-1 font-mono-tabular text-3xl font-black text-[var(--app-accent)]">
+=======
+              <p className="mt-1 text-3xl font-black text-[var(--app-accent)]">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                 {analytics.netMarks}{' '}
                 <span className="text-base font-medium text-[var(--app-muted)]">
                   / {analytics.maxMarks}
@@ -362,6 +459,7 @@ export default function QuizResultPage() {
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Conviction & Elimination Calibration Matrix */}
           <div className="mt-6 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2 mb-3">
@@ -372,6 +470,13 @@ export default function QuizResultPage() {
               <span className="text-[11px] text-[var(--app-muted)]">
                 Evaluates whether 50-50 elimination netted positive marks
               </span>
+=======
+          {/* Conviction & Elimination Matrix */}
+          <div className="mt-6 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4 sm:p-5">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--app-accent)] mb-3">
+              <Sparkles className="h-4 w-4" /> Attempt Conviction & Elimination
+              Calibration
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             </div>
             <div className="grid gap-3 sm:grid-cols-3 text-xs">
               {(
@@ -403,6 +508,7 @@ export default function QuizResultPage() {
                   >
                     <div className="flex items-center justify-between font-semibold">
                       <span>{bucket.title}</span>
+<<<<<<< HEAD
                       <span
                         className={`font-mono-tabular font-bold ${
                           bucket.data.netMarks >= 0
@@ -418,6 +524,15 @@ export default function QuizResultPage() {
                     <p className="mt-1 text-[var(--app-muted)]">
                       {bucket.data.correct}/{bucket.data.total} correct ({rate}%
                       accuracy)
+=======
+                      <span className="text-[var(--app-accent)]">
+                        {bucket.data.total ? `${rate}% Acc` : '—'}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[var(--app-muted)]">
+                      {bucket.data.correct} correct out of {bucket.data.total}{' '}
+                      tagged questions
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                     </p>
                   </div>
                 );
@@ -428,7 +543,11 @@ export default function QuizResultPage() {
 
         {/* Answer Review & Explanations Section */}
         <section>
+<<<<<<< HEAD
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+=======
+          <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
             <div>
               <h2 className="text-xl font-bold">
                 Detailed Bilingual Solution Key
@@ -440,6 +559,7 @@ export default function QuizResultPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
+<<<<<<< HEAD
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--app-muted)]" />
                 <input
@@ -451,6 +571,8 @@ export default function QuizResultPage() {
                 />
               </div>
 
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
               {/* Filter Tabs */}
               <div className="inline-flex items-center gap-1 rounded-xl border border-[var(--app-border)] bg-[var(--app-panel)] p-1 text-xs">
                 <Filter className="ml-2 h-3.5 w-3.5 text-[var(--app-muted)]" />
@@ -531,6 +653,7 @@ export default function QuizResultPage() {
                     />
                     <div className="min-w-0 flex-1">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+<<<<<<< HEAD
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">
                             Question {index + 1}
@@ -540,6 +663,12 @@ export default function QuizResultPage() {
                               {item.topic}
                             </span>
                           )}
+=======
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">
+                            Question {index + 1}
+                          </span>
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                           {item.confidence && (
                             <span className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-2 py-0.5 text-[10px] font-bold uppercase text-[var(--app-accent)]">
                               {item.confidence === 'sure'
@@ -552,12 +681,20 @@ export default function QuizResultPage() {
                         </div>
                         <div className="flex items-center gap-2 text-xs text-[var(--app-muted)]">
                           {item.time_spent !== undefined && (
+<<<<<<< HEAD
                             <span className="inline-flex items-center gap-1 font-mono-tabular">
+=======
+                            <span className="inline-flex items-center gap-1">
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                               <Clock3 className="h-3.5 w-3.5" /> {item.time_spent}s
                             </span>
                           )}
                           <span
+<<<<<<< HEAD
                             className={`font-mono-tabular font-bold ${
+=======
+                            className={`font-bold ${
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                               item.isCorrect
                                 ? 'text-emerald-400'
                                 : skipped
@@ -624,7 +761,11 @@ export default function QuizResultPage() {
                         item.explanationHi) && (
                         <div className="mt-4 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4 text-xs sm:text-sm leading-relaxed">
                           <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-[var(--app-accent)]">
+<<<<<<< HEAD
                             Faculty Value-Add & Concept Notes
+=======
+                            Faculty Value-Add & Explanation
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                           </span>
                           <div>
                             {text(
@@ -654,7 +795,11 @@ export default function QuizResultPage() {
             onClick={() => router.push(`/quiz/${quizId}`)}
             className="flex-1 rounded-xl bg-[var(--app-accent)] py-3.5 text-sm font-bold text-slate-950 hover:opacity-90 transition"
           >
+<<<<<<< HEAD
             <RotateCcw className="mr-2 inline h-4 w-4" /> Re-attempt Full Paper
+=======
+            <RotateCcw className="mr-2 inline h-4 w-4" /> Re-attempt Paper
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
           </button>
         </div>
       </div>

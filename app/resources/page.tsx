@@ -3,7 +3,10 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+<<<<<<< HEAD
 import { FALLBACK_RESOURCES } from '@/lib/mockData';
+=======
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 import { useRouter } from 'next/navigation';
 import {
   FolderOpen,
@@ -71,6 +74,7 @@ export default function StudentResourcesPage() {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+<<<<<<< HEAD
 
         if (session?.user?.id) {
           const { data: profile } = await supabase
@@ -80,12 +84,23 @@ export default function StudentResourcesPage() {
             .maybeSingle();
           if (profile) setUser(profile);
         }
+=======
+        if (!session) return router.push('/');
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        if (profile) setUser(profile);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
         const { data } = await supabase
           .from('resources')
           .select('*')
           .order('created_at', { ascending: false });
 
+<<<<<<< HEAD
         setResources(
           data && data.length > 0
             ? (data as Resource[])
@@ -93,12 +108,21 @@ export default function StudentResourcesPage() {
         );
       } catch {
         setResources(FALLBACK_RESOURCES as Resource[]);
+=======
+        if (data) setResources(data);
+      } catch (err) {
+        console.error('Error loading resources', err);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       } finally {
         setLoading(false);
       }
     }
     loadData();
+<<<<<<< HEAD
   }, []);
+=======
+  }, [router]);
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -139,6 +163,10 @@ export default function StudentResourcesPage() {
 
   return (
     <div className="app-theme min-h-screen text-[var(--app-text)]">
+<<<<<<< HEAD
+=======
+      {/* Desktop Sidebar */}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] text-[var(--app-accent)]">
@@ -204,6 +232,10 @@ export default function StudentResourcesPage() {
         </div>
       </aside>
 
+<<<<<<< HEAD
+=======
+      {/* Main Content */}
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
@@ -300,8 +332,12 @@ export default function StudentResourcesPage() {
                     No materials uploaded in {activeSubject} yet
                   </h3>
                   <p className="text-xs text-[var(--app-muted)] mt-1">
+<<<<<<< HEAD
                     Check Polity, Economy, Environment, or History for pre-loaded
                     compendiums.
+=======
+                    Check back soon for new faculty handouts.
+>>>>>>> b15c9e30bc2a92b8eb9ef08a25d335e8d4babc83
                   </p>
                 </div>
               ) : (
