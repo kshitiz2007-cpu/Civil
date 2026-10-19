@@ -47,8 +47,6 @@ export default function QuizResultPage() {
   );
 
   const isPassing = attempt.score >= 40;
-  const showEnglish = language !== 'hi';
-  const showHindi = language !== 'en';
   const text = (en?: string | null, hi?: string | null) => {
     const hindi = hi || en;
     if (language === 'hi') return hindi || '—';
