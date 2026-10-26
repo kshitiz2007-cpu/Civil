@@ -1,43 +1,158 @@
 @import "tailwindcss";
 
-/* A modern, subtle moving gradient background suitable for education platforms */
+/* Violet Capsule — deep navy surfaces, luminous violet-to-magenta accents. */
+:root {
+  color-scheme: dark;
+  --vc-bg: #0b1020;
+  --vc-panel: #151c2e;
+  --vc-panel-raised: #1b2438;
+  --vc-border: rgba(183, 191, 226, .14);
+  --vc-text: #f5f6ff;
+  --vc-muted: #a5aec7;
+  --vc-violet: #8b19d8;
+  --vc-magenta: #f00072;
+  --vc-gradient: linear-gradient(105deg, #6500a8 0%, #a900b9 48%, #f00067 100%);
+  --vc-glow: 0 0 24px rgba(191, 0, 211, .24), 0 0 52px rgba(239, 0, 103, .12);
+}
+
+* { box-sizing: border-box; }
+html { min-height: 100%; background: var(--vc-bg); }
 body {
-  background: linear-gradient(-45deg, #fcfbf9, #edf5f0, #fdf0ef, #fef9ec);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
   min-height: 100vh;
-  color: #1a1814;
+  margin: 0;
+  color: var(--vc-text);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(101, 0, 168, .17), transparent 42rem),
+    radial-gradient(ellipse at 100% 100%, rgba(240, 0, 103, .09), transparent 38rem),
+    var(--vc-bg);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+::selection { color: white; background: rgba(194, 0, 190, .55); }
+a { color: #e4baff; text-decoration-color: rgba(228, 186, 255, .4); text-underline-offset: 3px; }
+a:hover { color: #fff; }
+button, input, textarea, select { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid #ef47c7; outline-offset: 3px; }
 
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.vc-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--vc-border);
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(25, 33, 52, .97), rgba(13, 18, 33, .98));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255,255,255,.035);
 }
-
-/* Base utility for glass cards - converted to pure CSS to fix build error */
+.vc-shell::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 260px;
+  height: 260px;
+  right: -100px;
+  top: -150px;
+  border-radius: 50%;
+  background: rgba(159, 0, 213, .16);
+  filter: blur(54px);
+  pointer-events: none;
+}
+.vc-gradient-bar {
+  height: 12px;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--vc-gradient);
+  box-shadow: var(--vc-glow);
+}
+.vc-brand-mark {
+  display: inline-grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.17);
+  border-radius: 17px;
+  background: var(--vc-gradient);
+  box-shadow: var(--vc-glow);
+  color: white;
+  font-size: 25px;
+  font-weight: 800;
+}
+.vc-eyebrow {
+  color: #e0a6ff;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .19em;
+  text-transform: uppercase;
+}
+.vc-muted { color: var(--vc-muted); }
+.vc-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #d4d9eb;
+  font-size: .76rem;
+  font-weight: 750;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
 .glass-card {
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 1rem;
+  border: 1px solid var(--vc-border);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(29, 38, 59, .9), rgba(19, 26, 43, .94));
+  box-shadow: 0 16px 45px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.035);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
-
-/* Glass input base and focus states */
 .glass-input {
-  background-color: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid rgba(176, 187, 222, .2);
+  border-radius: 14px;
   outline: none;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  color: var(--vc-text);
+  background: rgba(7, 12, 25, .62);
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
-
+.glass-input::placeholder { color: #717d9b; }
+.glass-input:hover { border-color: rgba(190, 124, 255, .45); }
 .glass-input:focus {
-  border-color: #059669; 
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2); 
+  border-color: #c52adf;
+  background: rgba(10, 13, 28, .92);
+  box-shadow: 0 0 0 3px rgba(184, 0, 214, .17), 0 0 22px rgba(184, 0, 214, .1);
+}
+.vc-button {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 15px;
+  padding: 14px 22px;
+  color: #fff;
+  background: var(--vc-gradient);
+  box-shadow: 0 8px 24px rgba(168, 0, 177, .23), inset 0 1px 0 rgba(255,255,255,.16);
+  font-weight: 800;
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.vc-button:hover { transform: translateY(-2px); filter: saturate(1.13) brightness(1.08); box-shadow: var(--vc-glow); }
+.vc-button:active { transform: translateY(0); }
+.vc-button:disabled { opacity: .65; cursor: wait; transform: none; }
+.vc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(202, 139, 255, .22);
+  border-radius: 999px;
+  color: #e8c5ff;
+  background: rgba(121, 26, 180, .13);
+  font-size: .75rem;
+  font-weight: 700;
+}
+.vc-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--vc-border), transparent); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
