@@ -1,48 +1,110 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
 @import "tailwindcss";
 
-
+/* Violet Capsule theme applied over the existing app; no feature/page logic replaced. */
+:root {
+  color-scheme: dark;
+  --vc-bg: #0b1020;
+  --vc-panel: #151c2e;
+  --vc-raised: #1b2438;
+  --vc-border: rgba(183,191,226,.15);
+  --vc-text: #f5f6ff;
+  --vc-muted: #a5aec7;
+  --vc-gradient: linear-gradient(105deg,#6500a8 0%,#a900b9 48%,#f00067 100%);
+  --vc-glow: 0 0 24px rgba(191,0,211,.22),0 0 52px rgba(239,0,103,.12);
+}
+* { box-sizing: border-box; }
+html { min-height:100%; background:var(--vc-bg); }
 body {
-  font-family: 'Inter', sans-serif;
+  min-height:100vh; margin:0; color:var(--vc-text);
+  background:radial-gradient(ellipse at 12% 0%,rgba(101,0,168,.17),transparent 42rem),
+             radial-gradient(ellipse at 100% 100%,rgba(240,0,103,.09),transparent 38rem),
+             var(--vc-bg);
+  font-family:var(--font-geist-sans),Inter,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
-/* A modern, subtle moving gradient background suitable for education platforms */
-body {
-  background: linear-gradient(-45deg, #fcfbf9, #edf5f0, #fdf0ef, #fef9ec);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
-  min-height: 100vh;
-  color: #1a1814;
-}
+::selection { color:#fff; background:rgba(194,0,190,.55); }
+a { color:#e4baff; text-underline-offset:3px; }
+a:hover { color:#fff; }
+button,input,textarea,select { font:inherit; }
+:focus-visible { outline:2px solid #ef47c7; outline-offset:3px; }
 
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.vc-shell {
+  position:relative; isolation:isolate; overflow:hidden;
+  border:1px solid var(--vc-border); border-radius:28px;
+  background:linear-gradient(145deg,rgba(25,33,52,.97),rgba(13,18,33,.98));
+  box-shadow:0 24px 80px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.035);
 }
-
-/* Base utility for glass cards - converted to pure CSS to fix build error */
+.vc-gradient-bar {
+  width:100%; height:10px; border-radius:999px;
+  background:var(--vc-gradient); box-shadow:var(--vc-glow);
+}
+.vc-brand-mark {
+  display:inline-grid; width:48px; height:48px; flex:0 0 auto; place-items:center;
+  border:1px solid rgba(255,255,255,.17); border-radius:16px;
+  background:var(--vc-gradient); box-shadow:var(--vc-glow); color:#fff;
+}
+.vc-eyebrow { color:#e0a6ff; font-size:.72rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; }
+.vc-muted { color:var(--vc-muted); }
+.vc-label { display:block; margin-bottom:8px; color:#d4d9eb; font-size:.76rem; font-weight:750; letter-spacing:.1em; text-transform:uppercase; }
 .glass-card {
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 1rem;
+  border:1px solid var(--vc-border); border-radius:22px;
+  background:linear-gradient(145deg,rgba(29,38,59,.9),rgba(19,26,43,.94));
+  box-shadow:0 16px 45px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.035);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
 }
-
-/* Glass input base and focus states */
 .glass-input {
-  background-color: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  outline: none;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  width:100%; min-height:50px; padding:13px 15px; color:var(--vc-text);
+  background:rgba(7,12,25,.72); border:1px solid rgba(176,187,222,.2);
+  border-radius:13px; outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
 }
-
+.glass-input::placeholder { color:#717d9b; }
 .glass-input:focus {
-  border-color: #059669; 
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2); 
+  border-color:#c52adf; background:rgba(10,13,28,.92);
+  box-shadow:0 0 0 3px rgba(184,0,214,.17),0 0 22px rgba(184,0,214,.1);
+}
+.vc-button {
+  display:inline-flex; min-height:50px; align-items:center; justify-content:center; gap:9px;
+  padding:13px 20px; border:1px solid rgba(255,255,255,.15); border-radius:14px;
+  color:#fff; background:var(--vc-gradient);
+  box-shadow:0 8px 24px rgba(168,0,177,.23),inset 0 1px 0 rgba(255,255,255,.16);
+  font-weight:800; cursor:pointer; transition:transform .2s ease,filter .2s ease,box-shadow .2s ease;
+}
+.vc-button:hover { transform:translateY(-2px); filter:saturate(1.13) brightness(1.08); box-shadow:var(--vc-glow); }
+.vc-button:disabled { opacity:.65; cursor:wait; transform:none; }
+.vc-pill { display:inline-flex; align-items:center; gap:8px; padding:7px 11px; border:1px solid rgba(202,139,255,.22); border-radius:999px; color:#e8c5ff; background:rgba(121,26,180,.13); font-size:.75rem; font-weight:700; }
+.vc-divider { height:1px; background:linear-gradient(90deg,transparent,var(--vc-border),transparent); }
+
+/* Dark-theme compatibility for existing Tailwind components and all current routes. */
+[class*="bg-white/"], [class~="bg-white"], [class~="bg-gray-50"], [class~="bg-gray-100"], [class~="bg-slate-50"] {
+  background-color:rgba(27,36,56,.88) !important;
+}
+[class*="border-white"], [class*="border-gray-"], [class*="border-slate-"] {
+  border-color:var(--vc-border) !important;
+}
+[class*="text-gray-"], [class*="text-slate-"], [class*="text-zinc-"] {
+  color:#b3bdd5 !important;
+}
+[class*="text-emerald-9"], [class*="text-blue-8"], [class*="text-orange-8"],
+[class*="text-teal-9"], [class*="text-indigo-9"], [class*="text-purple-9"] {
+  color:#f0d7ff !important;
+}
+[class*="bg-emerald-50"], [class*="bg-teal-50"], [class*="bg-blue-50"],
+[class*="bg-orange-50"], [class*="bg-amber-50"], [class*="bg-indigo-50"],
+[class*="bg-purple-50"], [class*="bg-pink-50"] {
+  background-color:rgba(139,25,216,.15) !important;
+}
+[class*="border-emerald-"], [class*="border-teal-"], [class*="border-blue-"],
+[class*="border-orange-"], [class*="border-amber-"], [class*="border-indigo-"],
+[class*="border-purple-"], [class*="border-pink-"] {
+  border-color:rgba(202,139,255,.25) !important;
+}
+input:not(.glass-input), textarea:not(.glass-input), select:not(.glass-input) {
+  color:var(--vc-text); background-color:rgba(7,12,25,.72); border-color:var(--vc-border);
+}
+table th { color:#cbd2e7; }
+table td { color:#e8ebf7; }
+hr { border-color:var(--vc-border); }
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; }
 }
