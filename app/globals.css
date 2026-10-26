@@ -156,3 +156,35 @@ button { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Compatibility layer: bring existing Tailwind-built screens into the same theme
+   without changing their data flow, routing, or feature logic. */
+[class*="bg-white/"], [class~="bg-white"], [class~="bg-gray-50"], [class~="bg-gray-100"] {
+  background-color: rgba(27, 36, 56, .84) !important;
+}
+[class*="border-white"], [class*="border-gray-"], [class~="border-gray-200"] {
+  border-color: var(--vc-border) !important;
+}
+[class*="text-gray-"], [class~="text-slate-500"], [class~="text-slate-600"] {
+  color: #aeb8d1 !important;
+}
+[class*="text-emerald-9"], [class*="text-blue-8"], [class*="text-orange-8"],
+[class*="text-indigo-9"], [class*="text-purple-9"] {
+  color: #f0d7ff !important;
+}
+[class*="bg-emerald-50"], [class*="bg-blue-50"], [class*="bg-orange-50"],
+[class*="bg-amber-50"], [class*="bg-indigo-50"], [class*="bg-purple-50"] {
+  background-color: rgba(139, 25, 216, .15) !important;
+}
+[class*="border-emerald-"], [class*="border-blue-"], [class*="border-orange-"],
+[class*="border-amber-"], [class*="border-indigo-"], [class*="border-purple-"] {
+  border-color: rgba(202, 139, 255, .25) !important;
+}
+input:not(.glass-input), textarea:not(.glass-input), select:not(.glass-input) {
+  color: var(--vc-text);
+  background-color: rgba(7, 12, 25, .72);
+  border-color: var(--vc-border);
+}
+table th { color: #cbd2e7; }
+table td { color: #e8ebf7; }
+hr { border-color: var(--vc-border); }
