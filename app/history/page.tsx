@@ -1,6 +1,7 @@
 'use client';
 
 import StudentBottomNav from '@/components/StudentBottomNav';export const dynamic = "force-dynamic";
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -60,13 +61,7 @@ export default function HistoryPage() {
     window.location.href = '/';
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020617]">
-        <Loader2 className="w-10 h-10 animate-spin text-emerald-400" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingSkeleton label="Loading history page" />;
 
   return (
     <div className="min-h-screen bg-[#020617] relative overflow-hidden flex selection:bg-emerald-500/30">
