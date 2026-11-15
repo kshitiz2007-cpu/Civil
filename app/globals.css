@@ -980,3 +980,64 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .history-card, .history-card-glow { transition: none; }
 }
+
+
+/* Animated luminous outline for history scorecards */
+@keyframes history-border-pulse {
+  0%, 100% {
+    opacity: .42;
+    filter: brightness(.9);
+  }
+  50% {
+    opacity: .95;
+    filter: brightness(1.35);
+  }
+}
+.history-card {
+  border: 1px solid rgba(94, 234, 212, .34);
+  box-shadow:
+    0 0 0 1px rgba(45, 212, 191, .09),
+    0 0 13px rgba(45, 212, 191, .13),
+    0 14px 34px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+.history-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(110, 231, 183, .9),
+    rgba(45, 212, 191, .12) 34%,
+    rgba(129, 140, 248, .5) 68%,
+    rgba(110, 231, 183, .75)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: history-border-pulse 3.8s ease-in-out infinite;
+}
+.history-card-low {
+  border-color: rgba(251, 113, 133, .34);
+  box-shadow:
+    0 0 0 1px rgba(251, 113, 133, .08),
+    0 0 13px rgba(251, 113, 133, .12),
+    0 14px 34px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+.history-card-low::after {
+  background: linear-gradient(
+    135deg,
+    rgba(251, 113, 133, .9),
+    rgba(251, 113, 133, .1) 35%,
+    rgba(129, 140, 248, .45) 68%,
+    rgba(251, 113, 133, .75)
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .history-card::after { animation: none; opacity: .7; }
+}
