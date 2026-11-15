@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from 'react';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { useRouter, useParams } from 'next/navigation';
 import { Trophy, CheckCircle2, XCircle, MinusCircle, Home, RotateCcw, Loader2, ArrowLeft, Languages } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -36,7 +37,7 @@ export default function QuizResultPage() {
     fetchResult();
   }, [quizId]);
 
-  if (loading) return <div className="app-theme grid min-h-screen place-items-center"><Loader2 className="h-10 w-10 animate-spin text-emerald-600" /></div>;
+  if (loading) return <LoadingSkeleton label="Loading quiz result" />;
   if (!attempt) return (
     <main className="app-theme grid min-h-screen place-items-center p-4 text-center">
       <div className="theme-surface w-full max-w-md rounded-3xl p-8">
