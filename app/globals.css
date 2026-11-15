@@ -646,3 +646,74 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .quizzes-subject-card, .quizzes-module-card { transition: none; }
 }
+
+
+/* Chapter modules: compact two-column cards inside collapsible topic groups */
+.quizzes-module-grid {
+  align-items: stretch;
+}
+.quizzes-module-card {
+  min-height: 126px;
+}
+@media (max-width: 639px) {
+  .quizzes-accordion-list > div {
+    gap: 8px;
+  }
+  .quizzes-accordion-list > div > button {
+    min-height: 43px;
+    padding: 9px 10px;
+    gap: 8px;
+  }
+  .quizzes-accordion-list > div > button h2 {
+    min-width: 0;
+    flex: 1;
+    gap: 7px;
+    font-size: 11px;
+  }
+  .quizzes-module-grid {
+    gap: 8px;
+    padding: 0;
+  }
+  .quizzes-module-card {
+    min-height: 112px;
+    padding: 9px;
+    gap: 8px;
+    border-radius: 13px;
+  }
+  .quizzes-module-card h3 {
+    min-height: 2.5em;
+    margin-bottom: 7px;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+  .quizzes-module-card > div:first-child > div {
+    gap: 5px;
+  }
+  .quizzes-module-card > div:first-child > div > span {
+    padding: 5px 6px;
+    gap: 4px;
+    font-size: 8px;
+    line-height: 1;
+  }
+  .quizzes-module-card > div:last-child {
+    width: 100%;
+  }
+  .quizzes-module-card > div:last-child button,
+  .quizzes-module-card > div:last-child > div {
+    min-height: 28px;
+    padding: 6px 5px;
+    border-radius: 8px;
+    font-size: 8px;
+    line-height: 1;
+  }
+  .quizzes-module-card > div:last-child button svg,
+  .quizzes-module-card > div:last-child > div svg {
+    width: 11px;
+    height: 11px;
+  }
+}
+@media (min-width: 640px) {
+  .quizzes-module-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
