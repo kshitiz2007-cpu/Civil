@@ -105,10 +105,11 @@ export default function LeaderboardPage() {
       {/* Leaderboard List */}
       <div className="flex flex-col gap-4 animate-fade-in" style={{ animationDelay: '150ms' }}>
         {leaderboard.length === 0 ? (
-          <div className="glass-card p-12 text-center border-dashed border-2 border-emerald-900/10">
-            <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-gray-800 mb-1">No ranks yet</h3>
-            <p className="text-sm text-gray-500">Be the first to complete a quiz and claim the #1 spot!</p>
+          <div className="glass-card border border-dashed border-emerald-300/20 bg-white/[.035] p-8 text-center sm:p-12">
+            <span className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl border border-amber-300/20 bg-amber-300/10 text-amber-200"><Trophy className="h-7 w-7" /></span>
+            <h3 className="mb-1 text-lg font-extrabold text-[var(--app-text)]">No ranks yet</h3>
+            <p className="mx-auto max-w-sm text-sm text-[var(--app-muted)]">Be the first to complete a quiz and claim the #1 spot!</p>
+            <button onClick={() => router.push('/quizzes')} className="mt-5 rounded-xl border border-emerald-300/30 bg-emerald-400/10 px-4 py-2.5 text-xs font-extrabold text-emerald-100 transition hover:bg-emerald-400/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">Explore mock tests <span aria-hidden="true">→</span></button>
           </div>
         ) : (
           leaderboard.map((entry, index) => {
