@@ -1599,3 +1599,43 @@ button { cursor: pointer; }
   .quiz-option.is-selected, .quiz-timer.is-urgent { animation:none; }
   .quiz-option, .quiz-palette-dot, .quiz-primary, .quiz-secondary { transition:none; }
 }
+
+
+/* Global polish: shared loading skeletons, focus states and restrained motion */
+.skeleton-panel {
+  border-color: rgba(94,234,212,.16);
+  background: linear-gradient(145deg,rgba(16,42,59,.78),rgba(7,21,38,.9));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+}
+.skeleton-block {
+  background: linear-gradient(100deg,rgba(148,163,184,.09) 20%,rgba(148,163,184,.2) 42%,rgba(148,163,184,.09) 64%);
+  background-size: 220% 100%;
+  animation: skeleton-sheen 1.55s ease-in-out infinite;
+}
+.student-bottom-nav {
+  border-color: rgba(94,234,212,.24);
+  background: linear-gradient(135deg,rgba(8,27,44,.94),rgba(7,19,37,.96));
+  box-shadow: 0 12px 38px rgba(0,0,0,.34),0 0 22px rgba(45,212,191,.08),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.student-bottom-nav-item { min-height: 43px; }
+.student-bottom-nav-item.is-active {
+  color: #a7f3d0;
+  background: linear-gradient(135deg,rgba(16,185,129,.2),rgba(34,211,238,.11));
+  box-shadow: inset 0 0 0 1px rgba(110,231,183,.18),0 0 16px rgba(45,212,191,.09);
+}
+.student-bottom-nav-item:active { transform: scale(.96); }
+:where(button,a,input,select,textarea,[tabindex]):focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+button:disabled { cursor: not-allowed; }
+@keyframes skeleton-sheen { 0% { background-position: 100% 0; } 100% { background-position: -120% 0; } }
+@keyframes page-enter-soft { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+.app-theme main, .app-theme .quiz-layout, .history-page, .resources-page, .quizzes-page {
+  animation: page-enter-soft .32s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block { animation: none; }
+  .app-theme main, .app-theme .quiz-layout, .history-page, .resources-page, .quizzes-page { animation: none; }
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
