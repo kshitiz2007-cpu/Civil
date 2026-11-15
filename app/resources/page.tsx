@@ -194,16 +194,21 @@ export default function StudentResourcesPage() {
                     const Icon = subject.icon;
                     const count = getResourceCount(subject.id);
                     return (
-                      <SpotlightCard key={subject.id} className={`resources-subject-card group rounded-2xl border-b-2 ${subject.border}`}>
-                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex h-full w-full flex-col items-start p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:p-6">
-                          <div className="mb-4 flex w-full items-start justify-between sm:mb-6">
-                            <span className={`resources-subject-icon rounded-xl border border-white/10 p-2.5 shadow-inner transition-transform group-hover:scale-105 sm:rounded-2xl sm:p-4 ${subject.bg} ${subject.color}`}>
-                              <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                      <SpotlightCard key={subject.id} className="resources-subject-card group relative isolate overflow-hidden rounded-[22px] border p-0 shadow-[0_12px_30px_rgba(0,0,0,.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 sm:rounded-[26px]">
+                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex min-h-[142px] h-full w-full flex-col items-start justify-between gap-3 p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:min-h-[190px] sm:p-5">
+                          <div className="flex w-full items-start justify-between">
+                            <span className={`resources-subject-icon grid h-10 w-10 place-items-center rounded-2xl border shadow-lg transition-transform group-hover:scale-105 sm:h-12 sm:w-12 ${subject.bg} ${subject.color} border-white/15`}>
+                              <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                             </span>
-                            <ChevronRight className="mt-1 h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-emerald-200"/>
+                            <ChevronRight className="mt-1 h-4 w-4 text-white/45 transition group-hover:translate-x-1 group-hover:text-emerald-200"/>
                           </div>
-                          <h3 className="text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-xl">{subject.id}</h3>
-                          <span className="mt-1 text-[9px] font-bold uppercase tracking-[.15em] text-white/45 sm:text-[11px] sm:tracking-[.2em]">{count} Files</span>
+                          <div className="relative min-w-0">
+                            <p className="mb-1 text-[7px] font-black uppercase tracking-[.19em] text-white/40 sm:text-[9px]">Study library</p>
+                            <h3 className="line-clamp-2 break-words text-sm font-extrabold tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-lg">{subject.id}</h3>
+                            <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[.045] px-2 py-1 text-[8px] font-bold uppercase tracking-[.14em] text-white/55 sm:text-[10px]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,.8)]" /> {count} Files
+                            </span>
+                          </div>
                         </button>
                       </SpotlightCard>
                     )
@@ -246,7 +251,7 @@ export default function StudentResourcesPage() {
                         {/* Clickable Accordion Header */}
                         <button 
                           onClick={() => toggleSection(subsection)}
-                          className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.07] p-3.5 text-left shadow-md backdrop-blur-md transition-all hover:bg-white/10 group sm:rounded-3xl sm:p-5"
+                          className="resources-section-accordion group relative isolate flex w-full items-center justify-between overflow-hidden rounded-2xl border p-3.5 text-left shadow-lg backdrop-blur-xl transition-all hover:-translate-y-0.5 sm:rounded-3xl sm:p-5"
                         >
                           <h2 className="flex min-w-0 flex-1 items-center gap-2 text-sm font-bold tracking-tight text-white sm:gap-3 sm:text-lg group-hover:text-emerald-300 transition-colors">
                             <Layers className="h-4 w-4 shrink-0 text-emerald-400 sm:h-5 sm:w-5" /> <span className="truncate">{subsection}</span><span className="rounded-full border border-white/10 bg-white/[.06] px-2 py-1 text-[9px] font-semibold text-white/50">{sectionResources.length}</span>
@@ -258,7 +263,7 @@ export default function StudentResourcesPage() {
                         {isOpen && (
                           <div className="resources-grid grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-300 p-0.5 sm:gap-4">
                             {sectionResources.map((resource) => (
-                              <div key={resource.id} className="resources-card group flex min-w-0 flex-col justify-between gap-2 rounded-xl border border-white/15 bg-white/[.07] p-2.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 sm:rounded-2xl sm:p-4">
+                              <article key={resource.id} className="resources-card group relative isolate flex min-w-0 flex-col justify-between gap-2.5 overflow-hidden rounded-[20px] border p-2.5 shadow-[0_12px_30px_rgba(0,0,0,.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 sm:gap-3 sm:rounded-[26px] sm:p-4">
                                 
                                 <div className="flex min-w-0 items-center gap-2 overflow-hidden sm:gap-3">
                                   <div className={`resources-file-icon shrink-0 rounded-lg border border-white/10 p-2 shadow-inner sm:rounded-xl sm:p-3 ${
