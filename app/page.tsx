@@ -127,10 +127,10 @@ export default function LoginPage() {
             <Sparkles className="h-3.5 w-3.5" />
             A smarter way to prepare
           </div>
-          <h1 className="text-[2.75rem] font-semibold leading-[1.08] tracking-[-.055em] sm:text-6xl lg:text-[4.35rem]">
-            Make every
-            <span className="block bg-gradient-to-r from-emerald-200 via-teal-200 to-cyan-300 bg-clip-text pb-2 text-transparent">study session</span>
-            count.
+          <h1 className="kinetic-headline text-[2.75rem] font-semibold leading-[1.08] tracking-[-.055em] sm:text-6xl lg:text-[4.35rem]">
+            <span className="kinetic-line block">Make every</span>
+            <span className="kinetic-gradient block pb-2">study session</span>
+            <span className="kinetic-line kinetic-line-delay block">count.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-slate-400 sm:text-lg sm:leading-8 lg:mx-0">
             Your focused space for practice, progress, and better results. Pick up where you left off and move one step closer to your goals.
@@ -160,7 +160,8 @@ export default function LoginPage() {
         </section>
 
         <section className="mx-auto w-full max-w-[440px]">
-          <div className="rounded-[2rem] border border-white/[.13] bg-[#0c1b2b]/85 p-6 shadow-[0_30px_100px_rgba(0,0,0,.45)] backdrop-blur-2xl sm:p-9">
+          <div className="login-glow-shell">
+            <div className="login-glow-card rounded-[calc(2rem-1px)] bg-[#0c1b2b]/95 p-6 backdrop-blur-2xl sm:p-9">
             <div className="mb-8">
               <div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl border border-emerald-200/20 bg-gradient-to-br from-emerald-200/20 to-cyan-300/10 text-emerald-100">
                 <Sparkles className="h-6 w-6" />
@@ -203,6 +204,7 @@ export default function LoginPage() {
                 <p className="text-xs font-semibold text-slate-200">Your account stays protected</p>
                 <p className="mt-1 text-xs leading-5 text-slate-500">Secure sign-in powered by Google and Supabase authentication.</p>
               </div>
+            </div>
             </div>
           </div>
           <p className="mt-5 text-center text-[11px] leading-5 text-slate-600">By continuing, you’ll be redirected to your personal learning dashboard.</p>
