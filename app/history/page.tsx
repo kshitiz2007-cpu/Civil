@@ -158,26 +158,36 @@ export default function HistoryPage() {
                 const isPassing = attempt.score >= 40; 
                 
                 return (
-                  <article key={attempt.id} className="history-card flex min-w-0 flex-col gap-2.5 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.09] to-white/[.035] p-2.5 shadow-lg backdrop-blur-xl transition hover:border-emerald-300/20 hover:bg-white/10 sm:gap-3 sm:rounded-3xl sm:p-4">
-                    <div className="flex min-w-0 items-start gap-2">
-                      <div className={`shrink-0 rounded-xl border p-2 sm:p-2.5 ${isPassing ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300' : 'border-rose-500/30 bg-rose-500/15 text-rose-300'}`}>
+                  <article key={attempt.id} className={`history-card group relative isolate flex min-w-0 flex-col gap-2.5 overflow-hidden rounded-[20px] border p-2.5 shadow-[0_12px_30px_rgba(0,0,0,.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 sm:gap-3 sm:rounded-[26px] sm:p-4 ${isPassing ? 'history-card-pass' : 'history-card-low'}`}>
+                    <div className="history-card-glow pointer-events-none absolute -right-8 -top-10 h-24 w-24 rounded-full blur-2xl" />
+                    <div className="relative flex min-w-0 items-start gap-2">
+                      <div className={`history-award shrink-0 rounded-xl border p-2 sm:rounded-2xl sm:p-2.5 ${isPassing ? 'border-emerald-300/25 bg-emerald-300/10 text-emerald-200' : 'border-rose-300/25 bg-rose-300/10 text-rose-200'}`}>
                         <Award className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="line-clamp-2 break-words text-[11px] font-bold leading-snug text-white sm:text-sm">{attempt.quiz_title}</h4>
-                        <p className="mt-1 text-[9px] font-medium text-white/45 sm:text-[11px]">{new Date(attempt.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        <p className="mb-1 text-[7px] font-black uppercase tracking-[.19em] text-white/35 sm:text-[9px]">Completed test</p>
+                        <h4 className="line-clamp-2 break-words text-[11px] font-extrabold leading-snug tracking-tight text-white sm:text-sm">{attempt.quiz_title}</h4>
+                        <p className="mt-1.5 flex items-center gap-1 text-[9px] font-medium text-slate-300/60 sm:text-[11px]"><span className="h-1 w-1 rounded-full bg-cyan-300/70" />{new Date(attempt.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-white/5 bg-black/10 p-2">
-                      <div><p className="text-sm font-black leading-none text-emerald-300 sm:text-base">{attempt.correct ?? 0}</p><p className="mt-1 text-[8px] font-semibold text-white/45 sm:text-[10px]">Correct</p></div>
-                      <div><p className="text-sm font-black leading-none text-rose-300 sm:text-base">{attempt.wrong ?? 0}</p><p className="mt-1 text-[8px] font-semibold text-white/45 sm:text-[10px]">Wrong</p></div>
+                    <div className="history-score-panel relative grid grid-cols-[auto_1fr] items-center gap-2 rounded-2xl border border-white/[.07] p-2 sm:gap-3 sm:p-2.5">
+                      <div className="history-score-ring" style={{ background: `conic-gradient(${isPassing ? '#34d399' : '#fb7185'} ${Math.max(0, Math.min(100, Number(attempt.score) || 0))}%, rgba(255,255,255,.09) 0)` }}>
+                        <div className="history-score-ring-inner"><span>{attempt.score}%</span></div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <div className="history-stat history-stat-correct rounded-xl px-2 py-1.5">
+                          <p className="text-sm font-black leading-none text-emerald-200 sm:text-base">{attempt.correct ?? 0}</p>
+                          <p className="mt-1 text-[7px] font-bold uppercase tracking-wider text-emerald-100/50 sm:text-[9px]">Correct</p>
+                        </div>
+                        <div className="history-stat history-stat-wrong rounded-xl px-2 py-1.5">
+                          <p className="text-sm font-black leading-none text-rose-200 sm:text-base">{attempt.wrong ?? 0}</p>
+                          <p className="mt-1 text-[7px] font-bold uppercase tracking-wider text-rose-100/50 sm:text-[9px]">Wrong</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="mt-auto flex items-center justify-between gap-1.5 border-t border-white/10 pt-2">
-                      <p className={`text-lg font-black tracking-tight sm:text-2xl ${isPassing ? 'text-emerald-300' : 'text-rose-300'}`}>{attempt.score}%</p>
-                      <button onClick={() => router.push(`/quiz/${attempt.quiz_id}/result`)} className="inline-flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/10 px-2 py-1.5 text-[9px] font-bold text-white transition hover:bg-emerald-500/20 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-2 sm:text-xs">
-                        Review <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-                      </button>
-                    </div>
+                    <button onClick={() => router.push(`/quiz/${attempt.quiz_id}/result`)} className="history-review-btn relative inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[10px] font-extrabold tracking-wide text-white transition sm:rounded-2xl sm:py-2.5 sm:text-xs">
+                      Review answers <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 sm:h-4 sm:w-4" />
+                    </button>
                   </article>
                 );
               })
