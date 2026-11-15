@@ -142,3 +142,4 @@ export default function QuizPlayerPage() {
       </aside>
     </main>
   </div>;
+}
