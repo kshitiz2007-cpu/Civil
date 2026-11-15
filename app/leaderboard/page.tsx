@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import StudentBottomNav from '@/components/StudentBottomNav';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { Trophy, Medal, ChevronLeft, Target, BookOpen, Loader2 } from 'lucide-react';
@@ -88,7 +89,7 @@ export default function LeaderboardPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6 pb-24">
+    <div className="app-theme min-h-screen max-w-3xl mx-auto p-4 md:p-6 pb-28 text-[var(--app-text)]">
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-10 animate-fade-in">
@@ -155,6 +156,7 @@ export default function LeaderboardPage() {
           })
         )}
       </div>
+      <StudentBottomNav active="leaderboard" />
     </div>
   );
 }
