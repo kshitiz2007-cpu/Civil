@@ -290,8 +290,7 @@ export default function StudentResourcesPage() {
                                   {resource.file_type === 'pdf' ? <Download className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> : <ExternalLink className="h-3.5 w-3.5 sm:h-5 sm:w-5" />}
                                 </a>
 
-                              </div>
-                            ))}
+                              </article>                            ))}
                           </div>
                         )}
                       </div>
