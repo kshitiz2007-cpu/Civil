@@ -336,7 +336,7 @@ export default function StudentQuizzesPage() {
                   })
                 )}
               </div>
-            </div>
+            </AnimatedContent>
           )}
         </div>
       </main>
