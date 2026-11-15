@@ -1639,3 +1639,101 @@ button:disabled { cursor: not-allowed; }
   .app-theme main, .app-theme .quiz-layout, .history-page, .resources-page, .quizzes-page { animation: none; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+
+/* Dashboard card depth pass — restrained ~20–25% lift in perceived depth */
+.dashboard-main .dashboard-hero {
+  border-color: rgba(110, 231, 183, .27);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.035),
+    0 16px 34px rgba(0,0,0,.22),
+    0 30px 64px rgba(0,0,0,.16),
+    0 0 22px rgba(45,212,191,.075),
+    inset 0 1px 0 rgba(255,255,255,.09),
+    inset 0 -1px 0 rgba(0,0,0,.18);
+  transition: border-color .28s ease, box-shadow .28s ease, transform .28s ease;
+}
+.dashboard-main .dashboard-panel,
+.dashboard-main .dashboard-recent {
+  border-color: rgba(110,231,183,.22);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.025),
+    0 13px 28px rgba(0,0,0,.22),
+    0 24px 48px rgba(0,0,0,.13),
+    0 0 18px rgba(45,212,191,.055),
+    inset 0 1px 0 rgba(255,255,255,.075),
+    inset 0 -1px 0 rgba(0,0,0,.2);
+  transition: border-color .28s ease, box-shadow .28s ease, transform .28s ease;
+}
+.dashboard-main .dashboard-metric-card {
+  border-color: rgba(110,231,183,.3);
+  background-image:
+    radial-gradient(125% 100% at 100% 0%, rgba(45,212,191,.14), transparent 58%),
+    linear-gradient(145deg, rgba(20,48,65,.96), rgba(7,22,39,.98) 68%, rgba(16,29,54,.96));
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.06),
+    0 9px 20px rgba(0,0,0,.2),
+    0 17px 32px rgba(0,0,0,.14),
+    0 0 14px rgba(45,212,191,.07),
+    inset 0 1px 0 rgba(255,255,255,.1),
+    inset 0 -2px 0 rgba(0,0,0,.2);
+  transition: border-color .24s ease, transform .24s ease, box-shadow .24s ease;
+}
+.dashboard-main .dashboard-average {
+  box-shadow: 0 8px 18px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.075), inset 0 -1px 0 rgba(0,0,0,.16);
+}
+.dashboard-main .rb-spotlight-card {
+  border-color: rgba(110,231,183,.2);
+  background:
+    radial-gradient(120% 100% at 100% 0%, rgba(45,212,191,.1), transparent 58%),
+    linear-gradient(145deg, rgba(20,46,64,.92), rgba(7,22,39,.96));
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.055),
+    0 10px 22px rgba(0,0,0,.2),
+    0 18px 34px rgba(0,0,0,.12),
+    inset 0 1px 0 rgba(255,255,255,.085),
+    inset 0 -1px 0 rgba(0,0,0,.2);
+}
+.dashboard-main .dashboard-metric-card::before,
+.dashboard-main .dashboard-hero::before,
+.dashboard-main .dashboard-panel::before {
+  opacity: .85;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-main .dashboard-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 0 rgba(255,255,255,.04), 0 21px 42px rgba(0,0,0,.25), 0 34px 70px rgba(0,0,0,.17), 0 0 26px rgba(45,212,191,.1), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  .dashboard-main .dashboard-panel:hover,
+  .dashboard-main .dashboard-recent:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 0 rgba(255,255,255,.035), 0 17px 34px rgba(0,0,0,.24), 0 28px 54px rgba(0,0,0,.15), 0 0 20px rgba(45,212,191,.07), inset 0 1px 0 rgba(255,255,255,.085);
+  }
+  .dashboard-main .dashboard-metric-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(110,231,183,.46);
+    box-shadow: 0 3px 0 rgba(255,255,255,.06), 0 15px 26px rgba(0,0,0,.23), 0 24px 42px rgba(0,0,0,.16), 0 0 20px rgba(45,212,191,.11), inset 0 1px 0 rgba(255,255,255,.12);
+  }
+  .dashboard-main .rb-spotlight-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(110,231,183,.34);
+    box-shadow: 0 2px 0 rgba(255,255,255,.06), 0 15px 28px rgba(0,0,0,.23), 0 23px 40px rgba(0,0,0,.15), 0 0 18px rgba(45,212,191,.09), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .dashboard-main .dashboard-metric-card:active,
+  .dashboard-main .rb-spotlight-card:active {
+    transform: translateY(1px) scale(.99);
+    box-shadow: 0 4px 12px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-main .dashboard-hero,
+  .dashboard-main .dashboard-panel,
+  .dashboard-main .dashboard-recent,
+  .dashboard-main .dashboard-metric-card,
+  .dashboard-main .rb-spotlight-card {
+    transition: none;
+    transform: none;
+  }
+}
