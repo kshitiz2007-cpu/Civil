@@ -1,15 +1,22 @@
 'use client';
-export const dynamic = "force-dynamic";
 
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { Activity, ArrowRight, Award, BookOpen, CheckCircle2, Clock3, FileText, History, Layers, Loader2, LogOut, Sparkles, Target, TrendingUp } from 'lucide-react';
+import {
+  Activity, ArrowRight, Award, BookOpen, CheckCircle2, Clock3, FileText,
+  History, Layers, Loader2, LogOut, Sparkles, Target, TrendingUp,
+  Flame, Zap, CalendarDays, ChevronRight,
+} from 'lucide-react';
 import StudentChatWidget from '@/components/StudentChatWidget';
 import ThemeSelector from '@/components/ThemeSelector';
+import SpotlightCard from '@/components/reactbits/SpotlightCard';
+import CountUp from '@/components/reactbits/CountUp';
+import AnimatedContent from '@/components/reactbits/AnimatedContent';
 
 type Attempt = { id: string; quiz_id: string; quiz_title?: string; score: number; completed_at?: string };
 type Quiz = { id: string; title: string; description?: string; duration?: number; questions?: unknown[] };
+type IconComponent = typeof Activity;
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -37,50 +44,208 @@ export default function DashboardPage() {
         setQuizzes((quizData || []) as Quiz[]);
         setAttempts((attemptData || []) as Attempt[]);
         setResourceCount(count || 0);
-      } catch (error) { console.error('Dashboard data could not be loaded:', error); }
-      finally { if (active) setLoading(false); }
+      } catch (error) {
+        console.error('Dashboard data could not be loaded:', error);
+      } finally {
+        if (active) setLoading(false);
+      }
     }
     load();
     return () => { active = false; };
   }, []);
 
   const logout = async () => { await supabase.auth.signOut(); window.location.href = '/'; };
-  const average = attempts.length ? Math.round(attempts.reduce((sum, item) => sum + Number(item.score || 0), 0) / attempts.length) : 0;
+  const average = attempts.length
+    ? Math.round(attempts.reduce((sum, item) => sum + Number(item.score || 0), 0) / attempts.length)
+    : 0;
   const recentScores = useMemo(() => attempts.slice(0, 7).reverse(), [attempts]);
   const completedIds = new Set(attempts.map(item => item.quiz_id));
   const firstName = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Scholar';
+  const today = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
 
-  if (loading) return <div className="grid min-h-screen place-items-center bg-[#07111f]"><Loader2 className="h-9 w-9 animate-spin text-emerald-300"/></div>;
-
-  return <div className="app-theme text-[var(--app-text)]">
-    <div className="pointer-events-none fixed inset-0 overflow-hidden"><div className="absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full bg-emerald-500/[.08] blur-[120px]"/><div className="absolute -bottom-48 -left-40 h-[30rem] w-[30rem] rounded-full bg-cyan-500/[.06] blur-[120px]"/></div>
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-white/[.07] bg-[#091523]/90 px-5 py-6 backdrop-blur-xl md:flex">
-      <div className="flex items-center gap-3 px-2"><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-300 text-slate-950"><Sparkles className="h-5 w-5"/></span><div><p className="font-bold tracking-tight">Gyankunj</p><p className="text-xs text-slate-500">Learning space</p></div></div>
-      <nav className="mt-10 space-y-1">
-        <NavItem icon={Activity} label="Overview" active onClick={()=>window.scrollTo({top:0,behavior:'smooth'})}/>
-        <NavItem icon={Layers} label="Mock tests" onClick={()=>router.push('/quizzes')}/>
-        <NavItem icon={FileText} label="Study resources" onClick={()=>router.push('/resources')}/>
-        <NavItem icon={History} label="My results" onClick={()=>router.push('/history')}/>
-      </nav>
-      <div className="mt-auto rounded-2xl border border-emerald-300/10 bg-emerald-300/[.06] p-4"><p className="text-sm font-semibold">Small steps add up.</p><p className="mt-1 text-xs leading-5 text-slate-400">A focused practice session today keeps your momentum going.</p><button onClick={()=>router.push('/quizzes')} className="mt-4 flex items-center gap-2 text-xs font-semibold text-emerald-200">Find a test <ArrowRight className="h-3.5 w-3.5"/></button></div>
-      <div className="mt-5 flex items-center gap-3 border-t border-white/[.07] pt-5"><div className="grid h-9 w-9 place-items-center rounded-full bg-slate-700 font-semibold">{firstName.slice(0,1).toUpperCase()}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{user?.name||firstName}</p><p className="truncate text-xs text-slate-500">Student account</p></div><button onClick={logout} title="Sign out" className="rounded-lg p-2 text-slate-500 hover:bg-white/5 hover:text-white"><LogOut className="h-4 w-4"/></button></div>
-    </aside>
-    <main className="relative z-10 mx-auto max-w-7xl px-5 pb-28 pt-7 md:ml-64 md:px-10 md:py-10">
-      <header className="mb-8 flex items-center justify-between gap-4"><ThemeSelector compact /><div><p className="text-sm text-slate-400">Your learning overview</p><h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Welcome back, {firstName}<span className="text-emerald-300">.</span></h1><p className="mt-2 text-sm text-slate-400">A clear view of your progress and what to work on next.</p></div><button onClick={logout} className="rounded-xl border border-white/10 p-3 text-slate-400 hover:bg-white/5 md:hidden" aria-label="Sign out"><LogOut className="h-5 w-5"/></button></header>
-      <section className="relative overflow-hidden rounded-[2rem] border border-emerald-200/10 bg-gradient-to-br from-emerald-300/[.12] via-cyan-300/[.05] to-transparent p-6 sm:p-8"><div className="absolute -right-10 -top-24 h-64 w-64 rounded-full border border-emerald-200/10"/><div className="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center"><div className="max-w-xl"><span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/15 bg-emerald-200/[.08] px-3 py-1.5 text-xs font-medium text-emerald-100"><Sparkles className="h-3.5 w-3.5"/> Your next milestone awaits</span><h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Build confidence, one test at a time.</h2><p className="mt-2 text-sm leading-6 text-slate-300/75">Practice with a mock test, review what you’ve learned, and keep your preparation moving.</p><button onClick={()=>router.push('/quizzes')} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-emerald-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200">Explore mock tests <ArrowRight className="h-4 w-4"/></button></div><div className="grid grid-cols-2 gap-3 md:w-64"><div className="rounded-2xl border border-white/10 bg-[#07111f]/40 p-4"><BookOpen className="h-5 w-5 text-emerald-200"/><p className="mt-4 text-2xl font-semibold">{attempts.length}</p><p className="mt-1 text-xs text-slate-400">Tests completed</p></div><div className="rounded-2xl border border-white/10 bg-[#07111f]/40 p-4"><Target className="h-5 w-5 text-cyan-200"/><p className="mt-4 text-2xl font-semibold">{attempts.length?`${average}%`:'—'}</p><p className="mt-1 text-xs text-slate-400">Average score</p></div></div></div></section>
-      <section className="mt-6 grid gap-4 sm:grid-cols-3"><StatCard icon={Layers} label="Available tests" value={quizzes.length} hint="Ready when you are"/><StatCard icon={FileText} label="Study resources" value={resourceCount} hint="Materials to explore"/><StatCard icon={Award} label="Recent result" value={attempts.length?`${attempts[0].score}%`:'—'} hint={attempts[0]?.quiz_title||'Complete a test to get started'}/></section>
-      <div className="mt-8 grid gap-6 xl:grid-cols-[1.35fr_.85fr]">
-        <section className="rounded-3xl border border-white/[.08] bg-white/[.025] p-5 sm:p-6"><div className="flex items-end justify-between gap-4"><div><h2 className="text-lg font-semibold">Pick up your practice</h2><p className="mt-1 text-sm text-slate-400">A few recommended tests to keep you moving.</p></div><button onClick={()=>router.push('/quizzes')} className="hidden items-center gap-1 text-sm font-medium text-emerald-200 hover:text-emerald-100 sm:flex">All tests <ArrowRight className="h-4 w-4"/></button></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{quizzes.map((quiz)=>{const done=completedIds.has(quiz.id);return <article key={quiz.id} className="rounded-2xl border border-white/[.08] bg-[#0b1827] p-4 transition hover:border-emerald-200/20"><div className="flex items-start justify-between gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300/[.09] text-cyan-200"><BookOpen className="h-5 w-5"/></div>{done&&<span className="inline-flex items-center gap-1 rounded-full bg-emerald-300/10 px-2.5 py-1 text-[11px] font-medium text-emerald-200"><CheckCircle2 className="h-3 w-3"/>Attempted</span>}</div><h3 className="mt-4 line-clamp-1 font-semibold">{quiz.title}</h3><p className="mt-1 line-clamp-2 min-h-10 text-sm leading-5 text-slate-400">{quiz.description||'Strengthen your understanding with a focused practice session.'}</p><div className="mt-4 flex items-center justify-between border-t border-white/[.07] pt-3 text-xs text-slate-500"><span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5"/>{quiz.duration||'—'} min</span><button onClick={()=>router.push(`/quiz/${quiz.id}`)} className="inline-flex items-center gap-1 font-semibold text-emerald-200 hover:text-emerald-100">{done?'Try again':'Start test'}<ArrowRight className="h-3.5 w-3.5"/></button></div></article>})}{quizzes.length===0&&<p className="col-span-2 rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-400">New practice tests will appear here as they become available.</p>}</div></section>
-        <section className="rounded-3xl border border-white/[.08] bg-white/[.025] p-5 sm:p-6"><div className="flex items-center justify-between"><div><h2 className="text-lg font-semibold">Your score trend</h2><p className="mt-1 text-sm text-slate-400">Most recent attempts</p></div><TrendingUp className="h-5 w-5 text-emerald-200"/></div>{recentScores.length?<div className="mt-7"><div className="flex h-36 items-end gap-2 border-b border-white/10 pb-2">{recentScores.map((a,i)=><div key={a.id} className="group flex h-full flex-1 flex-col justify-end"><div className="mb-2 text-center text-[10px] text-slate-500 opacity-0 transition group-hover:opacity-100">{a.score}%</div><div className="w-full rounded-t-lg bg-gradient-to-t from-emerald-500/50 to-emerald-200/90 transition hover:from-emerald-400 hover:to-cyan-200" style={{height:`${Math.max(8,Math.min(100,Number(a.score)||0))}%`}} title={`${a.quiz_title||'Quiz'} · ${a.score}%`}/></div>)}</div><div className="mt-2 flex justify-between text-[10px] text-slate-500"><span>Older</span><span>Latest</span></div><div className="mt-5 flex items-center justify-between rounded-2xl bg-white/[.04] p-4"><span className="text-sm text-slate-400">Average score</span><span className="text-lg font-semibold text-emerald-100">{average}%</span></div></div>:<div className="mt-6 rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center"><div className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-white/[.05] text-slate-400"><Target className="h-5 w-5"/></div><p className="mt-3 text-sm font-medium">Your progress starts here</p><p className="mt-1 text-xs text-slate-500">Finish a mock test to see your score trend.</p><button onClick={()=>router.push('/quizzes')} className="mt-4 text-sm font-semibold text-emerald-200">Browse tests <ArrowRight className="ml-1 inline h-4 w-4"/></button></div>}</section>
+  if (loading) {
+    return <div className="grid min-h-screen place-items-center bg-[#07111f]">
+      <div className="flex flex-col items-center gap-4">
+        <span className="grid h-14 w-14 place-items-center rounded-2xl border border-emerald-200/20 bg-emerald-300/10 text-emerald-200"><Loader2 className="h-7 w-7 animate-spin"/></span>
+        <p className="text-sm text-slate-400">Preparing your learning space…</p>
       </div>
-      <section className="mt-6 rounded-3xl border border-white/[.08] bg-white/[.025]"><div className="flex items-center justify-between border-b border-white/[.07] p-5 sm:px-6"><div><h2 className="font-semibold">Recent activity</h2><p className="mt-1 text-sm text-slate-400">Your latest completed tests</p></div><button onClick={()=>router.push('/history')} className="inline-flex items-center gap-1 text-sm font-medium text-emerald-200">View history <ArrowRight className="h-4 w-4"/></button></div>{attempts.length?<div className="divide-y divide-white/[.06]">{attempts.slice(0,4).map(a=><div key={a.id} className="flex items-center justify-between gap-4 px-5 py-4 sm:px-6"><div className="flex min-w-0 items-center gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/[.05] text-slate-300"><CheckCircle2 className="h-5 w-5"/></div><div className="min-w-0"><p className="truncate text-sm font-medium">{a.quiz_title||'Quiz attempt'}</p><p className="mt-1 text-xs text-slate-500">{a.completed_at?new Date(a.completed_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'Recently completed'}</p></div></div><span className="rounded-full bg-emerald-300/10 px-3 py-1.5 text-sm font-semibold text-emerald-100">{a.score}%</span></div>)}</div>:<p className="p-8 text-center text-sm text-slate-400">You haven’t completed a test yet. Your results will show up here.</p>}</section>
-      <footer className="mt-8 flex items-center justify-between text-xs text-slate-600"><span>Stay curious. Keep learning.</span><span>{quizzes.length} tests · {resourceCount} resources</span></footer>
-    </main>
-    <nav className="fixed inset-x-3 bottom-3 z-30 flex justify-around rounded-2xl border border-white/10 bg-[#0a1726]/95 p-2 shadow-2xl backdrop-blur-xl md:hidden"><MobileItem icon={Activity} label="Home" active onClick={()=>window.scrollTo({top:0,behavior:'smooth'})}/><MobileItem icon={Layers} label="Tests" onClick={()=>router.push('/quizzes')}/><MobileItem icon={FileText} label="Files" onClick={()=>router.push('/resources')}/><MobileItem icon={History} label="Results" onClick={()=>router.push('/history')}/></nav>
-    <StudentChatWidget user={user}/>
-  </div>;
+    </div>;
+  }
+
+  return (
+    <div className="app-theme min-h-screen text-[var(--app-text)]">
+      <div className="dashboard-ambient pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full bg-cyan-400/[.09] blur-[130px]"/>
+        <div className="absolute -bottom-48 -left-40 h-[30rem] w-[30rem] rounded-full bg-emerald-400/[.08] blur-[130px]"/>
+      </div>
+
+      <aside className="dashboard-sidebar fixed inset-y-0 left-0 z-30 hidden w-[258px] flex-col border-r border-white/[.07] px-5 py-6 backdrop-blur-2xl md:flex">
+        <div className="flex items-center gap-3 px-2">
+          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-emerald-200 to-cyan-300 text-slate-950 shadow-lg shadow-emerald-400/15"><Sparkles className="h-5 w-5"/></span>
+          <div><p className="font-bold tracking-tight">Gyankunj</p><p className="text-[11px] tracking-[.2em] text-slate-500">ACADEMY</p></div>
+        </div>
+        <p className="mb-3 mt-11 px-3 text-[10px] font-bold uppercase tracking-[.22em] text-slate-600">Workspace</p>
+        <nav className="space-y-1">
+          <NavItem icon={Activity} label="Overview" active onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}/>
+          <NavItem icon={Layers} label="Mock tests" onClick={() => router.push('/quizzes')}/>
+          <NavItem icon={FileText} label="Study resources" onClick={() => router.push('/resources')}/>
+          <NavItem icon={History} label="My results" onClick={() => router.push('/history')}/>
+        </nav>
+        <SpotlightCard className="mt-auto rounded-2xl p-4">
+          <div className="relative z-10">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-300/10 text-emerald-200"><Zap className="h-4 w-4"/></span>
+            <p className="mt-4 text-sm font-semibold">Keep your streak alive</p>
+            <p className="mt-1 text-xs leading-5 text-slate-400">A little focused practice today goes a long way.</p>
+            <button onClick={() => router.push('/quizzes')} className="mt-4 inline-flex items-center gap-2 text-xs font-bold text-emerald-200">Find a test <ArrowRight className="h-3.5 w-3.5"/></button>
+          </div>
+        </SpotlightCard>
+        <div className="mt-5 flex items-center gap-3 border-t border-white/[.07] pt-5">
+          <div className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-gradient-to-br from-slate-600 to-slate-800 font-semibold">{firstName.slice(0, 1).toUpperCase()}</div>
+          <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{user?.name || firstName}</p><p className="truncate text-xs text-slate-500">Student account</p></div>
+          <button onClick={logout} title="Sign out" className="rounded-xl p-2 text-slate-500 transition hover:bg-white/5 hover:text-white"><LogOut className="h-4 w-4"/></button>
+        </div>
+      </aside>
+
+      <main className="relative z-10 mx-auto max-w-[1440px] px-4 pb-28 pt-5 sm:px-6 md:ml-[258px] md:px-9 md:py-9 xl:px-12">
+        <header className="mb-7 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-400"><CalendarDays className="h-3.5 w-3.5 text-emerald-200"/>{today}</div>
+            <h1 className="text-[1.7rem] font-semibold tracking-[-.045em] sm:text-3xl lg:text-4xl">Welcome back, <span className="dashboard-gradient-text">{firstName}</span></h1>
+            <p className="mt-2 text-sm text-slate-400">Your next breakthrough starts with one focused session.</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <ThemeSelector compact/>
+            <button onClick={logout} className="rounded-xl border border-white/10 bg-white/[.03] p-3 text-slate-400 transition hover:bg-white/[.08] hover:text-white md:hidden" aria-label="Sign out"><LogOut className="h-4 w-4"/></button>
+          </div>
+        </header>
+
+        <AnimatedContent>
+          <section className="dashboard-hero relative overflow-hidden rounded-[2rem] border border-emerald-200/15 p-6 sm:p-8 lg:p-10">
+            <div className="dashboard-hero-orb absolute -right-20 -top-36 h-[25rem] w-[25rem] rounded-full"/>
+            <div className="dashboard-hero-grid absolute inset-0 opacity-40"/>
+            <div className="relative grid gap-8 lg:grid-cols-[1fr_290px] lg:items-center">
+              <div className="max-w-2xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-emerald-200/[.08] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.14em] text-emerald-100"><Sparkles className="h-3.5 w-3.5"/> Your learning space</span>
+                <h2 className="mt-5 max-w-xl text-3xl font-semibold leading-[1.12] tracking-[-.045em] sm:text-4xl lg:text-[2.8rem]">Make progress that <span className="dashboard-gradient-text">adds up.</span></h2>
+                <p className="mt-3 max-w-lg text-sm leading-6 text-slate-300/75">Build confidence through deliberate practice. Pick a mock test, learn from every attempt, and keep moving forward.</p>
+                <button onClick={() => router.push('/quizzes')} className="dashboard-primary-button mt-6 inline-flex items-center gap-2 rounded-xl px-5 py-3.5 text-sm font-bold text-slate-950 transition hover:-translate-y-0.5">Explore mock tests <ArrowRight className="h-4 w-4"/></button>
+              </div>
+              <div className="relative mx-auto grid w-full max-w-[290px] grid-cols-2 gap-3">
+                <SpotlightCard className="rounded-2xl p-4">
+                  <BookOpen className="relative z-10 h-5 w-5 text-emerald-200"/>
+                  <p className="relative z-10 mt-5 text-3xl font-semibold tracking-tight"><CountUp value={attempts.length}/></p>
+                  <p className="relative z-10 mt-1 text-[11px] text-slate-400">Tests completed</p>
+                </SpotlightCard>
+                <SpotlightCard className="rounded-2xl p-4">
+                  <Target className="relative z-10 h-5 w-5 text-cyan-200"/>
+                  <p className="relative z-10 mt-5 text-3xl font-semibold tracking-tight"><CountUp value={average} suffix="%"/></p>
+                  <p className="relative z-10 mt-1 text-[11px] text-slate-400">Average score</p>
+                </SpotlightCard>
+                <div className="col-span-2 flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 backdrop-blur-xl">
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-orange-300/10 text-orange-200"><Flame className="h-4 w-4"/></span>
+                  <div className="min-w-0"><p className="text-xs font-semibold">Consistency beats intensity</p><p className="mt-0.5 text-[11px] text-slate-500">One step forward, every day.</p></div>
+                  <Sparkles className="ml-auto h-4 w-4 shrink-0 text-emerald-200/70"/>
+                </div>
+              </div>
+            </div>
+          </section>
+        </AnimatedContent>
+
+        <section className="mt-5 grid gap-3 sm:grid-cols-3">
+          <AnimatedContent delay={60}><MetricCard icon={Layers} label="Available tests" value={quizzes.length} hint="Ready when you are" accent="emerald"/></AnimatedContent>
+          <AnimatedContent delay={120}><MetricCard icon={FileText} label="Study resources" value={resourceCount} hint="Explore your materials" accent="cyan"/></AnimatedContent>
+          <AnimatedContent delay={180}><MetricCard icon={Award} label="Latest score" value={attempts.length ? attempts[0].score : '—'} suffix={attempts.length ? '%' : ''} hint={attempts[0]?.quiz_title || 'Complete a test to begin'} accent="violet"/></AnimatedContent>
+        </section>
+
+        <div className="mt-8 grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
+          <AnimatedContent>
+            <section className="dashboard-panel h-full rounded-[1.7rem] p-5 sm:p-6">
+              <div className="flex items-end justify-between gap-3">
+                <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-emerald-200/75">Curated for you</p><h2 className="mt-2 text-xl font-semibold tracking-tight">Pick up your practice</h2><p className="mt-1 text-xs text-slate-500 sm:text-sm">Jump back in or try something new.</p></div>
+                <button onClick={() => router.push('/quizzes')} className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-200 transition hover:text-emerald-100">All tests <ChevronRight className="h-4 w-4"/></button>
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {quizzes.map((quiz, index) => {
+                  const done = completedIds.has(quiz.id);
+                  return <SpotlightCard key={quiz.id} className="rounded-2xl p-4">
+                    <div className="relative z-10 flex h-full flex-col">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="grid h-10 w-10 place-items-center rounded-xl border border-cyan-200/10 bg-cyan-300/[.08] text-cyan-200"><BookOpen className="h-5 w-5"/></span>
+                        {done && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-300/10 px-2 py-1 text-[10px] font-semibold text-emerald-200"><CheckCircle2 className="h-3 w-3"/>Attempted</span>}
+                      </div>
+                      <p className="mt-4 text-[10px] font-bold uppercase tracking-[.16em] text-slate-600">Practice set 0{index + 1}</p>
+                      <h3 className="mt-1 line-clamp-1 font-semibold">{quiz.title}</h3>
+                      <p className="mt-1 line-clamp-2 min-h-10 text-xs leading-5 text-slate-400">{quiz.description || 'Strengthen your understanding with a focused practice session.'}</p>
+                      <div className="mt-4 flex items-center justify-between border-t border-white/[.07] pt-3">
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-500"><Clock3 className="h-3.5 w-3.5"/>{quiz.duration || '—'} min</span>
+                        <button onClick={() => router.push(`/quiz/${quiz.id}`)} className="inline-flex items-center gap-1 text-xs font-bold text-emerald-200 hover:text-white">{done ? 'Try again' : 'Start test'} <ArrowRight className="h-3.5 w-3.5"/></button>
+                      </div>
+                    </div>
+                  </SpotlightCard>;
+                })}
+                {quizzes.length === 0 && <p className="col-span-2 rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-400">New practice tests will appear here as they become available.</p>}
+              </div>
+            </section>
+          </AnimatedContent>
+
+          <AnimatedContent delay={100}>
+            <section className="dashboard-panel h-full rounded-[1.7rem] p-5 sm:p-6">
+              <div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-200/75">Your analytics</p><h2 className="mt-2 text-xl font-semibold tracking-tight">Score trend</h2><p className="mt-1 text-xs text-slate-500">Your latest seven attempts</p></div><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-300/[.08] text-emerald-200"><TrendingUp className="h-5 w-5"/></span></div>
+              {recentScores.length ? <>
+                <div className="mt-8 flex h-40 items-end gap-2 border-b border-white/10 pb-2">
+                  {recentScores.map((attempt, index) => <div key={attempt.id} className="group flex h-full flex-1 flex-col justify-end">
+                    <div className="mb-2 text-center text-[10px] text-emerald-100 opacity-0 transition group-hover:opacity-100">{attempt.score}%</div>
+                    <div className="score-bar w-full rounded-t-lg" style={{ height: `${Math.max(8, Math.min(100, Number(attempt.score) || 0))}%`, animationDelay: `${index * 70}ms` }} title={`${attempt.quiz_title || 'Quiz'} · ${attempt.score}%`}/>
+                  </div>)}
+                </div>
+                <div className="mt-2 flex justify-between text-[10px] text-slate-600"><span>Older</span><span>Latest</span></div>
+                <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/[.06] bg-white/[.035] p-4"><span className="text-xs text-slate-400">Overall average</span><span className="text-xl font-semibold text-emerald-100"><CountUp value={average} suffix="%"/></span></div>
+              </> : <div className="mt-7 rounded-2xl border border-dashed border-white/10 px-4 py-9 text-center"><span className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-white/[.05] text-slate-400"><Target className="h-5 w-5"/></span><p className="mt-3 text-sm font-semibold">Your progress starts here</p><p className="mt-1 text-xs text-slate-500">Finish a mock test to see your score trend.</p><button onClick={() => router.push('/quizzes')} className="mt-4 text-xs font-bold text-emerald-200">Browse tests <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>}
+            </section>
+          </AnimatedContent>
+        </div>
+
+        <AnimatedContent delay={80}>
+          <section className="dashboard-panel mt-5 overflow-hidden rounded-[1.7rem]">
+            <div className="flex items-center justify-between gap-3 border-b border-white/[.07] px-5 py-5 sm:px-6">
+              <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-violet-200/75">Stay on track</p><h2 className="mt-1 text-lg font-semibold">Recent activity</h2><p className="mt-1 text-xs text-slate-500">Your latest completed tests</p></div>
+              <button onClick={() => router.push('/history')} className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-200">Full history <ArrowRight className="h-3.5 w-3.5"/></button>
+            </div>
+            {attempts.length ? <div className="divide-y divide-white/[.055]">
+              {attempts.slice(0, 4).map(attempt => <div key={attempt.id} className="flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-white/[.025] sm:px-6">
+                <div className="flex min-w-0 items-center gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-200/10 bg-emerald-300/[.07] text-emerald-200"><CheckCircle2 className="h-5 w-5"/></span><div className="min-w-0"><p className="truncate text-sm font-semibold">{attempt.quiz_title || 'Quiz attempt'}</p><p className="mt-1 text-[11px] text-slate-500">{attempt.completed_at ? new Date(attempt.completed_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently completed'}</p></div></div>
+                <span className="shrink-0 rounded-full border border-emerald-200/10 bg-emerald-300/[.08] px-3 py-1.5 text-xs font-bold text-emerald-100">{attempt.score}%</span>
+              </div>)}
+            </div> : <p className="p-8 text-center text-sm text-slate-400">You haven’t completed a test yet. Your results will show up here.</p>}
+          </section>
+        </AnimatedContent>
+
+        <footer className="mt-8 flex items-center justify-between gap-3 text-[11px] text-slate-600"><span>Stay curious. Keep learning.</span><span>{quizzes.length} tests <span className="px-1 text-slate-700">·</span> {resourceCount} resources</span></footer>
+      </main>
+
+      <nav className="dashboard-mobile-nav fixed inset-x-3 bottom-3 z-40 flex justify-around rounded-2xl p-2 backdrop-blur-2xl md:hidden">
+        <MobileItem icon={Activity} label="Home" active onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}/>
+        <MobileItem icon={Layers} label="Tests" onClick={() => router.push('/quizzes')}/>
+        <MobileItem icon={FileText} label="Files" onClick={() => router.push('/resources')}/>
+        <MobileItem icon={History} label="Results" onClick={() => router.push('/history')}/>
+      </nav>
+      <StudentChatWidget user={user}/>
+    </div>
+  );
 }
 
-function NavItem({icon:Icon,label,active,onClick}:{icon:typeof Activity;label:string;active?:boolean;onClick:()=>void}) { return <button onClick={onClick} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition ${active?'bg-emerald-300/[.09] font-semibold text-emerald-100':'text-slate-400 hover:bg-white/[.04] hover:text-white'}`}><Icon className="h-4 w-4"/>{label}</button>; }
-function MobileItem({icon:Icon,label,active,onClick}:{icon:typeof Activity;label:string;active?:boolean;onClick:()=>void}) { return <button onClick={onClick} className={`flex min-w-14 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-medium ${active?'text-emerald-200':'text-slate-400'}`}><Icon className="h-5 w-5"/>{label}</button>; }
-function StatCard({icon:Icon,label,value,hint}:{icon:typeof Activity;label:string;value:string|number;hint:string}) { return <div className="rounded-2xl border border-white/[.08] bg-white/[.025] p-4"><div className="flex items-center justify-between"><span className="text-sm text-slate-400">{label}</span><Icon className="h-4 w-4 text-emerald-200"/></div><p className="mt-3 truncate text-2xl font-semibold">{value}</p><p className="mt-1 truncate text-xs text-slate-500">{hint}</p></div>; }
+function NavItem({ icon: Icon, label, active, onClick }: { icon: IconComponent; label: string; active?: boolean; onClick: () => void }) {
+  return <button onClick={onClick} className={`dashboard-nav-item flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition ${active ? 'is-active' : 'text-slate-400 hover:bg-white/[.04] hover:text-white'}`}><Icon className="h-4 w-4"/>{label}</button>;
+}
+
+function MobileItem({ icon: Icon, label, active, onClick }: { icon: IconComponent; label: string; active?: boolean; onClick: () => void }) {
+  return <button onClick={onClick} className={`flex min-w-14 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-semibold transition ${active ? 'text-emerald-200' : 'text-slate-400'}`}><Icon className="h-5 w-5"/>{label}</button>;
+}
+
+function MetricCard({ icon: Icon, label, value, suffix = '', hint, accent }: { icon: IconComponent; label: string; value: number | string; suffix?: string; hint: string; accent: 'emerald' | 'cyan' | 'violet' }) {
+  const accentClass = accent === 'emerald' ? 'text-emerald-200 bg-emerald-300/10' : accent === 'cyan' ? 'text-cyan-200 bg-cyan-300/10' : 'text-violet-200 bg-violet-300/10';
+  return <SpotlightCard className="rounded-2xl p-4 sm:p-5">
+    <div className="relative z-10 flex items-start justify-between gap-3"><div><p className="text-xs font-medium text-slate-400">{label}</p><p className="mt-2 text-2xl font-semibold tracking-tight">{typeof value === 'number' ? <CountUp value={value}/> : value}{suffix}</p></div><span className={`grid h-10 w-10 place-items-center rounded-xl ${accentClass}`}><Icon className="h-4.5 w-4.5"/></span></div>
+    <p className="relative z-10 mt-2 truncate text-[11px] text-slate-600">{hint}</p>
+  </SpotlightCard>;
+}
