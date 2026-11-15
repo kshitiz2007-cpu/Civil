@@ -81,7 +81,7 @@ export default function HistoryPage() {
         <div className="p-8 pb-6">
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 font-serif">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-white/20">
-              <Sparkles className="w-5 h-5 text-white" />
+              <Sparkles className="h-4 w-4 text-white sm:h-5 sm:w-5" />
             </div>
             Gyankunj
           </h1>
@@ -118,29 +118,29 @@ export default function HistoryPage() {
 
       {/* 4. MAIN CONTENT AREA */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
-        <div className="max-w-4xl mx-auto p-5 md:p-8 pb-32 space-y-8 animate-fade-in text-white">
+        <div className="history-page mx-auto max-w-5xl p-3 pb-28 text-white sm:p-5 md:p-8 md:pb-10">
           
           {/* Header */}
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="history-header mb-4 flex items-center gap-3 md:mt-0 md:mb-7">
             <button 
               onClick={() => router.push('/dashboard')}
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-colors shadow-lg border border-white/10 backdrop-blur-md"
+              className="p-2.5 sm:p-3 bg-white/10 hover:bg-white/20 rounded-xl sm:rounded-2xl transition-colors shadow-lg border border-white/10 backdrop-blur-md"
             >
               <ArrowLeft className="w-5 h-5 text-white" />
             </button>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-white/90 drop-shadow-sm flex items-center gap-3 font-serif tracking-tight">
-                <History className="w-8 h-8 text-emerald-400" /> 
+              <h1 className="text-xl md:text-4xl font-black text-white/90 drop-shadow-sm flex items-center gap-3 font-serif tracking-tight">
+                <History className="h-5 w-5 text-emerald-400 sm:h-8 sm:w-8" /> 
                 My Test History
               </h1>
-              <p className="text-sm md:text-base text-emerald-100/70 font-medium mt-1">Review your past performance and check your answers.</p>
+              <p className="text-[11px] leading-snug md:text-base text-emerald-100/70 font-medium mt-1">Review your past performance and check your answers.</p>
             </div>
           </div>
 
           {/* CONTENT (Glass Containers) */}
-          <div className="bg-white/5 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden divide-y divide-white/10">
+          <div className="history-grid grid grid-cols-2 gap-2.5 sm:gap-4">
             {attempts.length === 0 ? (
-              <div className="p-12 text-center flex flex-col items-center">
+              <div className="col-span-2 p-7 sm:p-12 text-center flex flex-col items-center">
                 <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-4">
                   <Trophy className="w-10 h-10 text-white/30" />
                 </div>
@@ -158,12 +158,27 @@ export default function HistoryPage() {
                 const isPassing = attempt.score >= 40; 
                 
                 return (
-                  <div key={attempt.id} className="p-5 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:bg-white/5 transition-colors group">
-                    
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className={`p-3 rounded-2xl shrink-0 border ${isPassing ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border-rose-500/30'}`}>
-                        <Award className="w-6 h-6" />
+                  <article key={attempt.id} className="history-card flex min-w-0 flex-col gap-2.5 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.09] to-white/[.035] p-2.5 shadow-lg backdrop-blur-xl transition hover:border-emerald-300/20 hover:bg-white/10 sm:gap-3 sm:rounded-3xl sm:p-4">
+                    <div className="flex min-w-0 items-start gap-2">
+                      <div className={`shrink-0 rounded-xl border p-2 sm:p-2.5 ${isPassing ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300' : 'border-rose-500/30 bg-rose-500/15 text-rose-300'}`}>
+                        <Award className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="line-clamp-2 break-words text-[11px] font-bold leading-snug text-white sm:text-sm">{attempt.quiz_title}</h4>
+                        <p className="mt-1 text-[9px] font-medium text-white/45 sm:text-[11px]">{new Date(attempt.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-white/5 bg-black/10 p-2">
+                      <div><p className="text-sm font-black leading-none text-emerald-300 sm:text-base">{attempt.correct ?? 0}</p><p className="mt-1 text-[8px] font-semibold text-white/45 sm:text-[10px]">Correct</p></div>
+                      <div><p className="text-sm font-black leading-none text-rose-300 sm:text-base">{attempt.wrong ?? 0}</p><p className="mt-1 text-[8px] font-semibold text-white/45 sm:text-[10px]">Wrong</p></div>
+                    </div>
+                    <div className="mt-auto flex items-center justify-between gap-1.5 border-t border-white/10 pt-2">
+                      <p className={`text-lg font-black tracking-tight sm:text-2xl ${isPassing ? 'text-emerald-300' : 'text-rose-300'}`}>{attempt.score}%</p>
+                      <button onClick={() => router.push(`/quiz/${attempt.quiz_id}/result`)} className="inline-flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/10 px-2 py-1.5 text-[9px] font-bold text-white transition hover:bg-emerald-500/20 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-2 sm:text-xs">
+                        Review <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </button>
+                    </div>
+                  </article>
                       <div>
                         <h4 className="font-bold text-white text-lg line-clamp-1">{attempt.quiz_title}</h4>
                         <div className="flex items-center gap-3 mt-1.5 text-sm font-medium text-white/50">
