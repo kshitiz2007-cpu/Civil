@@ -2,6 +2,8 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from 'react';
+import SpotlightCard from '@/components/reactbits/SpotlightCard';
+import AnimatedContent from '@/components/reactbits/AnimatedContent';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { 
@@ -177,10 +179,10 @@ export default function StudentResourcesPage() {
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
-        <div className="max-w-5xl mx-auto p-5 md:p-8 pb-32 space-y-8 animate-fade-in text-white">
+        <div className="resources-main max-w-5xl mx-auto p-4 md:p-8 pb-28 space-y-6 md:space-y-8 animate-fade-in text-white">
           
           {/* Header */}
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="resources-header flex items-center gap-4 mt-2 md:mt-0">
             <button 
               onClick={() => activeSubject ? setActiveSubject(null) : router.push('/dashboard')}
               className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-colors shadow-lg border border-white/10 backdrop-blur-md"
@@ -188,7 +190,7 @@ export default function StudentResourcesPage() {
               <ChevronLeft className="w-6 h-6 text-white" />
             </button>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-white/90 drop-shadow-sm flex items-center gap-3 font-serif tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-black text-white/90 drop-shadow-sm flex items-center gap-3 font-serif tracking-tight">
                 {activeSubject ? `${activeSubject} Library` : 'Study Materials'}
               </h1>
               <p className="text-sm md:text-base text-emerald-100/70 font-medium mt-1">
@@ -199,60 +201,53 @@ export default function StudentResourcesPage() {
 
           {/* VIEW 1: MAIN SUBJECT FOLDERS */}
           {!activeSubject && (
-            <div className="animate-fade-in space-y-10">
+            <AnimatedContent className="resources-subject-view space-y-6 md:space-y-10">
               <section>
-                <h2 className="text-lg font-bold text-white/80 mb-6 px-2 flex items-center gap-2 uppercase tracking-widest text-sm">
+                <h2 className="text-xs md:text-sm font-bold text-white/80 mb-3 md:mb-6 px-1 md:px-2 flex items-center gap-2 uppercase tracking-widest text-sm">
                   <FolderOpen className="w-5 h-5 text-emerald-400" /> Subject Folders
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="resources-subject-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-6">
                   {SUBJECT_CONFIG.map((subject) => {
                     const Icon = subject.icon;
                     const count = getResourceCount(subject.id);
                     return (
-                      <div 
-                        key={subject.id}
-                        onClick={() => setActiveSubject(subject.id)}
-                        className={`bg-white/10 backdrop-blur-2xl p-6 rounded-[2rem] cursor-pointer hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] transition-all group border border-white/20 border-b-4 ${subject.border}`}
-                      >
-                        <div className="flex justify-between items-start mb-6">
-                          <div className={`p-4 rounded-2xl ${subject.bg} ${subject.color} group-hover:scale-110 transition-transform shadow-inner border border-white/10`}>
-                            <Icon className="w-7 h-7" />
+                      <SpotlightCard key={subject.id} className={`resources-subject-card group rounded-2xl border-b-2 ${subject.border}`}>
+                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex h-full w-full flex-col items-start p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:p-6">
+                          <div className="mb-4 flex w-full items-start justify-between sm:mb-6">
+                            <span className={`resources-subject-icon rounded-xl border border-white/10 p-2.5 shadow-inner transition-transform group-hover:scale-105 sm:rounded-2xl sm:p-4 ${subject.bg} ${subject.color}`}>
+                              <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                            </span>
+                            <ChevronRight className="mt-1 h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-emerald-200"/>
                           </div>
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors tracking-tight">
-                            {subject.id}
-                          </h3>
-                          <span className="text-[11px] font-bold text-white/50 uppercase tracking-[0.2em]">
-                            {count} Files
-                          </span>
-                        </div>
-                      </div>
+                          <h3 className="text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-xl">{subject.id}</h3>
+                          <span className="mt-1 text-[9px] font-bold uppercase tracking-[.15em] text-white/45 sm:text-[11px] sm:tracking-[.2em]">{count} Files</span>
+                        </button>
+                      </SpotlightCard>
                     )
                   })}
                 </div>
               </section>
-            </div>
+            </AnimatedContent>
           )}
 
           {/* VIEW 2: SUBSECTIONS & RESOURCES (ACCORDIONS) */}
           {activeSubject && (
-            <div className="animate-fade-in space-y-8">
+            <AnimatedContent className="resources-module-view space-y-5 md:space-y-8">
               
               {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-white/50" />
+              <div className="resources-search relative">
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50 sm:left-5 sm:h-6 sm:w-6" />
                 <input 
                   type="text" 
                   placeholder={`Search ${activeSubject} materials...`} 
-                  className="w-full pl-14 pr-6 py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-white/50 rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg text-lg"
+                  className="w-full rounded-2xl border border-white/15 bg-white/[.07] py-3.5 pl-11 pr-4 text-sm text-white shadow-lg backdrop-blur-xl placeholder:text-white/45 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 sm:rounded-[2rem] sm:py-5 sm:pl-14 sm:pr-6 sm:text-lg"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
 
               {/* Accordion List wrapper */}
-              <div className="flex flex-col gap-4">
+              <div className="resources-accordion-list flex flex-col gap-3 md:gap-4">
                 {Object.keys(groupedResources).length === 0 ? (
                   <div className="bg-white/5 backdrop-blur-xl p-12 text-center border-dashed border-2 border-white/20 rounded-[2rem]">
                     <FileText className="w-12 h-12 text-white/30 mx-auto mb-4" />
@@ -268,31 +263,31 @@ export default function StudentResourcesPage() {
                         {/* Clickable Accordion Header */}
                         <button 
                           onClick={() => toggleSection(subsection)}
-                          className="w-full flex items-center justify-between bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/10 hover:bg-white/15 transition-all shadow-md group text-left"
+                          className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.07] p-3.5 text-left shadow-md backdrop-blur-md transition-all hover:bg-white/10 group sm:rounded-3xl sm:p-5"
                         >
-                          <h2 className="text-lg font-bold text-white flex items-center gap-3 tracking-tight group-hover:text-emerald-300 transition-colors">
-                            <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
+                          <h2 className="flex min-w-0 flex-1 items-center gap-2 text-sm font-bold tracking-tight text-white sm:gap-3 sm:text-lg group-hover:text-emerald-300 transition-colors">
+                            <Layers className="h-4 w-4 shrink-0 text-emerald-400 sm:h-5 sm:w-5" /> <span className="truncate">{subsection}</span><span className="rounded-full border border-white/10 bg-white/[.06] px-2 py-1 text-[9px] font-semibold text-white/50">{sectionResources.length}</span>
                           </h2>
                           <ChevronRight className={`w-5 h-5 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-90 text-emerald-400' : ''}`} />
                         </button>
                         
                         {/* Collapsible Content Grid */}
                         {isOpen && (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300 p-1">
+                          <div className="resources-grid grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-300 p-0.5 sm:gap-4">
                             {sectionResources.map((resource) => (
-                              <div key={resource.id} className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 shadow-lg flex items-center justify-between gap-4 hover:bg-white/15 transition-all group">
+                              <div key={resource.id} className="resources-card group flex min-w-0 flex-col justify-between gap-2 rounded-xl border border-white/15 bg-white/[.07] p-2.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 sm:rounded-2xl sm:p-4">
                                 
-                                <div className="flex items-center gap-4 overflow-hidden">
-                                  <div className={`p-4 rounded-2xl shrink-0 shadow-inner border border-white/10 ${
+                                <div className="flex min-w-0 items-center gap-2 overflow-hidden sm:gap-3">
+                                  <div className={`resources-file-icon shrink-0 rounded-lg border border-white/10 p-2 shadow-inner sm:rounded-xl sm:p-3 ${
                                     resource.file_type === 'pdf' ? 'bg-rose-500/20 text-rose-400' : 'bg-indigo-500/20 text-indigo-400'
                                   }`}>
-                                    {resource.file_type === 'pdf' ? <FileText className="w-6 h-6" /> : <ExternalLink className="w-6 h-6" />}
+                                    {resource.file_type === 'pdf' ? <FileText className="h-4 w-4 sm:h-5 sm:w-5" /> : <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" />}
                                   </div>
                                   <div className="overflow-hidden">
-                                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors truncate">
+                                    <h3 className="line-clamp-2 break-words text-[10px] font-bold leading-[1.25] text-white transition-colors group-hover:text-emerald-300 sm:text-sm">
                                       {resource.title}
                                     </h3>
-                                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] bg-white/5 px-2 py-1 rounded-md border border-white/10">
+                                    <span className="mt-1 inline-block rounded-md border border-white/10 bg-white/5 px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider text-white/50 sm:px-2 sm:text-[10px]">
                                       {(resource.file_type || 'LINK').toUpperCase()}
                                     </span>
                                   </div>
@@ -302,9 +297,9 @@ export default function StudentResourcesPage() {
                                   href={resource.file_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="shrink-0 p-4 bg-white/10 hover:bg-emerald-500 text-white rounded-2xl transition-all shadow-md border border-white/10 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                                  className="flex w-full items-center justify-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2 py-2 text-white shadow-md transition-all hover:bg-emerald-500 sm:w-auto sm:rounded-xl sm:p-3"
                                 >
-                                  {resource.file_type === 'pdf' ? <Download className="w-5 h-5" /> : <ExternalLink className="w-5 h-5" />}
+                                  {resource.file_type === 'pdf' ? <Download className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> : <ExternalLink className="h-3.5 w-3.5 sm:h-5 sm:w-5" />}
                                 </a>
 
                               </div>
@@ -316,7 +311,7 @@ export default function StudentResourcesPage() {
                   })
                 )}
               </div>
-            </div>
+            </AnimatedContent>
           )}
         </div>
       </main>
