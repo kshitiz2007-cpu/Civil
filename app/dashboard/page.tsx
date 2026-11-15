@@ -106,8 +106,8 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      <main className="relative z-10 mx-auto max-w-[1440px] px-4 pb-28 pt-5 sm:px-6 md:ml-[258px] md:px-9 md:py-9 xl:px-12">
-        <header className="mb-7 flex items-center justify-between gap-3">
+      <main className="dashboard-main relative z-10 mx-auto max-w-[1440px] px-3 pb-24 pt-4 sm:px-6 md:ml-[258px] md:px-9 md:py-9 xl:px-12">
+        <header className="dashboard-header mb-5 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-400"><CalendarDays className="h-3.5 w-3.5 text-emerald-200"/>{today}</div>
             <h1 className="text-[1.7rem] font-semibold tracking-[-.045em] sm:text-3xl lg:text-4xl">Welcome back, <span className="dashboard-gradient-text">{firstName}</span></h1>
@@ -120,10 +120,10 @@ export default function DashboardPage() {
         </header>
 
         <AnimatedContent>
-          <section className="dashboard-hero relative overflow-hidden rounded-[2rem] border border-emerald-200/15 p-6 sm:p-8 lg:p-10">
+          <section className="dashboard-hero relative overflow-hidden rounded-[1.5rem] border border-emerald-200/15 p-4 sm:rounded-[2rem] sm:p-8 lg:p-10">
             <div className="dashboard-hero-orb absolute -right-20 -top-36 h-[25rem] w-[25rem] rounded-full"/>
             <div className="dashboard-hero-grid absolute inset-0 opacity-40"/>
-            <div className="relative grid gap-8 lg:grid-cols-[1fr_290px] lg:items-center">
+            <div className="relative grid gap-5 lg:grid-cols-[1fr_290px] lg:items-center">
               <div className="max-w-2xl">
                 <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-emerald-200/[.08] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.14em] text-emerald-100"><Sparkles className="h-3.5 w-3.5"/> Your learning space</span>
                 <h2 className="mt-5 max-w-xl text-3xl font-semibold leading-[1.12] tracking-[-.045em] sm:text-4xl lg:text-[2.8rem]">Make progress that <span className="dashboard-gradient-text">adds up.</span></h2>
@@ -151,20 +151,20 @@ export default function DashboardPage() {
           </section>
         </AnimatedContent>
 
-        <section className="mt-5 grid gap-3 sm:grid-cols-3">
+        <section className="dashboard-metrics mt-4 grid grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
           <AnimatedContent delay={60}><MetricCard icon={Layers} label="Available tests" value={quizzes.length} hint="Ready when you are" accent="emerald"/></AnimatedContent>
           <AnimatedContent delay={120}><MetricCard icon={FileText} label="Study resources" value={resourceCount} hint="Explore your materials" accent="cyan"/></AnimatedContent>
           <AnimatedContent delay={180}><MetricCard icon={Award} label="Latest score" value={attempts.length ? attempts[0].score : '—'} suffix={attempts.length ? '%' : ''} hint={attempts[0]?.quiz_title || 'Complete a test to begin'} accent="violet"/></AnimatedContent>
         </section>
 
-        <div className="mt-8 grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
+        <div className="dashboard-content-grid mt-5 grid gap-4 xl:mt-8 xl:grid-cols-[1.25fr_.75fr] xl:gap-5">
           <AnimatedContent>
-            <section className="dashboard-panel h-full rounded-[1.7rem] p-5 sm:p-6">
+            <section className="dashboard-panel h-full rounded-2xl p-3.5 sm:rounded-[1.7rem] sm:p-6">
               <div className="flex items-end justify-between gap-3">
                 <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-emerald-200/75">Curated for you</p><h2 className="mt-2 text-xl font-semibold tracking-tight">Pick up your practice</h2><p className="mt-1 text-xs text-slate-500 sm:text-sm">Jump back in or try something new.</p></div>
                 <button onClick={() => router.push('/quizzes')} className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-200 transition hover:text-emerald-100">All tests <ChevronRight className="h-4 w-4"/></button>
               </div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="dashboard-quiz-grid mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3">
                 {quizzes.map((quiz, index) => {
                   const done = completedIds.has(quiz.id);
                   return <SpotlightCard key={quiz.id} className="rounded-2xl p-4">
@@ -206,8 +206,8 @@ export default function DashboardPage() {
         </div>
 
         <AnimatedContent delay={80}>
-          <section className="dashboard-panel mt-5 overflow-hidden rounded-[1.7rem]">
-            <div className="flex items-center justify-between gap-3 border-b border-white/[.07] px-5 py-5 sm:px-6">
+          <section className="dashboard-panel mt-4 overflow-hidden rounded-2xl sm:mt-5 sm:rounded-[1.7rem]">
+            <div className="flex items-center justify-between gap-3 border-b border-white/[.07] px-4 py-4 sm:px-6 sm:py-5">
               <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-violet-200/75">Stay on track</p><h2 className="mt-1 text-lg font-semibold">Recent activity</h2><p className="mt-1 text-xs text-slate-500">Your latest completed tests</p></div>
               <button onClick={() => router.push('/history')} className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-200">Full history <ArrowRight className="h-3.5 w-3.5"/></button>
             </div>
@@ -220,7 +220,7 @@ export default function DashboardPage() {
           </section>
         </AnimatedContent>
 
-        <footer className="mt-8 flex items-center justify-between gap-3 text-[11px] text-slate-600"><span>Stay curious. Keep learning.</span><span>{quizzes.length} tests <span className="px-1 text-slate-700">·</span> {resourceCount} resources</span></footer>
+        <footer className="mt-5 flex items-center justify-between gap-3 text-[11px] text-slate-600 sm:mt-8"><span>Stay curious. Keep learning.</span><span>{quizzes.length} tests <span className="px-1 text-slate-700">·</span> {resourceCount} resources</span></footer>
       </main>
 
       <nav className="dashboard-mobile-nav fixed inset-x-3 bottom-3 z-40 flex justify-around rounded-2xl p-2 backdrop-blur-2xl md:hidden">
@@ -244,7 +244,7 @@ function MobileItem({ icon: Icon, label, active, onClick }: { icon: IconComponen
 
 function MetricCard({ icon: Icon, label, value, suffix = '', hint, accent }: { icon: IconComponent; label: string; value: number | string; suffix?: string; hint: string; accent: 'emerald' | 'cyan' | 'violet' }) {
   const accentClass = accent === 'emerald' ? 'text-emerald-200 bg-emerald-300/10' : accent === 'cyan' ? 'text-cyan-200 bg-cyan-300/10' : 'text-violet-200 bg-violet-300/10';
-  return <SpotlightCard className="rounded-2xl p-4 sm:p-5">
+  return <SpotlightCard className="dashboard-metric-card rounded-xl p-2.5 sm:rounded-2xl sm:p-5">
     <div className="relative z-10 flex items-start justify-between gap-3"><div><p className="text-xs font-medium text-slate-400">{label}</p><p className="mt-2 text-2xl font-semibold tracking-tight">{typeof value === 'number' ? <CountUp value={value}/> : value}{suffix}</p></div><span className={`grid h-10 w-10 place-items-center rounded-xl ${accentClass}`}><Icon className="h-4.5 w-4.5"/></span></div>
     <p className="relative z-10 mt-2 truncate text-[11px] text-slate-600">{hint}</p>
   </SpotlightCard>;
