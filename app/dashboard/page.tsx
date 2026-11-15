@@ -1,6 +1,7 @@
 'use client';
 
 import StudentBottomNav from '@/components/StudentBottomNav';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -64,14 +65,7 @@ export default function DashboardPage() {
   const firstName = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Scholar';
   const today = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
 
-  if (loading) {
-    return <div className="grid min-h-screen place-items-center bg-[#07111f]">
-      <div className="flex flex-col items-center gap-4">
-        <span className="grid h-14 w-14 place-items-center rounded-2xl border border-emerald-200/20 bg-emerald-300/10 text-emerald-200"><Loader2 className="h-7 w-7 animate-spin"/></span>
-        <p className="text-sm text-slate-400">Preparing your learning space…</p>
-      </div>
-    </div>;
-  }
+  if (loading) return <LoadingSkeleton label="Loading dashboard page" />;
 
   return (
     <div className="app-theme min-h-screen text-[var(--app-text)]">
