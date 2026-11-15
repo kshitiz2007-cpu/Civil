@@ -60,6 +60,24 @@ export default function StudentQuizzesPage() {
     setOpenSections(prev => ({ ...prev, [sectionName]: !prev[sectionName] }));
   };
 
+  const selectSubject = (subjectId: string) => {
+    setSearchQuery('');
+    setOpenSections({});
+    setActiveSubject(subjectId);
+    requestAnimationFrame(() => {
+      document.querySelector('.quizzes-main')?.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
+  const backToSubjects = () => {
+    setSearchQuery('');
+    setOpenSections({});
+    setActiveSubject(null);
+    requestAnimationFrame(() => {
+      document.querySelector('.quizzes-main')?.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -180,7 +198,7 @@ export default function StudentQuizzesPage() {
           {/* Header */}
           <div className="quizzes-header flex items-center gap-4 mt-2 md:mt-0">
             <button 
-              onClick={() => activeSubject ? setActiveSubject(null) : router.push('/dashboard')}
+              onClick={() => activeSubject ? backToSubjects() : router.push('/dashboard')}
               className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-colors shadow-lg border border-white/10 backdrop-blur-md"
             >
               <ChevronLeft className="w-6 h-6 text-white" />
@@ -208,7 +226,7 @@ export default function StudentQuizzesPage() {
                     const count = getQuizCount(subject.id);
                     return (
                       <SpotlightCard key={subject.id} className="quizzes-subject-card group relative isolate overflow-hidden rounded-[22px] border p-0 shadow-[0_12px_30px_rgba(0,0,0,.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 sm:rounded-[26px]">
-                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex min-h-[142px] h-full w-full flex-col items-start justify-between gap-3 p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:min-h-[190px] sm:p-5">
+                        <button type="button" onClick={() => selectSubject(subject.id)} className="relative z-10 flex min-h-[142px] h-full w-full flex-col items-start justify-between gap-3 p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:min-h-[190px] sm:p-5">
                           <div className="flex w-full items-start justify-between">
                             <span className={`quizzes-subject-icon grid h-10 w-10 place-items-center rounded-2xl border shadow-lg transition-transform group-hover:scale-105 sm:h-12 sm:w-12 ${subject.bg} ${subject.color} border-white/15`}>
                               <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
