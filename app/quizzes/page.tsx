@@ -2,6 +2,8 @@
 export const dynamic = "force-dynamic";
 
 import ThemeSelector from '@/components/ThemeSelector';
+import SpotlightCard from '@/components/reactbits/SpotlightCard';
+import AnimatedContent from '@/components/reactbits/AnimatedContent';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -195,10 +197,10 @@ export default function StudentQuizzesPage() {
 
       {/* 4. MAIN CONTENT AREA */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
-        <div className="max-w-5xl mx-auto p-5 md:p-8 pb-32 space-y-8 animate-fade-in text-white">
+        <div className="quizzes-main max-w-5xl mx-auto p-4 md:p-8 pb-28 space-y-6 md:space-y-8 animate-fade-in text-white">
           
           {/* Header */}
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="quizzes-header flex items-center gap-4 mt-2 md:mt-0">
             <button 
               onClick={() => activeSubject ? setActiveSubject(null) : router.push('/dashboard')}
               className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-colors shadow-lg border border-white/10 backdrop-blur-md"
@@ -206,7 +208,7 @@ export default function StudentQuizzesPage() {
               <ChevronLeft className="w-6 h-6 text-white" />
             </button>
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-white/90 drop-shadow-sm flex items-center gap-3 font-serif tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-black text-white/90 drop-shadow-sm flex items-center gap-3 font-serif tracking-tight">
                 {activeSubject ? `${activeSubject} Modules` : 'Test Series'}
               </h1>
               <p className="text-sm md:text-base text-emerald-100/70 font-medium mt-1">
@@ -217,60 +219,53 @@ export default function StudentQuizzesPage() {
 
           {/* VIEW 1: MAIN SUBJECT FOLDERS */}
           {!activeSubject && (
-            <div className="animate-fade-in space-y-10">
+            <AnimatedContent className="quizzes-subject-view space-y-6 md:space-y-10">
               <section>
-                <h2 className="text-lg font-bold text-white/80 mb-6 px-2 flex items-center gap-2 uppercase tracking-widest text-sm">
+                <h2 className="text-xs md:text-sm font-bold text-white/80 mb-3 md:mb-6 px-1 md:px-2 flex items-center gap-2 uppercase tracking-widest">
                   <FolderOpen className="w-5 h-5 text-emerald-400" /> General Studies Sections
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="quizzes-subject-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-6">
                   {SUBJECT_CONFIG.map((subject) => {
                     const Icon = subject.icon;
                     const count = getQuizCount(subject.id);
                     return (
-                      <div 
-                        key={subject.id}
-                        onClick={() => setActiveSubject(subject.id)}
-                        className={`bg-white/10 backdrop-blur-2xl p-6 rounded-[2rem] cursor-pointer hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] transition-all group border border-white/20 border-b-4 ${subject.border}`}
-                      >
-                        <div className="flex justify-between items-start mb-6">
-                          <div className={`p-4 rounded-2xl ${subject.bg} ${subject.color} group-hover:scale-110 transition-transform shadow-inner border border-white/10`}>
-                            <Icon className="w-7 h-7" />
+                      <SpotlightCard key={subject.id} className={`quizzes-subject-card rounded-2xl border-b-2 ${subject.border}`}>
+                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex h-full w-full flex-col items-start p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:p-6">
+                          <div className="mb-4 flex w-full items-start justify-between sm:mb-6">
+                            <span className={`quizzes-subject-icon rounded-xl p-2.5 sm:rounded-2xl sm:p-4 ${subject.bg} ${subject.color} border border-white/10 shadow-inner transition-transform group-hover:scale-105`}>
+                              <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                            </span>
+                            <ChevronRight className="mt-1 h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-emerald-200"/>
                           </div>
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors tracking-tight">
-                            {subject.id}
-                          </h3>
-                          <span className="text-[11px] font-bold text-white/50 uppercase tracking-[0.2em]">
-                            {count} Tests
-                          </span>
-                        </div>
-                      </div>
+                          <h3 className="text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-xl">{subject.id}</h3>
+                          <span className="mt-1 text-[9px] font-bold uppercase tracking-[.15em] text-white/45 sm:text-[11px] sm:tracking-[.2em]">{count} Tests</span>
+                        </button>
+                      </SpotlightCard>
                     )
                   })}
                 </div>
               </section>
-            </div>
+            </AnimatedContent>
           )}
 
           {/* VIEW 2: SUBSECTIONS & MODULES (ACCORDIONS) */}
           {activeSubject && (
-            <div className="animate-fade-in space-y-8">
+            <AnimatedContent className="quizzes-module-view space-y-5 md:space-y-8">
               
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-white/50" />
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50 sm:left-5 sm:h-6 sm:w-6" />
                 <input 
                   type="text" 
                   placeholder={`Search ${activeSubject} chapters...`} 
-                  className="w-full pl-14 pr-6 py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-white/50 rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg text-lg"
+                  className="w-full rounded-2xl border border-white/15 bg-white/[.07] py-3.5 pl-11 pr-4 text-sm text-white shadow-lg backdrop-blur-xl placeholder:text-white/45 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 sm:rounded-[2rem] sm:py-5 sm:pl-14 sm:pr-6 sm:text-lg"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
 
               {/* Accordion Container Wrapper */}
-              <div className="flex flex-col gap-4">
+              <div className="quizzes-accordion-list flex flex-col gap-3 md:gap-4">
                 {Object.keys(groupedQuizzes).length === 0 ? (
                   <div className="bg-white/5 backdrop-blur-xl p-12 text-center border-dashed border-2 border-white/20 rounded-[2rem]">
                     <FileText className="w-12 h-12 text-white/30 mx-auto mb-4" />
@@ -286,9 +281,9 @@ export default function StudentQuizzesPage() {
                         {/* Interactive Accordion Tab Controller */}
                         <button 
                           onClick={() => toggleSection(subsection)}
-                          className="w-full flex items-center justify-between bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/10 hover:bg-white/15 transition-all shadow-md group text-left"
+                          className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.07] p-3.5 text-left shadow-md backdrop-blur-md transition-all hover:bg-white/10 group sm:rounded-3xl sm:p-5"
                         >
-                          <h2 className="text-lg font-bold text-white flex items-center gap-3 tracking-tight group-hover:text-emerald-300 transition-colors">
+                          <h2 className="flex items-center gap-2 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:gap-3 sm:text-lg">
                             <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
                           </h2>
                           <ChevronRight className={`w-5 h-5 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-90 text-emerald-400' : ''}`} />
@@ -296,14 +291,14 @@ export default function StudentQuizzesPage() {
                         
                         {/* Collapsible Widescreen Test Modules */}
                         {isOpen && (
-                          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300 p-1">
+                          <div className="flex flex-col gap-2.5 animate-in fade-in slide-in-from-top-2 duration-300 p-1 sm:gap-4">
                             {sectionQuizzes.map((quiz) => {
                               const pastAttempt = getAttempt(quiz.id);
                               return (
-                                <div key={quiz.id} className="bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 border border-white/20 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/15 transition-all group">
+                                <div key={quiz.id} className="quizzes-module-card rounded-2xl border border-white/15 bg-white/[.07] p-3.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 group sm:rounded-[2rem] sm:p-6 md:flex-row md:items-center md:justify-between md:gap-6">
                                   
                                   <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-white mb-4 group-hover:text-emerald-300 transition-colors tracking-tight">
+                                    <h3 className="mb-3 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:mb-4 sm:text-xl">
                                       {quiz.title}
                                     </h3>
                                     <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-white/50">
@@ -324,7 +319,7 @@ export default function StudentQuizzesPage() {
                                     ) : (
                                       <button 
                                         onClick={() => router.push(`/quiz/${quiz.id}`)}
-                                        className="w-full px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                                        className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-xs font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-colors hover:bg-emerald-400 sm:px-8 sm:py-4 sm:text-sm md:w-auto"
                                       >
                                         <PlayCircle className="w-5 h-5" /> Start Module
                                       </button>
