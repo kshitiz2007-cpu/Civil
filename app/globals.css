@@ -519,3 +519,130 @@ button { cursor: pointer; }
     padding: 5px 3px;
   }
 }
+
+
+/* Test series page — compact mobile layout and spotlight cards */
+.quizzes-subject-card {
+  background: linear-gradient(145deg, rgba(18,39,57,.82), rgba(8,24,40,.86));
+  box-shadow: 0 14px 38px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.035);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.quizzes-subject-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 46px rgba(0,0,0,.24), 0 0 28px rgba(45,212,191,.06);
+}
+.quizzes-module-card {
+  background: linear-gradient(145deg, rgba(17,37,55,.84), rgba(8,23,39,.88));
+}
+.quizzes-module-card:hover {
+  border-color: rgba(110,231,183,.22);
+  box-shadow: 0 14px 34px rgba(0,0,0,.18), 0 0 24px rgba(45,212,191,.04);
+}
+@media (max-width: 639px) {
+  .quizzes-main {
+    padding: 13px 12px 94px;
+  }
+  .quizzes-header {
+    gap: 10px;
+    margin-top: 3px;
+  }
+  .quizzes-header > button {
+    flex: 0 0 auto;
+    padding: 9px;
+    border-radius: 12px;
+  }
+  .quizzes-header > button svg {
+    width: 18px;
+    height: 18px;
+  }
+  .quizzes-header h1 {
+    font-size: 21px;
+    line-height: 1.2;
+  }
+  .quizzes-header p {
+    margin-top: 4px;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .quizzes-subject-view > section > h2 {
+    margin-bottom: 10px;
+  }
+  .quizzes-subject-grid {
+    gap: 9px;
+  }
+  .quizzes-subject-card {
+    min-height: 116px;
+    border-radius: 15px;
+  }
+  .quizzes-subject-card > button {
+    padding: 11px;
+  }
+  .quizzes-subject-card > button > div {
+    margin-bottom: 10px;
+  }
+  .quizzes-subject-icon {
+    padding: 8px;
+    border-radius: 10px;
+  }
+  .quizzes-module-view {
+    gap: 14px;
+  }
+  .quizzes-accordion-list {
+    gap: 10px;
+  }
+  .quizzes-accordion-list > div {
+    gap: 8px;
+  }
+  .quizzes-accordion-list > div > button {
+    padding: 11px 12px;
+    border-radius: 13px;
+  }
+  .quizzes-accordion-list > div > button h2 {
+    font-size: 12px;
+  }
+  .quizzes-accordion-list > div > button svg {
+    width: 16px;
+    height: 16px;
+  }
+  .quizzes-module-card {
+    gap: 10px;
+    padding: 11px;
+    border-radius: 14px;
+  }
+  .quizzes-module-card h3 {
+    margin-bottom: 8px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .quizzes-module-card > div:first-child > div {
+    gap: 7px;
+  }
+  .quizzes-module-card > div:first-child > div > span {
+    padding: 6px 8px;
+    gap: 5px;
+    border-radius: 9px;
+    font-size: 9px;
+  }
+  .quizzes-module-card > div:first-child > div > span svg {
+    width: 13px;
+    height: 13px;
+  }
+  .quizzes-module-card > div:last-child > div {
+    padding: 9px 10px;
+    font-size: 10px;
+  }
+  .quizzes-module-card > div:last-child button {
+    padding: 9px 11px;
+    font-size: 10px;
+  }
+  .quizzes-module-card > div:last-child button svg {
+    width: 15px;
+    height: 15px;
+  }
+  .quizzes-main + nav {
+    bottom: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quizzes-subject-card, .quizzes-module-card { transition: none; }
+}
