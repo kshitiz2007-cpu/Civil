@@ -437,3 +437,85 @@ button { cursor: pointer; }
     height: 17px;
   }
 }
+
+
+/* Final mobile polish: compact analytics, activity and bottom actions */
+@media (max-width: 639px) {
+  .dashboard-analytics {
+    padding: 12px;
+  }
+  .dashboard-analytics .dashboard-score-chart {
+    height: 76px;
+    margin-top: 12px;
+    gap: 7px;
+    padding-bottom: 5px;
+  }
+  .dashboard-analytics .dashboard-score-chart > div > div:first-child {
+    display: none;
+  }
+  .dashboard-analytics > div:first-child > div > p {
+    font-size: 9px;
+  }
+  .dashboard-analytics .dashboard-average {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+  .dashboard-analytics .dashboard-average span:first-child {
+    font-size: 10px;
+  }
+  .dashboard-analytics .dashboard-average span:last-child {
+    font-size: 17px;
+  }
+  .dashboard-recent > div:first-child {
+    padding: 12px 13px;
+  }
+  .dashboard-recent > div:first-child h2 {
+    margin-top: 3px;
+    font-size: 15px;
+  }
+  .dashboard-recent > div:first-child p {
+    margin-top: 3px;
+    font-size: 10px;
+  }
+  .dashboard-recent > div.divide-y > .dashboard-activity-row {
+    gap: 9px;
+    padding: 9px 12px;
+    min-height: 58px;
+  }
+  .dashboard-recent .dashboard-activity-row > div > span {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .dashboard-recent .dashboard-activity-row > div > span svg {
+    width: 16px;
+    height: 16px;
+  }
+  .dashboard-recent .dashboard-activity-row p:first-child {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  .dashboard-recent .dashboard-activity-row p:last-child {
+    margin-top: 2px;
+    font-size: 9px;
+  }
+  .dashboard-recent .dashboard-activity-row > span:last-child {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+  .dashboard-main > footer {
+    margin-top: 13px;
+    font-size: 9px;
+  }
+  .dashboard-mobile-nav {
+    right: 76px;
+    padding: 5px 4px;
+    justify-content: space-between;
+  }
+  .dashboard-mobile-nav button {
+    min-width: 0;
+    flex: 1;
+    padding: 5px 3px;
+  }
+}
