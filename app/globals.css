@@ -125,3 +125,130 @@ button { cursor: pointer; }
   .kinetic-gradient { animation: none !important; }
   .kinetic-gradient { background-position: 50% 50%; }
 }
+
+
+/* Student dashboard — React Bits-inspired Spotlight, Count Up and reveal surfaces */
+.dashboard-sidebar {
+  background: linear-gradient(180deg, rgba(7, 20, 34, .96), rgba(7, 17, 30, .91));
+  box-shadow: 18px 0 70px rgba(0,0,0,.12);
+}
+.dashboard-nav-item.is-active {
+  color: #c8fff0;
+  background: linear-gradient(100deg, rgba(52,211,153,.15), rgba(34,211,238,.055));
+  border: 1px solid rgba(110,231,183,.12);
+  box-shadow: inset 3px 0 0 rgba(110,231,183,.8), 0 8px 24px rgba(0,0,0,.12);
+}
+.dashboard-gradient-text {
+  color: transparent;
+  background: linear-gradient(105deg, #a7f3d0 0%, #5eead4 35%, #67e8f9 68%, #c4b5fd 100%);
+  background-size: 180% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: dashboard-gradient-shift 8s ease-in-out infinite;
+}
+.dashboard-hero {
+  background:
+    radial-gradient(ellipse at 78% 20%, rgba(45,212,191,.13), transparent 36%),
+    linear-gradient(125deg, rgba(11,39,52,.96), rgba(8,25,42,.94) 52%, rgba(12,29,48,.96));
+  box-shadow: 0 28px 90px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.045);
+}
+.dashboard-hero-orb {
+  border: 1px solid rgba(110,231,183,.13);
+  box-shadow: 0 0 0 24px rgba(45,212,191,.025), 0 0 0 52px rgba(45,212,191,.018), inset 0 0 70px rgba(45,212,191,.07);
+  animation: dashboard-orbit 22s linear infinite;
+}
+.dashboard-hero-grid {
+  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(110deg, black, transparent 65%);
+}
+.dashboard-primary-button {
+  background: linear-gradient(105deg, #a7f3d0, #5eead4 55%, #67e8f9);
+  box-shadow: 0 10px 30px rgba(45,212,191,.18);
+}
+.dashboard-primary-button:hover { box-shadow: 0 14px 38px rgba(45,212,191,.28); }
+.dashboard-panel {
+  background: linear-gradient(145deg, rgba(14,31,48,.82), rgba(8,21,36,.78));
+  border: 1px solid rgba(190,231,255,.09);
+  box-shadow: 0 18px 55px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.025);
+}
+.dashboard-mobile-nav {
+  border: 1px solid rgba(190,231,255,.14);
+  background: rgba(7,19,33,.91);
+  box-shadow: 0 16px 55px rgba(0,0,0,.38), 0 0 35px rgba(45,212,191,.06);
+}
+.rb-spotlight-card {
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  --spotlight-color: rgba(94,234,212,.13);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(190,231,255,.105);
+  background: linear-gradient(145deg, rgba(18,39,57,.76), rgba(8,24,40,.78));
+  box-shadow: 0 12px 34px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.035);
+  transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+.rb-spotlight-card::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(260px circle at var(--spotlight-x) var(--spotlight-y), var(--spotlight-color), transparent 68%);
+  transition: opacity .3s ease;
+}
+.rb-spotlight-card::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(220px circle at var(--spotlight-x) var(--spotlight-y), rgba(153,246,228,.32), transparent 72%);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+  transition: opacity .3s ease;
+}
+.rb-spotlight-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(110,231,183,.24);
+  box-shadow: 0 18px 44px rgba(0,0,0,.2), 0 0 30px rgba(45,212,191,.045);
+}
+.rb-spotlight-card:hover::before, .rb-spotlight-card:hover::after { opacity: 1; }
+.rb-reveal {
+  opacity: 0;
+  transform: translateY(22px) scale(.99);
+  filter: blur(7px);
+  transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1), filter .7s ease;
+}
+.rb-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+.score-bar {
+  transform-origin: bottom;
+  background: linear-gradient(180deg, #a7f3d0 0%, #34d399 48%, rgba(20,184,166,.35) 100%);
+  box-shadow: 0 0 18px rgba(52,211,153,.13);
+  animation: score-bar-rise .8s cubic-bezier(.2,.75,.25,1) both;
+  transition: filter .2s ease, box-shadow .2s ease;
+}
+.score-bar:hover { filter: saturate(1.35) brightness(1.12); box-shadow: 0 0 24px rgba(52,211,153,.28); }
+@keyframes score-bar-rise {
+  from { transform: scaleY(.08); opacity: .3; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+@keyframes dashboard-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes dashboard-orbit { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-gradient-text, .dashboard-hero-orb, .score-bar { animation: none !important; }
+  .rb-reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .rb-spotlight-card { transition: none; }
+}
