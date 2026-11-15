@@ -1,5 +1,6 @@
 'use client';
-export const dynamic = "force-dynamic";
+
+import StudentBottomNav from '@/components/StudentBottomNav';export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from 'react';
 import SpotlightCard from '@/components/reactbits/SpotlightCard';
@@ -157,25 +158,7 @@ export default function StudentResourcesPage() {
       </aside>
 
       {/* MOBILE FLOATING GLASS DOCK */}
-      <nav className="md:hidden fixed bottom-6 left-4 right-4 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl z-50 flex justify-between px-2 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
-        <button onClick={() => router.push('/dashboard')} className="flex flex-col items-center p-2 text-white/50 hover:text-white transition-colors">
-          <LayoutDashboard className="w-6 h-6 mb-1" />
-          <span className="text-[10px] font-bold">Home</span>
-        </button>
-        <button onClick={() => router.push('/quizzes')} className="flex flex-col items-center p-2 text-white/50 hover:text-white transition-colors">
-          <Layers className="w-6 h-6 mb-1" />
-          <span className="text-[10px] font-bold">Tests</span>
-        </button>
-        <button className="flex flex-col items-center p-2 text-emerald-300 relative">
-          <div className="absolute inset-0 bg-white/10 rounded-xl"></div>
-          <FileText className="w-6 h-6 mb-1 relative z-10" />
-          <span className="text-[10px] font-bold relative z-10">Files</span>
-        </button>
-        <button onClick={() => router.push('/history')} className="flex flex-col items-center p-2 text-white/50 hover:text-white transition-colors">
-          <History className="w-6 h-6 mb-1" />
-          <span className="text-[10px] font-bold">History</span>
-        </button>
-      </nav>
+      <StudentBottomNav active="files" />
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
