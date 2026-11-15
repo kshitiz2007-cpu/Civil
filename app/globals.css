@@ -1737,3 +1737,55 @@ button:disabled { cursor: not-allowed; }
     transform: none;
   }
 }
+
+
+/* Test Series subject cards — align perceived depth with the dashboard */
+.quizzes-page .quizzes-subject-card {
+  border-color: rgba(110,231,183,.38) !important;
+  background:
+    radial-gradient(125% 95% at 100% 0%, rgba(45,212,191,.17), transparent 57%),
+    linear-gradient(145deg, rgba(20,48,66,.99), rgba(7,21,39,.99) 64%, rgba(17,29,55,.98));
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.075),
+    0 9px 20px rgba(0,0,0,.22),
+    0 17px 34px rgba(0,0,0,.15),
+    0 0 16px rgba(45,212,191,.09),
+    inset 0 1px 0 rgba(255,255,255,.11),
+    inset 0 -2px 0 rgba(0,0,0,.22);
+  transition: border-color .24s ease, transform .24s ease, box-shadow .24s ease;
+}
+.quizzes-page .quizzes-subject-card::before {
+  height: 2px;
+  opacity: .95;
+  background: linear-gradient(90deg, transparent, rgba(167,243,208,.95), rgba(94,234,212,.45), rgba(165,180,252,.55), transparent);
+}
+.quizzes-page .quizzes-subject-card .quizzes-subject-icon {
+  border-color: rgba(255,255,255,.13);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.07),
+    0 7px 16px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(0,0,0,.16);
+}
+@media (hover: hover) and (pointer: fine) {
+  .quizzes-page .quizzes-subject-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(110,231,183,.58) !important;
+    box-shadow:
+      0 3px 0 rgba(255,255,255,.07),
+      0 15px 27px rgba(0,0,0,.25),
+      0 24px 42px rgba(0,0,0,.17),
+      0 0 22px rgba(45,212,191,.14),
+      inset 0 1px 0 rgba(255,255,255,.13),
+      inset 0 -2px 0 rgba(0,0,0,.2);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .quizzes-page .quizzes-subject-card:active {
+    transform: translateY(1px) scale(.99);
+    box-shadow: 0 4px 12px rgba(0,0,0,.23), inset 0 1px 0 rgba(255,255,255,.09);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quizzes-page .quizzes-subject-card { transition: none; transform: none; }
+}
