@@ -199,20 +199,20 @@ export default function DashboardPage() {
                   </div>)}
                 </div>
                 <div className="mt-2 flex justify-between text-[10px] text-slate-600"><span>Older</span><span>Latest</span></div>
-                <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/[.06] bg-white/[.035] p-4"><span className="text-xs text-slate-400">Overall average</span><span className="text-xl font-semibold text-emerald-100"><CountUp value={average} suffix="%"/></span></div>
+                <div className="dashboard-average mt-5 flex items-center justify-between rounded-2xl border border-white/[.06] bg-white/[.035] p-4"><span className="text-xs text-slate-400">Overall average</span><span className="text-xl font-semibold text-emerald-100"><CountUp value={average} suffix="%"/></span></div>
               </> : <div className="mt-7 rounded-2xl border border-dashed border-white/10 px-4 py-9 text-center"><span className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-white/[.05] text-slate-400"><Target className="h-5 w-5"/></span><p className="mt-3 text-sm font-semibold">Your progress starts here</p><p className="mt-1 text-xs text-slate-500">Finish a mock test to see your score trend.</p><button onClick={() => router.push('/quizzes')} className="mt-4 text-xs font-bold text-emerald-200">Browse tests <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>}
             </section>
           </AnimatedContent>
         </div>
 
         <AnimatedContent delay={80}>
-          <section className="dashboard-panel mt-4 overflow-hidden rounded-2xl sm:mt-5 sm:rounded-[1.7rem]">
+          <section className="dashboard-panel dashboard-recent mt-4 overflow-hidden rounded-2xl sm:mt-5 sm:rounded-[1.7rem]">
             <div className="flex items-center justify-between gap-3 border-b border-white/[.07] px-4 py-4 sm:px-6 sm:py-5">
               <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-violet-200/75">Stay on track</p><h2 className="mt-1 text-lg font-semibold">Recent activity</h2><p className="mt-1 text-xs text-slate-500">Your latest completed tests</p></div>
               <button onClick={() => router.push('/history')} className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-200">Full history <ArrowRight className="h-3.5 w-3.5"/></button>
             </div>
             {attempts.length ? <div className="divide-y divide-white/[.055]">
-              {attempts.slice(0, 4).map(attempt => <div key={attempt.id} className="flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-white/[.025] sm:px-6">
+              {attempts.slice(0, 4).map(attempt => <div key={attempt.id} className="dashboard-activity-row flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-white/[.025] sm:px-6">
                 <div className="flex min-w-0 items-center gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-200/10 bg-emerald-300/[.07] text-emerald-200"><CheckCircle2 className="h-5 w-5"/></span><div className="min-w-0"><p className="truncate text-sm font-semibold">{attempt.quiz_title || 'Quiz attempt'}</p><p className="mt-1 text-[11px] text-slate-500">{attempt.completed_at ? new Date(attempt.completed_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently completed'}</p></div></div>
                 <span className="shrink-0 rounded-full border border-emerald-200/10 bg-emerald-300/[.08] px-3 py-1.5 text-xs font-bold text-emerald-100">{attempt.score}%</span>
               </div>)}
