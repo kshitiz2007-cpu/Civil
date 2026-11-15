@@ -152,9 +152,9 @@ export default function DashboardPage() {
         </AnimatedContent>
 
         <section className="dashboard-metrics mt-4 grid grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
-          <AnimatedContent delay={60}><MetricCard icon={Layers} label="Available tests" value={quizzes.length} hint="Ready when you are" accent="emerald"/></AnimatedContent>
-          <AnimatedContent delay={120}><MetricCard icon={FileText} label="Study resources" value={resourceCount} hint="Explore your materials" accent="cyan"/></AnimatedContent>
-          <AnimatedContent delay={180}><MetricCard icon={Award} label="Latest score" value={attempts.length ? attempts[0].score : '—'} suffix={attempts.length ? '%' : ''} hint={attempts[0]?.quiz_title || 'Complete a test to begin'} accent="violet"/></AnimatedContent>
+          <AnimatedContent delay={60}><MetricCard icon={Layers} label="Available tests" value={quizzes.length} hint="Browse all mock tests" accent="emerald" onClick={() => router.push('/quizzes')}/></AnimatedContent>
+          <AnimatedContent delay={120}><MetricCard icon={FileText} label="Study resources" value={resourceCount} hint="Open your study library" accent="cyan" onClick={() => router.push('/resources')}/></AnimatedContent>
+          <AnimatedContent delay={180}><MetricCard icon={Award} label="Latest score" value={attempts.length ? attempts[0].score : '—'} suffix={attempts.length ? '%' : ''} hint={attempts[0]?.quiz_title || 'Complete a test to begin'} accent="violet" onClick={() => router.push(attempts.length ? `/quiz/${attempts[0].quiz_id}/result` : '/history')}/></AnimatedContent>
         </section>
 
         <div className="dashboard-content-grid mt-5 grid gap-4 xl:mt-8 xl:grid-cols-[1.25fr_.75fr] xl:gap-5">
@@ -242,10 +242,12 @@ function MobileItem({ icon: Icon, label, active, onClick }: { icon: IconComponen
   return <button onClick={onClick} className={`flex min-w-14 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-semibold transition ${active ? 'text-emerald-200' : 'text-slate-400'}`}><Icon className="h-5 w-5"/>{label}</button>;
 }
 
-function MetricCard({ icon: Icon, label, value, suffix = '', hint, accent }: { icon: IconComponent; label: string; value: number | string; suffix?: string; hint: string; accent: 'emerald' | 'cyan' | 'violet' }) {
+function MetricCard({ icon: Icon, label, value, suffix = '', hint, accent, onClick }: { icon: IconComponent; label: string; value: number | string; suffix?: string; hint: string; accent: 'emerald' | 'cyan' | 'violet'; onClick: () => void }) {
   const accentClass = accent === 'emerald' ? 'text-emerald-200 bg-emerald-300/10' : accent === 'cyan' ? 'text-cyan-200 bg-cyan-300/10' : 'text-violet-200 bg-violet-300/10';
-  return <SpotlightCard className="dashboard-metric-card rounded-xl p-2.5 sm:rounded-2xl sm:p-5">
-    <div className="relative z-10 flex items-start justify-between gap-3"><div><p className="text-xs font-medium text-slate-400">{label}</p><p className="mt-2 text-2xl font-semibold tracking-tight">{typeof value === 'number' ? <CountUp value={value}/> : value}{suffix}</p></div><span className={`grid h-10 w-10 place-items-center rounded-xl ${accentClass}`}><Icon className="h-4.5 w-4.5"/></span></div>
-    <p className="relative z-10 mt-2 truncate text-[11px] text-slate-600">{hint}</p>
+  return <SpotlightCard className="dashboard-metric-card rounded-xl p-0 sm:rounded-2xl" >
+    <button type="button" onClick={onClick} aria-label={`Open ${label}`} className="relative z-10 block h-full w-full rounded-[inherit] p-2.5 text-left outline-none transition focus-visible:ring-2 focus-visible:ring-emerald-300 sm:p-5">
+      <div className="flex items-start justify-between gap-2 sm:gap-3"><div className="min-w-0"><p className="text-xs font-medium text-slate-400">{label}</p><p className="mt-2 text-2xl font-semibold tracking-tight">{typeof value === 'number' ? <CountUp value={value}/> : value}{suffix}</p></div><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg sm:h-10 sm:w-10 sm:rounded-xl ${accentClass}`}><Icon className="h-4.5 w-4.5"/></span></div>
+      <p className="mt-2 truncate text-[11px] text-slate-600">{hint}</p>
+    </button>
   </SpotlightCard>;
 }
