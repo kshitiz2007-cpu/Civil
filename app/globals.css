@@ -252,3 +252,188 @@ button { cursor: pointer; }
   .rb-reveal { opacity: 1; transform: none; filter: none; transition: none; }
   .rb-spotlight-card { transition: none; }
 }
+
+
+/* Compact mobile dashboard layout */
+@media (max-width: 639px) {
+  .dashboard-main {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 14px;
+    padding-bottom: 94px;
+  }
+  .dashboard-header {
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .dashboard-header h1 {
+    font-size: clamp(1.3rem, 6vw, 1.65rem);
+    line-height: 1.15;
+  }
+  .dashboard-header p {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .dashboard-header > div:first-child > div {
+    margin-bottom: 5px;
+    font-size: 10px;
+  }
+  .dashboard-hero {
+    border-radius: 20px;
+    padding: 15px;
+  }
+  .dashboard-hero .relative.grid {
+    gap: 15px;
+  }
+  .dashboard-hero h2 {
+    margin-top: 12px;
+    font-size: clamp(1.45rem, 6.2vw, 1.8rem);
+    line-height: 1.13;
+  }
+  .dashboard-hero p {
+    margin-top: 7px;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+  .dashboard-hero .dashboard-primary-button {
+    margin-top: 12px;
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+  .dashboard-hero .relative.mx-auto.grid {
+    max-width: none;
+    gap: 8px;
+  }
+  .dashboard-hero .relative.mx-auto.grid > .rb-spotlight-card {
+    padding: 10px;
+    border-radius: 13px;
+  }
+  .dashboard-hero .relative.mx-auto.grid > .rb-spotlight-card p:first-of-type {
+    margin-top: 8px;
+    font-size: 1.45rem;
+  }
+  .dashboard-hero .relative.mx-auto.grid > .rb-spotlight-card p:last-of-type {
+    margin-top: 2px;
+    font-size: 9px;
+  }
+  .dashboard-hero .relative.mx-auto.grid > div:last-child {
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+  .dashboard-hero .relative.mx-auto.grid > div:last-child > span {
+    width: 30px;
+    height: 30px;
+  }
+  .dashboard-metrics {
+    margin-top: 10px;
+    gap: 7px;
+  }
+  .dashboard-metric-card {
+    min-width: 0;
+    padding: 9px 8px;
+    border-radius: 13px;
+  }
+  .dashboard-metric-card p:first-child {
+    font-size: 9px;
+    line-height: 1.25;
+    min-height: 23px;
+  }
+  .dashboard-metric-card p:nth-child(2) {
+    margin-top: 5px;
+    font-size: 1.2rem;
+    line-height: 1.15;
+  }
+  .dashboard-metric-card p:last-child {
+    display: none;
+  }
+  .dashboard-metric-card span.grid {
+    width: 27px;
+    height: 27px;
+    border-radius: 8px;
+  }
+  .dashboard-content-grid {
+    margin-top: 16px;
+    gap: 13px;
+  }
+  .dashboard-panel {
+    border-radius: 17px;
+  }
+  .dashboard-panel h2 {
+    font-size: 16px;
+  }
+  .dashboard-panel > div:first-child p {
+    line-height: 1.35;
+  }
+  .dashboard-quiz-grid {
+    margin-top: 11px;
+    gap: 8px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card {
+    min-width: 0;
+    border-radius: 13px;
+    padding: 9px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card span.grid {
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card span.grid svg {
+    width: 15px;
+    height: 15px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card p {
+    font-size: 9px;
+    line-height: 1.35;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card p:nth-of-type(1) {
+    margin-top: 9px;
+    font-size: 8px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card h3 {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card p:nth-of-type(2) {
+    min-height: 0;
+    margin-top: 4px;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card > div > div:last-child {
+    margin-top: 9px;
+    padding-top: 8px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card button {
+    font-size: 9px;
+  }
+  .dashboard-quiz-grid .rb-spotlight-card button svg {
+    width: 11px;
+    height: 11px;
+  }
+  .dashboard-panel .score-bar {
+    min-width: 8px;
+  }
+  .dashboard-panel .flex.h-40 {
+    height: 112px;
+    margin-top: 18px;
+  }
+  .dashboard-mobile-nav {
+    bottom: 8px;
+    left: 10px;
+    right: 10px;
+    padding: 6px;
+    border-radius: 16px;
+  }
+  .dashboard-mobile-nav button {
+    gap: 3px;
+    padding: 5px 8px;
+    font-size: 9px;
+  }
+  .dashboard-mobile-nav button svg {
+    width: 17px;
+    height: 17px;
+  }
+}
