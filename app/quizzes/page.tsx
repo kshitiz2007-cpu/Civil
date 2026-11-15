@@ -212,16 +212,21 @@ export default function StudentQuizzesPage() {
                     const Icon = subject.icon;
                     const count = getQuizCount(subject.id);
                     return (
-                      <SpotlightCard key={subject.id} className={`quizzes-subject-card group rounded-2xl border-b-2 ${subject.border}`}>
-                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex h-full w-full flex-col items-start p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:p-6">
-                          <div className="mb-4 flex w-full items-start justify-between sm:mb-6">
-                            <span className={`quizzes-subject-icon rounded-xl p-2.5 sm:rounded-2xl sm:p-4 ${subject.bg} ${subject.color} border border-white/10 shadow-inner transition-transform group-hover:scale-105`}>
-                              <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                      <SpotlightCard key={subject.id} className="quizzes-subject-card group relative isolate overflow-hidden rounded-[22px] border p-0 shadow-[0_12px_30px_rgba(0,0,0,.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 sm:rounded-[26px]">
+                        <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex min-h-[142px] h-full w-full flex-col items-start justify-between gap-3 p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:min-h-[190px] sm:p-5">
+                          <div className="flex w-full items-start justify-between">
+                            <span className={`quizzes-subject-icon grid h-10 w-10 place-items-center rounded-2xl border shadow-lg transition-transform group-hover:scale-105 sm:h-12 sm:w-12 ${subject.bg} ${subject.color} border-white/15`}>
+                              <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                             </span>
-                            <ChevronRight className="mt-1 h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-emerald-200"/>
+                            <ChevronRight className="mt-1 h-4 w-4 text-white/45 transition group-hover:translate-x-1 group-hover:text-emerald-200"/>
                           </div>
-                          <h3 className="text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-xl">{subject.id}</h3>
-                          <span className="mt-1 text-[9px] font-bold uppercase tracking-[.15em] text-white/45 sm:text-[11px] sm:tracking-[.2em]">{count} Tests</span>
+                          <div className="relative min-w-0">
+                            <p className="mb-1 text-[7px] font-black uppercase tracking-[.19em] text-white/40 sm:text-[9px]">Study section</p>
+                            <h3 className="line-clamp-2 break-words text-sm font-extrabold tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-lg">{subject.id}</h3>
+                            <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[.045] px-2 py-1 text-[8px] font-bold uppercase tracking-[.14em] text-white/55 sm:text-[10px]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,.8)]" /> {count} Tests
+                            </span>
+                          </div>
                         </button>
                       </SpotlightCard>
                     )
