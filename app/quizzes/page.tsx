@@ -229,7 +229,7 @@ export default function StudentQuizzesPage() {
                     const Icon = subject.icon;
                     const count = getQuizCount(subject.id);
                     return (
-                      <SpotlightCard key={subject.id} className={`quizzes-subject-card rounded-2xl border-b-2 ${subject.border}`}>
+                      <SpotlightCard key={subject.id} className={`quizzes-subject-card group rounded-2xl border-b-2 ${subject.border}`}>
                         <button type="button" onClick={() => setActiveSubject(subject.id)} className="relative z-10 flex h-full w-full flex-col items-start p-3.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:p-6">
                           <div className="mb-4 flex w-full items-start justify-between sm:mb-6">
                             <span className={`quizzes-subject-icon rounded-xl p-2.5 sm:rounded-2xl sm:p-4 ${subject.bg} ${subject.color} border border-white/10 shadow-inner transition-transform group-hover:scale-105`}>
@@ -295,7 +295,7 @@ export default function StudentQuizzesPage() {
                             {sectionQuizzes.map((quiz) => {
                               const pastAttempt = getAttempt(quiz.id);
                               return (
-                                <div key={quiz.id} className="quizzes-module-card rounded-2xl border border-white/15 bg-white/[.07] p-3.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 group sm:rounded-[2rem] sm:p-6 md:flex-row md:items-center md:justify-between md:gap-6">
+                                <div key={quiz.id} className="quizzes-module-card group flex flex-col gap-3 rounded-2xl border border-white/15 bg-white/[.07] p-3.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 sm:rounded-[2rem] sm:p-6 md:flex-row md:items-center md:justify-between md:gap-6">
                                   
                                   <div className="flex-1">
                                     <h3 className="mb-3 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:mb-4 sm:text-xl">
@@ -319,7 +319,7 @@ export default function StudentQuizzesPage() {
                                     ) : (
                                       <button 
                                         onClick={() => router.push(`/quiz/${quiz.id}`)}
-                                        className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-xs font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-colors hover:bg-emerald-400 sm:px-8 sm:py-4 sm:text-sm md:w-auto"
+                                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-3 text-xs font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-colors hover:bg-emerald-400 sm:px-8 sm:py-4 sm:text-sm md:w-auto"
                                       >
                                         <PlayCircle className="w-5 h-5" /> Start Module
                                       </button>
