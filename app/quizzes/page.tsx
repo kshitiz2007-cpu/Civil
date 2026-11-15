@@ -264,7 +264,7 @@ export default function StudentQuizzesPage() {
                         {/* Interactive Accordion Tab Controller */}
                         <button 
                           onClick={() => toggleSection(subsection)}
-                          className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.07] p-3.5 text-left shadow-md backdrop-blur-md transition-all hover:bg-white/10 group sm:rounded-3xl sm:p-5"
+                          className="quiz-section-accordion group relative isolate flex w-full items-center justify-between overflow-hidden rounded-2xl border p-3.5 text-left shadow-lg backdrop-blur-xl transition-all hover:-translate-y-0.5 sm:rounded-3xl sm:p-5"
                         >
                           <h2 className="flex items-center gap-2 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:gap-3 sm:text-lg">
                             <Layers className="h-4 w-4 shrink-0 text-emerald-400 sm:h-5 sm:w-5" /> <span className="min-w-0 flex-1 truncate">{subsection}</span><span className="rounded-full border border-white/10 bg-white/[.06] px-2 py-1 text-[9px] font-semibold text-white/50">{sectionQuizzes.length}</span>
@@ -278,38 +278,39 @@ export default function StudentQuizzesPage() {
                             {sectionQuizzes.map((quiz) => {
                               const pastAttempt = getAttempt(quiz.id);
                               return (
-                                <div key={quiz.id} className="quizzes-module-card group flex min-w-0 flex-col justify-between gap-2 rounded-xl border border-white/15 bg-white/[.07] p-2.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 sm:rounded-2xl sm:p-4">
-                                  
-                                  <div className="flex-1">
-                                    <h3 className="mb-3 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:mb-4 sm:text-xl">
-                                      {quiz.title}
-                                    </h3>
-                                    <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold text-white/50 sm:gap-2 sm:text-xs">
-                                      <span className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-1.5 py-1 sm:gap-2 sm:rounded-xl sm:px-3 sm:py-2">
-                                        <Clock className="h-3 w-3 shrink-0 text-emerald-400 sm:h-4 sm:w-4" /> {quiz.time_limit}m
-                                      </span>
-                                      <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
-                                        <FileText className="h-3 w-3 shrink-0 text-blue-400 sm:h-4 sm:w-4" /> {quiz.questions?.length || 0} Qs
-                                      </span>
+                                <article key={quiz.id} className={`quizzes-module-card group relative isolate flex min-w-0 flex-col gap-2.5 overflow-hidden rounded-[20px] border p-2.5 shadow-[0_12px_30px_rgba(0,0,0,.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 sm:gap-3 sm:rounded-[26px] sm:p-4 ${pastAttempt ? 'quiz-module-completed' : ''}`}>
+                                  <div className="quiz-card-glow pointer-events-none absolute -right-8 -top-10 h-24 w-24 rounded-full blur-2xl" />
+                                  <div className="relative flex min-w-0 items-start gap-2">
+                                    <div className="quiz-card-icon grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-emerald-300/20 bg-emerald-300/10 text-emerald-200 sm:h-10 sm:w-10 sm:rounded-2xl">
+                                      <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="mb-1 text-[7px] font-black uppercase tracking-[.19em] text-white/35 sm:text-[9px]">{pastAttempt ? 'Completed test' : 'Mock test'}</p>
+                                      <h3 className="line-clamp-2 break-words text-[11px] font-extrabold leading-snug tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-sm">{quiz.title}</h3>
                                     </div>
                                   </div>
-                                  
-                                  <div className="w-full">
+                                  <div className="quiz-module-meta relative grid grid-cols-2 gap-1.5 rounded-xl border border-white/[.07] p-2">
+                                    <div className="flex items-center gap-1.5 rounded-lg border border-emerald-300/10 bg-emerald-300/[.06] px-1.5 py-1.5">
+                                      <Clock className="h-3 w-3 shrink-0 text-emerald-200" />
+                                      <span className="text-[9px] font-bold text-emerald-50/75 sm:text-[10px]">{quiz.time_limit} min</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 rounded-lg border border-cyan-300/10 bg-cyan-300/[.06] px-1.5 py-1.5">
+                                      <FileText className="h-3 w-3 shrink-0 text-cyan-200" />
+                                      <span className="text-[9px] font-bold text-cyan-50/75 sm:text-[10px]">{quiz.questions?.length || 0} Qs</span>
+                                    </div>
+                                  </div>
+                                  <div className="relative mt-auto">
                                     {pastAttempt ? (
-                                      <div className="flex w-full items-center justify-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-2 text-[9px] font-bold text-emerald-300 shadow-inner sm:gap-2 sm:rounded-xl sm:px-3 sm:py-3 sm:text-xs">
-                                        <Award className="h-3 w-3 sm:h-4 sm:w-4" /> Score: {pastAttempt.score}%
+                                      <div className="quiz-completed-score flex w-full items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-[9px] font-extrabold text-emerald-100 sm:rounded-2xl sm:py-2.5 sm:text-xs">
+                                        <Award className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Previous score: {pastAttempt.score}%
                                       </div>
                                     ) : (
-                                      <button 
-                                        onClick={() => router.push(`/quiz/${quiz.id}`)}
-                                        className="flex w-full items-center justify-center gap-1 rounded-lg bg-emerald-500 px-2 py-2 text-[9px] font-bold text-white shadow-[0_0_16px_rgba(16,185,129,0.18)] transition-colors hover:bg-emerald-400 sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-xs"
-                                      >
-                                        <PlayCircle className="h-3 w-3 sm:h-4 sm:w-4" /> Start
+                                      <button onClick={() => router.push(`/quiz/${quiz.id}`)} className="quiz-start-button flex w-full items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-[9px] font-extrabold tracking-wide text-white transition sm:rounded-2xl sm:py-2.5 sm:text-xs">
+                                        <PlayCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Start test <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 sm:h-4 sm:w-4" />
                                       </button>
                                     )}
                                   </div>
-
-                                </div>
+                                </article>
                               );
                             })}
                           </div>
