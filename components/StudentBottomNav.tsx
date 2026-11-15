@@ -16,7 +16,7 @@ const items = [
 export default function StudentBottomNav({ active }: { active: StudentNavTab }) {
   const router = useRouter();
   return (
-    <nav aria-label="Student navigation" className="student-bottom-nav fixed inset-x-3 bottom-[max(12px,env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-xl items-center justify-around rounded-2xl border p-1.5 backdrop-blur-2xl md:bottom-5 md:left-1/2 md:right-auto md:w-[min(560px,calc(100%-40px))] md:-translate-x-1/2">
+    <nav aria-label="Student navigation" className="student-bottom-nav fixed inset-x-3 bottom-[max(12px,env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-xl items-center justify-around rounded-2xl border p-1.5 backdrop-blur-2xl md:hidden">
       {items.map(({ id, label, icon: Icon, href }) => {
         const selected = active === id;
         return (
