@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from 'react';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
@@ -91,13 +92,7 @@ export default function AdminPage() {
     window.location.href = '/';
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020617]">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSkeleton label="Loading admin page" />;
 
   return (
     <div className="app-theme relative flex min-h-screen w-full flex-col font-sans md:flex-row">
