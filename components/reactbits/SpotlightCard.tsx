@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, type CSSProperties, type ReactNode } from 'react';
+import { useRef, type CSSProperties, type ReactNode, type PointerEvent } from 'react';
 
 type SpotlightCardProps = {
   children: ReactNode;
@@ -15,7 +15,7 @@ export default function SpotlightCard({
 }: SpotlightCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const bounds = cardRef.current?.getBoundingClientRect();
     if (!bounds) return;
     const x = event.clientX - bounds.left;
