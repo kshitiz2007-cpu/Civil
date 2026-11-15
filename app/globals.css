@@ -1957,3 +1957,106 @@ button:disabled { cursor: not-allowed; }
     transition: none;
   }
 }
+
+
+/* Hall of Fame — premium podium, weekly switch and consistent student cards */
+.leaderboard-page {
+  background:
+    radial-gradient(90% 38% at 0% 0%, rgba(20,184,166,.17), transparent 72%),
+    radial-gradient(75% 34% at 100% 10%, rgba(99,102,241,.14), transparent 70%),
+    linear-gradient(155deg, #061b2b 0%, #031321 58%, #07172e 100%);
+}
+.leaderboard-header h1 { text-shadow: 0 5px 22px rgba(0,0,0,.3); }
+.leaderboard-podium-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 178px;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(148,163,184,.25);
+  border-radius: 20px;
+  padding: 13px 7px 0;
+  text-align: center;
+  background: linear-gradient(155deg, rgba(19,43,61,.97), rgba(6,20,36,.99));
+  box-shadow: 0 2px 0 rgba(255,255,255,.055), 0 12px 24px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.09);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.leaderboard-podium-card.podium-first { min-height: 204px; }
+.leaderboard-podium-card.gold { border-color: rgba(251,191,36,.52); box-shadow: 0 0 0 1px rgba(251,191,36,.1), 0 14px 30px rgba(180,83,9,.18), inset 0 1px 0 rgba(255,255,255,.13); }
+.leaderboard-podium-card.silver { border-color: rgba(203,213,225,.38); }
+.leaderboard-podium-card.bronze { border-color: rgba(251,146,60,.38); }
+.leaderboard-podium-card.is-you { outline: 2px solid rgba(52,211,153,.72); outline-offset: 2px; }
+.podium-avatar {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 15px;
+  background: rgba(255,255,255,.07);
+  color: #cbd5e1;
+  box-shadow: 0 6px 14px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.gold .podium-avatar { color: #fcd34d; background: rgba(245,158,11,.14); }
+.bronze .podium-avatar { color: #fdba74; background: rgba(234,88,12,.13); }
+.podium-rank { margin-top: 7px; color: #94a3b8; font-size: 8px; font-weight: 900; letter-spacing: .18em; }
+.gold .podium-rank { color: #fcd34d; }
+.podium-name { width: 100%; margin-top: 5px; overflow: hidden; color: #f8fafc; font-size: 11px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.podium-you { margin-top: 3px; border-radius: 999px; background: rgba(16,185,129,.2); padding: 2px 7px; color: #a7f3d0; font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.podium-points { margin-top: 7px; color: #fef3c7; font-family: Georgia,serif; font-size: 22px; font-weight: 900; line-height: 1; }
+.podium-caption { margin-top: 3px; color: #94a3b8; font-size: 7px; font-weight: 800; letter-spacing: .18em; }
+.podium-base { display: grid; width: 100%; height: 22px; margin-top: auto; place-items: center; border-top: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.035); color: rgba(226,232,240,.4); font-size: 10px; font-weight: 900; }
+.gold .podium-base { background: rgba(245,158,11,.12); color: #fcd34d; }
+.silver .podium-base { background: rgba(148,163,184,.1); }
+.bronze .podium-base { background: rgba(234,88,12,.1); color: #fdba74; }
+.leaderboard-row {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(148,163,184,.17);
+  border-radius: 17px;
+  padding: 12px 13px;
+  background:
+    radial-gradient(100% 120% at 100% 0%, rgba(45,212,191,.07), transparent 62%),
+    linear-gradient(145deg, rgba(17,42,60,.92), rgba(6,20,36,.97));
+  box-shadow: 0 1px 0 rgba(255,255,255,.045), 0 9px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.055);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.leaderboard-row.is-you {
+  border-color: rgba(52,211,153,.62);
+  background: radial-gradient(110% 130% at 100% 0%, rgba(16,185,129,.15), transparent 64%), linear-gradient(145deg, rgba(13,53,57,.96), rgba(6,25,40,.98));
+  box-shadow: 0 0 0 1px rgba(52,211,153,.13), 0 10px 24px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.leaderboard-row-rank {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(148,163,184,.2);
+  border-radius: 11px;
+  background: rgba(255,255,255,.055);
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 900;
+}
+.leaderboard-row.is-you .leaderboard-row-rank { border-color: rgba(110,231,183,.3); background: rgba(16,185,129,.13); color: #a7f3d0; }
+.leaderboard-empty { background: linear-gradient(145deg, rgba(17,42,60,.92), rgba(6,20,36,.97)); box-shadow: 0 14px 32px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.06); }
+@media (hover:hover) and (pointer:fine) {
+  .leaderboard-podium-card:hover { transform: translateY(-3px); box-shadow: 0 18px 34px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.12); }
+  .leaderboard-row:hover { transform: translateY(-1px); border-color: rgba(110,231,183,.34); }
+}
+@media (max-width: 380px) {
+  .leaderboard-podium-card { min-height: 164px; padding-left: 4px; padding-right: 4px; }
+  .leaderboard-podium-card.podium-first { min-height: 188px; }
+  .podium-avatar { width: 36px; height: 36px; }
+  .podium-name { font-size: 10px; }
+  .podium-points { font-size: 19px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaderboard-podium-card, .leaderboard-row { transition: none; }
+}
