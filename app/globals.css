@@ -1740,7 +1740,7 @@ button:disabled { cursor: not-allowed; }
 
 
 /* Test Series subject cards — align perceived depth with the dashboard */
-.quizzes-page .quizzes-subject-card {
+.quizzes-main .quizzes-subject-card {
   border-color: rgba(110,231,183,.38) !important;
   background:
     radial-gradient(125% 95% at 100% 0%, rgba(45,212,191,.17), transparent 57%),
@@ -1754,12 +1754,12 @@ button:disabled { cursor: not-allowed; }
     inset 0 -2px 0 rgba(0,0,0,.22);
   transition: border-color .24s ease, transform .24s ease, box-shadow .24s ease;
 }
-.quizzes-page .quizzes-subject-card::before {
+.quizzes-main .quizzes-subject-card::before {
   height: 2px;
   opacity: .95;
   background: linear-gradient(90deg, transparent, rgba(167,243,208,.95), rgba(94,234,212,.45), rgba(165,180,252,.55), transparent);
 }
-.quizzes-page .quizzes-subject-card .quizzes-subject-icon {
+.quizzes-main .quizzes-subject-card .quizzes-subject-icon {
   border-color: rgba(255,255,255,.13);
   box-shadow:
     0 2px 0 rgba(255,255,255,.07),
@@ -1768,7 +1768,7 @@ button:disabled { cursor: not-allowed; }
     inset 0 -1px 0 rgba(0,0,0,.16);
 }
 @media (hover: hover) and (pointer: fine) {
-  .quizzes-page .quizzes-subject-card:hover {
+  .quizzes-main .quizzes-subject-card:hover {
     transform: translateY(-3px);
     border-color: rgba(110,231,183,.58) !important;
     box-shadow:
@@ -1781,13 +1781,13 @@ button:disabled { cursor: not-allowed; }
   }
 }
 @media (hover: none), (pointer: coarse) {
-  .quizzes-page .quizzes-subject-card:active {
+  .quizzes-main .quizzes-subject-card:active {
     transform: translateY(1px) scale(.99);
     box-shadow: 0 4px 12px rgba(0,0,0,.23), inset 0 1px 0 rgba(255,255,255,.09);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .quizzes-page .quizzes-subject-card { transition: none; transform: none; }
+  .quizzes-main .quizzes-subject-card { transition: none; transform: none; }
 }
 
 
@@ -1796,49 +1796,49 @@ button:disabled { cursor: not-allowed; }
   from { opacity: 0; transform: translate3d(0, 12px, 0) scale(.992); filter: blur(3px); }
   to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
 }
-.quizzes-page .quizzes-subject-view,
-.quizzes-page .quizzes-module-view {
+.quizzes-main .quizzes-subject-view,
+.quizzes-main .quizzes-module-view {
   animation: quizzes-view-enter .34s cubic-bezier(.2,.72,.25,1) both;
   will-change: opacity, transform;
 }
-.quizzes-page .quizzes-subject-card button {
+.quizzes-main .quizzes-subject-card button {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   transform: translateZ(0);
   transition: transform .16s cubic-bezier(.2,.75,.25,1), filter .16s ease;
 }
-.quizzes-page .quizzes-subject-card button:active {
+.quizzes-main .quizzes-subject-card button:active {
   transform: translateY(2px) scale(.975);
   filter: brightness(1.08);
 }
-.quizzes-page .quizzes-subject-card button:active .quizzes-subject-icon {
+.quizzes-main .quizzes-subject-card button:active .quizzes-subject-icon {
   transform: scale(.94);
 }
-.quizzes-page .quizzes-subject-card button:focus-visible {
+.quizzes-main .quizzes-subject-card button:focus-visible {
   outline: 2px solid rgba(103,232,249,.95);
   outline-offset: 4px;
 }
-.quizzes-page .quiz-section-accordion {
+.quizzes-main .quiz-section-accordion {
   transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
 }
-.quizzes-page .quiz-section-accordion:active {
+.quizzes-main .quiz-section-accordion:active {
   transform: translateY(1px) scale(.992);
 }
-.quizzes-page .quizzes-module-card {
+.quizzes-main .quizzes-module-card {
   transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-.quizzes-page .quiz-start-button:active {
+.quizzes-main .quiz-start-button:active {
   transform: translateY(1px) scale(.985);
 }
 @media (prefers-reduced-motion: reduce) {
-  .quizzes-page .quizzes-subject-view,
-  .quizzes-page .quizzes-module-view {
+  .quizzes-main .quizzes-subject-view,
+  .quizzes-main .quizzes-module-view {
     animation: none;
     will-change: auto;
   }
-  .quizzes-page .quizzes-subject-card button,
-  .quizzes-page .quiz-section-accordion,
-  .quizzes-page .quizzes-module-card {
+  .quizzes-main .quizzes-subject-card button,
+  .quizzes-main .quiz-section-accordion,
+  .quizzes-main .quizzes-module-card {
     transition: none;
   }
 }
