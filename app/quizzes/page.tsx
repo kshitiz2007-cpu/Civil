@@ -1,6 +1,7 @@
 'use client';
 
 import StudentBottomNav from '@/components/StudentBottomNav';export const dynamic = "force-dynamic";
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 
 import ThemeSelector from '@/components/ThemeSelector';
 import SpotlightCard from '@/components/reactbits/SpotlightCard';
@@ -114,13 +115,7 @@ export default function StudentQuizzesPage() {
     return acc;
   }, {} as Record<string, Quiz[]>);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020617]">
-        <Loader2 className="w-10 h-10 animate-spin text-emerald-400" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingSkeleton label="Loading quizzes page" />;
 
   return (
     <div className="app-theme relative flex min-h-screen overflow-hidden">
