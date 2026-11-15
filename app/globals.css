@@ -1041,3 +1041,125 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .history-card::after { animation: none; opacity: .7; }
 }
+
+
+/* Shared premium glass + luminous outline system across student pages */
+@keyframes app-card-border-shimmer {
+  0%, 100% { opacity: .48; filter: brightness(.92); }
+  50% { opacity: .92; filter: brightness(1.28); }
+}
+.dashboard-hero,
+.dashboard-panel,
+.dashboard-metric-card,
+.dashboard-average,
+.dashboard-recent,
+.quizzes-module-card,
+.resources-card,
+.theme-surface,
+.admin-empty-state {
+  position: relative;
+  isolation: isolate;
+  border-color: rgba(94, 234, 212, .2);
+  background-image:
+    radial-gradient(130% 95% at 100% 0%, rgba(45, 212, 191, .09), transparent 56%),
+    linear-gradient(145deg, rgba(17, 43, 60, .88), rgba(7, 21, 38, .94) 66%, rgba(17, 29, 54, .9));
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .2),
+    inset 0 1px 0 rgba(255, 255, 255, .055);
+}
+.dashboard-hero::after,
+.dashboard-panel::after,
+.dashboard-metric-card::after,
+.dashboard-average::after,
+.dashboard-recent::after,
+.quizzes-module-card::after,
+.resources-card::after,
+.theme-surface::after,
+.admin-empty-state::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(110, 231, 183, .78),
+    rgba(45, 212, 191, .1) 32%,
+    rgba(129, 140, 248, .42) 68%,
+    rgba(110, 231, 183, .58)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .52;
+  animation: app-card-border-shimmer 4.8s ease-in-out infinite;
+}
+.dashboard-hero:hover,
+.dashboard-panel:hover,
+.dashboard-metric-card:hover,
+.quizzes-module-card:hover,
+.resources-card:hover,
+.theme-surface:hover {
+  border-color: rgba(110, 231, 183, .4);
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, .27),
+    0 0 18px rgba(45, 212, 191, .09),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+.dashboard-hero::before,
+.dashboard-panel::before,
+.quizzes-module-card::before,
+.resources-card::before,
+.theme-surface::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(167, 243, 208, .5), transparent);
+}
+.quizzes-module-card,
+.resources-card {
+  overflow: hidden;
+  background-color: rgba(7, 22, 39, .8);
+}
+.dashboard-metric-card {
+  overflow: hidden;
+}
+.theme-surface {
+  color: var(--app-text);
+}
+.admin-empty-state {
+  border-style: dashed;
+}
+@media (max-width: 639px) {
+  .dashboard-hero::after,
+  .dashboard-panel::after,
+  .dashboard-metric-card::after,
+  .dashboard-average::after,
+  .dashboard-recent::after,
+  .quizzes-module-card::after,
+  .resources-card::after,
+  .theme-surface::after,
+  .admin-empty-state::after {
+    animation-duration: 6s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-hero::after,
+  .dashboard-panel::after,
+  .dashboard-metric-card::after,
+  .dashboard-average::after,
+  .dashboard-recent::after,
+  .quizzes-module-card::after,
+  .resources-card::after,
+  .theme-surface::after,
+  .admin-empty-state::after {
+    animation: none;
+    opacity: .68;
+  }
+}
