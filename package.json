@@ -7,6 +7,7 @@
     "build": "next build",
     "build:web": "next build",
     "start": "next start",
+    "serve:web": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
