@@ -16,12 +16,13 @@ export default function SpotlightCard({
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    const bounds = cardRef.current?.getBoundingClientRect();
-    if (!bounds) return;
+    const card = cardRef.current;
+    if (!card) return;
+    const bounds = card.getBoundingClientRect();
     const x = event.clientX - bounds.left;
     const y = event.clientY - bounds.top;
-    cardRef.current.style.setProperty('--spotlight-x', `${x}px`);
-    cardRef.current.style.setProperty('--spotlight-y', `${y}px`);
+    card.style.setProperty('--spotlight-x', `${x}px`);
+    card.style.setProperty('--spotlight-y', `${y}px`);
   };
 
   return (
