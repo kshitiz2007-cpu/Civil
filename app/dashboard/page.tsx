@@ -1,5 +1,6 @@
 'use client';
 
+import StudentBottomNav from '@/components/StudentBottomNav';
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -223,12 +224,7 @@ export default function DashboardPage() {
         <footer className="mt-5 flex items-center justify-between gap-3 text-[11px] text-slate-600 sm:mt-8"><span>Stay curious. Keep learning.</span><span>{quizzes.length} tests <span className="px-1 text-slate-700">·</span> {resourceCount} resources</span></footer>
       </main>
 
-      <nav className="dashboard-mobile-nav fixed inset-x-3 bottom-3 z-40 flex justify-around rounded-2xl p-2 backdrop-blur-2xl md:hidden">
-        <MobileItem icon={Activity} label="Home" active onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}/>
-        <MobileItem icon={Layers} label="Tests" onClick={() => router.push('/quizzes')}/>
-        <MobileItem icon={FileText} label="Files" onClick={() => router.push('/resources')}/>
-        <MobileItem icon={History} label="Results" onClick={() => router.push('/history')}/>
-      </nav>
+      <StudentBottomNav active="home" />
       <StudentChatWidget user={user}/>
     </div>
   );
