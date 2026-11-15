@@ -284,7 +284,7 @@ export default function StudentQuizzesPage() {
                           className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/[.07] p-3.5 text-left shadow-md backdrop-blur-md transition-all hover:bg-white/10 group sm:rounded-3xl sm:p-5"
                         >
                           <h2 className="flex items-center gap-2 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:gap-3 sm:text-lg">
-                            <Layers className="w-5 h-5 text-emerald-400" /> {subsection}
+                            <Layers className="h-4 w-4 shrink-0 text-emerald-400 sm:h-5 sm:w-5" /> <span className="min-w-0 flex-1 truncate">{subsection}</span><span className="rounded-full border border-white/10 bg-white/[.06] px-2 py-1 text-[9px] font-semibold text-white/50">{sectionQuizzes.length}</span>
                           </h2>
                           <ChevronRight className={`w-5 h-5 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-90 text-emerald-400' : ''}`} />
                         </button>
