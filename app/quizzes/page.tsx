@@ -291,37 +291,37 @@ export default function StudentQuizzesPage() {
                         
                         {/* Collapsible Widescreen Test Modules */}
                         {isOpen && (
-                          <div className="flex flex-col gap-2.5 animate-in fade-in slide-in-from-top-2 duration-300 p-1 sm:gap-4">
+                          <div className="quizzes-module-grid grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-300 p-0.5 sm:gap-4">
                             {sectionQuizzes.map((quiz) => {
                               const pastAttempt = getAttempt(quiz.id);
                               return (
-                                <div key={quiz.id} className="quizzes-module-card group flex flex-col gap-3 rounded-2xl border border-white/15 bg-white/[.07] p-3.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 sm:rounded-[2rem] sm:p-6 md:flex-row md:items-center md:justify-between md:gap-6">
+                                <div key={quiz.id} className="quizzes-module-card group flex min-w-0 flex-col justify-between gap-2 rounded-xl border border-white/15 bg-white/[.07] p-2.5 shadow-lg backdrop-blur-xl transition-all hover:bg-white/10 sm:rounded-2xl sm:p-4">
                                   
                                   <div className="flex-1">
                                     <h3 className="mb-3 text-sm font-bold tracking-tight text-white transition-colors group-hover:text-emerald-300 sm:mb-4 sm:text-xl">
                                       {quiz.title}
                                     </h3>
-                                    <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-white/50">
-                                      <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
-                                        <Clock className="w-4 h-4 text-emerald-400" /> {quiz.time_limit}m
+                                    <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold text-white/50 sm:gap-2 sm:text-xs">
+                                      <span className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-1.5 py-1 sm:gap-2 sm:rounded-xl sm:px-3 sm:py-2">
+                                        <Clock className="h-3 w-3 shrink-0 text-emerald-400 sm:h-4 sm:w-4" /> {quiz.time_limit}m
                                       </span>
                                       <span className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10">
-                                        <FileText className="w-4 h-4 text-blue-400" /> {quiz.questions?.length || 0} Qs
+                                        <FileText className="h-3 w-3 shrink-0 text-blue-400 sm:h-4 sm:w-4" /> {quiz.questions?.length || 0} Qs
                                       </span>
                                     </div>
                                   </div>
                                   
-                                  <div className="shrink-0 w-full md:w-auto">
+                                  <div className="w-full">
                                     {pastAttempt ? (
-                                      <div className="w-full px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-inner">
-                                        <Award className="w-5 h-5" /> Score: {pastAttempt.score}%
+                                      <div className="flex w-full items-center justify-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-2 text-[9px] font-bold text-emerald-300 shadow-inner sm:gap-2 sm:rounded-xl sm:px-3 sm:py-3 sm:text-xs">
+                                        <Award className="h-3 w-3 sm:h-4 sm:w-4" /> Score: {pastAttempt.score}%
                                       </div>
                                     ) : (
                                       <button 
                                         onClick={() => router.push(`/quiz/${quiz.id}`)}
-                                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-3 text-xs font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-colors hover:bg-emerald-400 sm:px-8 sm:py-4 sm:text-sm md:w-auto"
+                                        className="flex w-full items-center justify-center gap-1 rounded-lg bg-emerald-500 px-2 py-2 text-[9px] font-bold text-white shadow-[0_0_16px_rgba(16,185,129,0.18)] transition-colors hover:bg-emerald-400 sm:gap-2 sm:rounded-xl sm:px-4 sm:py-3 sm:text-xs"
                                       >
-                                        <PlayCircle className="w-5 h-5" /> Start Module
+                                        <PlayCircle className="h-3 w-3 sm:h-4 sm:w-4" /> Start
                                       </button>
                                     )}
                                   </div>
