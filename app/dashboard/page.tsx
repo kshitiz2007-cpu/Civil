@@ -192,7 +192,7 @@ export default function DashboardPage() {
             <section className="dashboard-panel h-full rounded-[1.7rem] p-5 sm:p-6">
               <div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-200/75">Your analytics</p><h2 className="mt-2 text-xl font-semibold tracking-tight">Score trend</h2><p className="mt-1 text-xs text-slate-500">Your latest seven attempts</p></div><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-300/[.08] text-emerald-200"><TrendingUp className="h-5 w-5"/></span></div>
               {recentScores.length ? <>
-                <div className="mt-8 flex h-40 items-end gap-2 border-b border-white/10 pb-2">
+                <div className="dashboard-score-chart mt-8 flex h-40 items-end gap-2 border-b border-white/10 pb-2">
                   {recentScores.map((attempt, index) => <div key={attempt.id} className="group flex h-full flex-1 flex-col justify-end">
                     <div className="mb-2 text-center text-[10px] text-emerald-100 opacity-0 transition group-hover:opacity-100">{attempt.score}%</div>
                     <div className="score-bar w-full rounded-t-lg" style={{ height: `${Math.max(8, Math.min(100, Number(attempt.score) || 0))}%`, animationDelay: `${index * 70}ms` }} title={`${attempt.quiz_title || 'Quiz'} · ${attempt.score}%`}/>
