@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Trophy, CheckCircle2, XCircle, MinusCircle, Home, RotateCcw, Loader2, ArrowLeft, Languages } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
+import StudentBottomNav from '@/components/StudentBottomNav';
 
 type ReviewLanguage = 'en' | 'hi' | 'both';
 
@@ -114,6 +115,7 @@ export default function QuizResultPage() {
           <button onClick={() => router.push(`/quiz/${quizId}`)} className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-2 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-700/20 transition hover:brightness-105 sm:flex-1 sm:py-4 sm:text-base"><RotateCcw className="mr-2 inline h-5 w-5" />{label('Retake Quiz', 'क्विज़ फिर से दें')}</button>
         </div>
       </div>
+      <StudentBottomNav active="results" />
     </main>
   );
 }
