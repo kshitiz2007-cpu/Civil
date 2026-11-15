@@ -179,34 +179,6 @@ export default function HistoryPage() {
                       </button>
                     </div>
                   </article>
-                      <div>
-                        <h4 className="font-bold text-white text-lg line-clamp-1">{attempt.quiz_title}</h4>
-                        <div className="flex items-center gap-3 mt-1.5 text-sm font-medium text-white/50">
-                          <span>{new Date(attempt.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                          <span className="w-1 h-1 bg-white/20 rounded-full"></span>
-                          <span className="text-emerald-400">{attempt.correct} Correct</span>
-                          <span className="w-1 h-1 bg-white/20 rounded-full"></span>
-                          <span className="text-rose-400">{attempt.wrong} Wrong</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between w-full md:w-auto gap-6 md:pl-4 border-t md:border-t-0 border-white/10 pt-4 md:pt-0">
-                      <div className="text-left md:text-right">
-                        <p className={`text-3xl font-black tracking-tight drop-shadow-md ${isPassing ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {attempt.score}%
-                        </p>
-                      </div>
-                      
-                      <button 
-                        onClick={() => router.push(`/quiz/${attempt.quiz_id}/result`)}
-                        className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold border border-white/10 rounded-xl transition-all flex items-center gap-2 group-hover:shadow-lg"
-                      >
-                        Review <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                  </div>
                 );
               })
             )}
