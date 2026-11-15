@@ -1789,3 +1789,56 @@ button:disabled { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   .quizzes-page .quizzes-subject-card { transition: none; transform: none; }
 }
+
+
+/* Test Series tactile feedback + smooth subject/module view transitions */
+@keyframes quizzes-view-enter {
+  from { opacity: 0; transform: translate3d(0, 12px, 0) scale(.992); filter: blur(3px); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+}
+.quizzes-page .quizzes-subject-view,
+.quizzes-page .quizzes-module-view {
+  animation: quizzes-view-enter .34s cubic-bezier(.2,.72,.25,1) both;
+  will-change: opacity, transform;
+}
+.quizzes-page .quizzes-subject-card button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: transform .16s cubic-bezier(.2,.75,.25,1), filter .16s ease;
+}
+.quizzes-page .quizzes-subject-card button:active {
+  transform: translateY(2px) scale(.975);
+  filter: brightness(1.08);
+}
+.quizzes-page .quizzes-subject-card button:active .quizzes-subject-icon {
+  transform: scale(.94);
+}
+.quizzes-page .quizzes-subject-card button:focus-visible {
+  outline: 2px solid rgba(103,232,249,.95);
+  outline-offset: 4px;
+}
+.quizzes-page .quiz-section-accordion {
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.quizzes-page .quiz-section-accordion:active {
+  transform: translateY(1px) scale(.992);
+}
+.quizzes-page .quizzes-module-card {
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.quizzes-page .quiz-start-button:active {
+  transform: translateY(1px) scale(.985);
+}
+@media (prefers-reduced-motion: reduce) {
+  .quizzes-page .quizzes-subject-view,
+  .quizzes-page .quizzes-module-view {
+    animation: none;
+    will-change: auto;
+  }
+  .quizzes-page .quizzes-subject-card button,
+  .quizzes-page .quiz-section-accordion,
+  .quizzes-page .quizzes-module-card {
+    transition: none;
+  }
+}
