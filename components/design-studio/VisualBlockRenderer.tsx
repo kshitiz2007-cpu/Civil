@@ -26,6 +26,8 @@ export default function VisualBlockRenderer({ block }: { block: VisualBlock }) {
   const effect = (reduceMotion ? {} : EFFECTS[block.effect || 'none']) as any;
   const style = block.styles as React.CSSProperties | undefined;
   const href = block.href && (/^\/(?!\/)/.test(block.href) || /^(https?:|mailto:|tel:)/i.test(block.href)) ? block.href : '#';
+  const imageSrc = block.src && (/^\/(?!\/)/.test(block.src) || /^https:\/\//i.test(block.src)) ? block.src : '';
+  if (block.type === 'image') return imageSrc ? <motion.img {...effect} src={imageSrc} alt={block.title || 'Visual block image'} style={style} className="my-3 max-h-96 w-full rounded-2xl object-cover" /> : <div className="my-3 rounded-xl border border-dashed border-[var(--app-border)] p-6 text-center text-xs text-[var(--app-muted)]">Set an image URL in the component inspector</div>;
   if (block.type === 'divider') return <motion.hr {...effect} className="my-4 border-[var(--app-border)]" />;
   if (block.type === 'heading') return <motion.h2 {...effect} style={style} className="my-3 text-2xl font-extrabold tracking-tight">{block.title}</motion.h2>;
   if (block.type === 'text') return <motion.p {...effect} style={style} className="my-3 text-sm leading-relaxed text-[var(--app-muted)]">{block.text || block.title}</motion.p>;
