@@ -284,7 +284,7 @@ export default function QuizResultPage() {
         </div></StudioSlot>
 
         {/* UPSC Prelims Analytical Scorecard */}
-        <StudioSlot id="quiz.result.scorecard"><section className="theme-surface relative mb-8 overflow-hidden rounded-3xl p-6 sm:p-9">
+        <section className="theme-surface relative mb-8 overflow-hidden rounded-3xl p-6 sm:p-9">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[var(--app-border)] pb-6">
             <div>
               <span
