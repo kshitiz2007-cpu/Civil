@@ -32,7 +32,7 @@ const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]>
   {id:'quiz.toolbar',label:'Quiz toolbar',group:'Quiz player'},{id:'quiz.question-telemetry',label:'Question telemetry',group:'Quiz player'},
   {id:'quiz.question-workspace',label:'Question workspace',group:'Quiz player'},{id:'quiz.question-and-options',label:'Question and options',group:'Quiz player'},
   {id:'quiz.bottom-navigation',label:'Question navigation',group:'Quiz player'},{id:'quiz.question-palette',label:'Question palette',group:'Quiz player'},
-  {id:'quiz.result.toolbar',label:'Result toolbar',group:'Quiz result'},
+  {id:'quiz.result.toolbar',label:'Result toolbar',group:'Quiz result'},{id:'quiz.result.scorecard',label:'Result scorecard',group:'Quiz result'},
  ],
  quizzes: [
   {id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'},{id:'quizzes.header',label:'Catalogue header',group:'Quiz catalogue'},
