@@ -4,9 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { DEFAULT_DESIGN, type BentoDesign, type DesignValues } from '@/components/DesignSystemProvider';
 import {
-  Activity, ArrowDownRight, ArrowUpRight, Check, ChevronRight, CircleHelp,
-  Clock3, Eye, Globe, Layers3, Monitor, MousePointer2, Palette, Redo2,
-  RotateCcw, Save, Smartphone, Tablet, Undo2, WandSparkles, X,
+  Activity, ChevronRight, Clock3, Copy, Eye, Globe, GripVertical, ImagePlus, Layers3, Monitor, MousePointer2, Palette, Redo2,
+  RotateCcw, Save, Smartphone, Tablet, Trash2, Undo2, Upload, WandSparkles, X,
 } from 'lucide-react';
 
 type Device = 'desktop' | 'tablet' | 'mobile';
@@ -16,6 +15,8 @@ type SelectedElement = {
   label: string;
   classes: string[];
   styles: Record<string, string>;
+  nodeId?: string;
+  componentId?: string | null;
 };
 type Field = { key: string; label: string; type?: 'color' | 'select' | 'text'; options?: string[]; suffix?: string };
 
@@ -99,16 +100,25 @@ export default function DesignStudio() {
   const [scope, setScope] = useState('dashboard');
   const [device, setDevice] = useState<Device>('desktop');
   const [selected, setSelected] = useState<SelectedElement | null>(null);
-  const [panel, setPanel] = useState<'pages' | 'design' | 'inspector' | 'history'>('pages');
+  const [panel, setPanel] = useState<'pages' | 'design' | 'inspector' | 'history' | 'structure' | 'components' | 'assets'>('pages');
   const [status, setStatus] = useState('Loading design settings…');
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [revisions, setRevisions] = useState<any[]>([]);
   const [undoStack, setUndoStack] = useState<BentoDesign[]>([DEFAULT_DESIGN]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const [assets, setAssets] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [assetError, setAssetError] = useState('');
+  const [componentName, setComponentName] = useState('');
+  const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const activePage = pages.find(p => p.id === scope) || pages[0];
-  const selectedStyles = selected ? (design.elements?.[scope]?.[selected.selector] || {}) : {};
+  const responsiveKey = scope + ':' + device;
+  const selectedStyles = selected ? (selected.componentId && design.components?.[selected.componentId]
+    ? design.components[selected.componentId].styles
+    : device === 'desktop' ? (design.elements?.[scope]?.[selected.selector] || {})
+    : (design.responsive?.[responsiveKey]?.elements?.[selected.selector] || {})) : {};
 
   const remember = useCallback((next: BentoDesign) => {
     setUndoStack(current => [...current.slice(0, historyIndex + 1), next].slice(-60));
@@ -119,8 +129,14 @@ export default function DesignStudio() {
 
   const updateGlobal = (key: keyof DesignValues, value: string | number) => {
     const next = structuredClone(design);
-    if (scope === 'all') next.global = { ...next.global, [key]: value };
-    else next.pages = { ...next.pages, [scope]: { ...(next.pages?.[scope] || {}), [key]: value } };
+    if (device === 'desktop') {
+      if (scope === 'all') next.global = { ...next.global, [key]: value };
+      else next.pages = { ...next.pages, [scope]: { ...(next.pages?.[scope] || {}), [key]: value } };
+    } else {
+      next.responsive = next.responsive || {};
+      next.responsive[(scope === 'all' ? 'global' : scope) + ':' + device] = next.responsive[(scope === 'all' ? 'global' : scope) + ':' + device] || {};
+      next.responsive[(scope === 'all' ? 'global' : scope) + ':' + device].tokens = { ...(next.responsive[(scope === 'all' ? 'global' : scope) + ':' + device].tokens || {}), [key]: value };
+    }
     remember(next);
   };
 
@@ -130,10 +146,16 @@ export default function DesignStudio() {
     next.elements = next.elements || {};
     const elementScope = scope === 'all' ? 'global' : scope;
     next.elements[elementScope] = next.elements[elementScope] || {};
-    next.elements[elementScope][selected.selector] = {
-      ...(next.elements[scope][selected.selector] || {}),
-      [key]: value,
-    };
+    if (selected.componentId && next.components?.[selected.componentId]) {
+      next.components[selected.componentId].styles = { ...next.components[selected.componentId].styles, [key]: value };
+    } else if (device === 'desktop') {
+      next.elements[elementScope][selected.selector] = { ...(next.elements[elementScope][selected.selector] || {}), [key]: value };
+    } else {
+      next.responsive = next.responsive || {};
+      next.responsive[responsiveKey] = next.responsive[responsiveKey] || {};
+      next.responsive[responsiveKey].elements = next.responsive[responsiveKey].elements || {};
+      next.responsive[responsiveKey].elements![selected.selector] = { ...(next.responsive[responsiveKey].elements?.[selected.selector] || {}), [key]: value };
+    }
     remember(next);
   };
 
@@ -141,10 +163,10 @@ export default function DesignStudio() {
     if (!selected) return;
     const next = structuredClone(design);
     const elementScope = scope === 'all' ? 'global' : scope;
-    const values = next.elements?.[elementScope]?.[selected.selector];
+    const values = selected.componentId ? next.components?.[selected.componentId]?.styles : device === 'desktop' ? next.elements?.[elementScope]?.[selected.selector] : next.responsive?.[responsiveKey]?.elements?.[selected.selector];
     if (values) {
       delete values[key];
-      if (!Object.keys(values).length) delete next.elements![elementScope][selected.selector];
+      if (!Object.keys(values).length) { if (selected.componentId) delete next.components?.[selected.componentId]; else if (device === 'desktop') delete next.elements![elementScope][selected.selector]; else delete next.responsive?.[responsiveKey]?.elements?.[selected.selector]; }
     }
     remember(next);
   };
@@ -165,6 +187,8 @@ export default function DesignStudio() {
         const { data: rows } = await supabase.from('bento_design_revisions')
           .select('id,note,created_at,design').order('created_at', { ascending: false }).limit(25);
         if (active && rows) setRevisions(rows);
+        const { data: assetRows } = await supabase.from('bento_design_assets').select('*').order('created_at', { ascending: false });
+        if (active && assetRows) setAssets(assetRows);
       } catch (error) {
         if (active) setStatus(error instanceof Error ? error.message : 'Database migration required');
       }
@@ -175,9 +199,25 @@ export default function DesignStudio() {
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin || event.source !== frame.current?.contentWindow) return;
+      if (event.data?.type === 'BENTO_STRUCTURE_UPDATED') {
+        const next = structuredClone(design);
+        next.structure = next.structure || {};
+        next.structure[scope] = next.structure[scope] || {};
+        next.structure[scope][String(event.data.parentId)] = event.data.childIds.map(String);
+        remember(next);
+      }
+      if (event.data?.type === 'BENTO_ELEMENT_DELETED') {
+        const next = structuredClone(design);
+        next.hidden = next.hidden || {};
+        next.hidden[scope] = [...(next.hidden[scope] || []), String(event.data.nodeId)];
+        remember(next);
+        setSelected(null);
+      }
       if (event.data?.type === 'BENTO_ELEMENT_SELECTED') {
         setSelected({
           selector: String(event.data.selector || ''),
+          nodeId: String(event.data.nodeId || ''),
+          componentId: event.data.componentId ? String(event.data.componentId) : null,
           tag: String(event.data.tag || 'element'),
           label: String(event.data.label || 'Selected element'),
           classes: Array.isArray(event.data.classes) ? event.data.classes : [],
@@ -188,7 +228,7 @@ export default function DesignStudio() {
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, []);
+  }, [design, scope, remember]);
 
   const sendPreview = () => {
     const target = frame.current?.contentWindow;
@@ -266,6 +306,68 @@ export default function DesignStudio() {
     setSelected(null);
   };
 
+  const saveComponent = () => {
+    if (!selected) return;
+    const name = componentName.trim() || window.prompt('Name this reusable component', selected.label) || '';
+    if (!name.trim()) return;
+    const id = 'component-' + Date.now().toString(36);
+    const next = structuredClone(design);
+    next.components = next.components || {};
+    next.components[id] = { name: name.trim(), styles: { ...(selectedStyles || {}) } };
+    next.componentBindings = next.componentBindings || {};
+    next.componentBindings[scope] = { ...(next.componentBindings[scope] || {}), [selected.selector]: id };
+    remember(next);
+    frame.current?.contentWindow?.postMessage({ type:'BENTO_COMPONENT_MARK', id }, window.location.origin);
+    setComponentName('');
+    setStatus('Reusable component saved');
+  };
+  const applyComponent = (id: string) => {
+    if (!selected) return;
+    const next = structuredClone(design);
+    next.componentBindings = next.componentBindings || {};
+    next.componentBindings[scope] = { ...(next.componentBindings[scope] || {}), [selected.selector]: id };
+    remember(next);
+    frame.current?.contentWindow?.postMessage({ type:'BENTO_COMPONENT_MARK', id }, window.location.origin);
+    setStatus('Component linked to selected element');
+  };
+  const uploadAsset = async (file?: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { setAssetError('Choose an image file.'); return; }
+    if (file.size > 10 * 1024 * 1024) { setAssetError('Images must be 10 MB or smaller.'); return; }
+    setUploading(true); setAssetError('');
+    try {
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) throw new Error('Please sign in as an admin.');
+      const path = auth.user.id + '/' + Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+      const { error: uploadError } = await supabase.storage.from('bento-design-assets').upload(path, file, { contentType:file.type, upsert:false });
+      if (uploadError) throw uploadError;
+      const publicUrl = supabase.storage.from('bento-design-assets').getPublicUrl(path).data.publicUrl;
+      const { data, error } = await supabase.from('bento_design_assets').insert({ name:file.name, path, public_url:publicUrl, mime_type:file.type, size_bytes:file.size, created_by:auth.user.id }).select('*').single();
+      if (error) throw error;
+      setAssets(rows => [data, ...rows]);
+      setStatus('Asset uploaded to Bento library');
+    } catch (error) { setAssetError(error instanceof Error ? error.message : 'Upload failed'); }
+    finally { setUploading(false); }
+  };
+  const useAsset = (asset: any) => {
+    if (!selected) { setSelectedAsset(asset.id); return; }
+    const next = structuredClone(design);
+    const elementScope = scope === 'all' ? 'global' : scope;
+    next.elements = next.elements || {}; next.elements[elementScope] = next.elements[elementScope] || {};
+    next.elements[elementScope][selected.selector] = { ...(next.elements[elementScope][selected.selector] || {}), assetUrl: asset.public_url };
+    remember(next);
+    frame.current?.contentWindow?.postMessage({ type:'BENTO_ELEMENT_ASSET', url:asset.public_url }, window.location.origin);
+    setStatus('Asset applied to selected element');
+  };
+  const deleteAsset = async (asset: any) => {
+    if (!window.confirm('Delete this asset from the library?')) return;
+    const { error } = await supabase.storage.from('bento-design-assets').remove([asset.path]);
+    if (error) { setAssetError(error.message); return; }
+    const result = await supabase.from('bento_design_assets').delete().eq('id', asset.id);
+    if (result.error) { setAssetError(result.error.message); return; }
+    setAssets(rows => rows.filter(row => row.id !== asset.id));
+  };
+  const elementAction = (action: 'duplicate' | 'delete') => frame.current?.contentWindow?.postMessage({ type:'BENTO_ELEMENT_ACTION', action }, window.location.origin);
   const renderField = (field: Field, value: string | number, onChange: (value: string | number) => void) => (
     <label key={field.key} className="ds-field">
       <span>{field.label}</span>
@@ -288,8 +390,8 @@ export default function DesignStudio() {
   );
 
   const activeTokenValues = scope === 'all'
-    ? design.global
-    : { ...design.global, ...(design.pages?.[scope] || {}) };
+    ? { ...design.global, ...(design.responsive?.['global:' + device]?.tokens || {}) }
+    : { ...design.global, ...(design.pages?.[scope] || {}), ...(design.responsive?.[scope + ':' + device]?.tokens || {}) };
 
   return (
     <div className="ds-studio">
@@ -302,7 +404,7 @@ export default function DesignStudio() {
         .ds-status{font-size:10px;color:#9fb1c9;display:flex;align-items:center;gap:6px;margin-right:5px}.ds-dot{width:6px;height:6px;border-radius:50%;background:${dirty?'#f59e0b':'#34d399'}}
         .ds-shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100vh - 150px);border:1px solid #26364b;border-radius:16px;overflow:hidden;background:#091321;box-shadow:0 22px 60px #02061766}
         .ds-sidebar{background:#0b1727;border-right:1px solid #26364b;display:flex;flex-direction:column;min-width:0}
-        .ds-tabs{display:grid;grid-template-columns:repeat(2,1fr);padding:10px;gap:5px;border-bottom:1px solid #26364b}
+        .ds-tabs{display:grid;grid-template-columns:repeat(3,1fr);padding:10px;gap:5px;border-bottom:1px solid #26364b}
         .ds-tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 5px;border-radius:8px;color:#91a4bf;font-size:10px;font-weight:700}.ds-tab.active{background:#1e3a5f;color:#bfdbfe}
         .ds-side-content{padding:13px;overflow:auto;max-height:calc(100vh - 230px)}.ds-section-title{font-size:9px;font-weight:800;letter-spacing:.16em;color:#7186a4;text-transform:uppercase;margin:4px 0 10px}
         .ds-page{width:100%;text-align:left;padding:10px;border-radius:9px;margin:3px 0;border:1px solid transparent;color:#b6c4d8}.ds-page strong{display:block;font-size:11px}.ds-page small{display:block;font-size:9px;color:#7186a4;margin-top:3px}.ds-page.active{background:#142b46;border-color:#2e5b8b;color:#eff6ff}
