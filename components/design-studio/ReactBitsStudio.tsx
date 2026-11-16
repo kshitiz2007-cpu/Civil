@@ -139,13 +139,14 @@ export default function ReactBitsStudio({ page, config, save, previewUrl }: { pa
   const componentToken=registry?.[1]||(packageName?.[1]||'').split('/').pop()||raw.split(/[\s/]/).filter(Boolean).pop()||'';
   const normalized=componentToken.replace(/-(?:ts|js)-(?:css|tw)$/i,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
   const resolved=componentAliases[normalized];
-  if(!resolved||!["blur-text","aurora","spotlight-card","magnet-button","shiny-text","gradient-text","fuzzy-text","split-text","tilted-card","glare-hover","particles","beams","click-spark","card-swap","target-cursor","text-pressure","electric-border","dither","star-border","fade-content","animated-content","scroll-reveal","count-up","decrypted-text","infinite-scroll","dock","profile-card","glass-icons","true-focus","scroll-float","pixel-transition","waves","silk","lightning","galaxy","orb","masonry","stack","carousel","stepper","folder","pill-nav","flowing-menu"].includes(resolved)){setInstallError('Command parsed, but this component has no approved live renderer yet. Add a reviewed React adapter before it can be installed into the app. The command was not executed.');return;}
+  if(!resolved||!["blur-text","aurora","spotlight-card","magnet-button","shiny-text","gradient-text","fuzzy-text","split-text","tilted-card","glare-hover","particles","beams","click-spark","card-swap","target-cursor","text-pressure","electric-border","dither","star-border","fade-content","animated-content","scroll-reveal","count-up","decrypted-text","infinite-scroll","dock","profile-card","glass-icons","true-focus","scroll-float","pixel-transition","waves","silk","lightning","galaxy","orb","masonry","stack","carousel","stepper","folder","pill-nav","flowing-menu","shadcn-button","shadcn-card","shadcn-badge","shadcn-input","shadcn-tabs","shadcn-dialog","shadcn-accordion","shadcn-avatar","shadcn-alert","shadcn-progress","shadcn-skeleton","shadcn-separator","shadcn-tooltip","shadcn-dropdown-menu","shadcn-sheet","shadcn-select","shadcn-switch","shadcn-checkbox","shadcn-slider","shadcn-table"].includes(resolved)){setInstallError('Command parsed, but this component has no approved live renderer yet. Add a reviewed React adapter before it can be installed into the app. The command was not executed.');return;}
   const starter=STARTERS.find(bit=>bit.id===resolved);
   const display=starter?.name||componentToken.replace(/([a-z])([A-Z])/g,'$1 $2');
   setSelected(resolved);setName(display);setSource(starter?.source||'// Registered React Bits adapter: '+display+'\\n// Runtime rendering is provided by ReactBitBlockRenderer.\\nexport default function '+componentToken+'(){ return <div>'+display+'</div>; }');setCss(starter?.css||'/* Runtime styles are managed by the Design Studio gradient and layout controls. */');
   setLiveBlockId(null);setLiveMessage('');setInstallStatus(display+' resolved to the approved live renderer. Select a page slot and choose Add to live page. No shell command was executed.');
  };
-\n const addToLivePage = () => {
+
+ const addToLivePage = () => {
    if (!supported || !targetSlot) { setMessage('Choose a supported starter and a registered page section.'); return; }
    const block: VisualBlock = {
      id: 'react-bit-' + Date.now().toString(36), type: 'reactBit',
