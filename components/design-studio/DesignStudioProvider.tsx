@@ -11,6 +11,7 @@ export type StudioConfig = {
   breakpoints: Record<StudioBreakpoint, Record<string, string>>;
   pageBreakpoints: Record<string, Partial<Record<StudioBreakpoint, Record<string, string>>>>;
   components: Record<string, Record<string, string>>;
+  elementStyles: Record<string, Record<string, string>>;
   structure: Record<string, string[]>;
   assets: { id: string; name: string; type: string; data: string; path?: string }[];
 };
@@ -26,7 +27,7 @@ export const DEFAULT_STUDIO: StudioConfig = {
     '--studio-content-width': '1280px', '--studio-spacing': '16px',
   },
   pages: {}, breakpoints: { desktop: {}, tablet: {}, mobile: {} },
-  pageBreakpoints: {}, components: {}, structure: {}, assets: [],
+  pageBreakpoints: {}, components: {}, elementStyles: {}, structure: {}, assets: [],
 };
 const StudioContext = createContext<{ config: StudioConfig; save: (v: StudioConfig) => void } | null>(null);
 export function useDesignStudio() {
@@ -77,7 +78,8 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
         : '';
     };
     const componentCss = Object.entries(config.components).map(([name, styles]) => `.${name}{${declarations(styles)}}`).join("");
-    return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}` + componentCss +
+    const elementCss = Object.entries(config.elementStyles || {}).map(([selector, styles]) => `${selector}{${declarations(styles)}}`).join("");
+    return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}` + componentCss + elementCss +
       responsive('tablet','(min-width:768px) and (max-width:1023px)') +
       responsive('mobile','(max-width:767px)');
   }, [config, pageKey]);
