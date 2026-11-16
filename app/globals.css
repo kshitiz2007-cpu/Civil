@@ -2060,3 +2060,16 @@ button:disabled { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   .leaderboard-podium-card, .leaderboard-row { transition: none; }
 }
+
+
+/* Bento Visual Design Studio — shared live design tokens */
+:root {
+  --studio-bg: #061321;
+  --studio-surface: #10263a;
+  --studio-text: #effbff;
+  --studio-muted: #a5b7c8;
+  --studio-accent: #62e6e4;
+  --studio-border: #284257;
+  --studio-radius: 18px;
+  --studio-spacing: 24px;
+}
