@@ -2,28 +2,31 @@
 
 ## Browse and install
 
-The Design System Studio > React Bits Studio includes a curated quick-start index. Choose a component, language (TypeScript/JavaScript), and styling variant (plain CSS/Tailwind), then copy the official shadcn registry command.
-
-Example:
+Design System Studio > React Bits Studio offers a curated quick-start index. Choose a component, language (TypeScript/JavaScript), and styling variant (plain CSS/Tailwind), then copy the official shadcn registry command.
 
 ```bash
 npx shadcn@latest add @react-bits/SplitText-TS-CSS
 ```
 
-The registry is configured in `components.json`. The command installs component source into the project and adds dependencies declared by the registry. Review the generated source, imports, license and dependency changes before committing. Do not bulk-install the entire catalogue: many components are optional and some have substantial animation/WebGL dependencies.
+The registry is configured in `components.json`. Registry commands copy component source into the project and add declared dependencies. Review generated source, imports, dependencies and license before committing. Avoid bulk-installing the full catalogue: components are optional and some carry animation/WebGL dependencies.
 
-Official documentation: https://reactbits.dev/get-started/installation
+Official guide: https://reactbits.dev/get-started/installation
 
-## Element-by-element upgrades
+## Registered slots and one-click replacement
+
+The home page now exposes registered slots for its hero title, description, three feature cards and sign-in card. Each slot is a stable React boundary with an ID, not a fragile CSS selector.
 
 1. Open Design System Studio and enable the live page preview.
-2. Click an element in the iframe to select its DOM selector.
-3. Choose a suggested React Bits component in the inspector.
-4. Save an upgrade plan and copy the install command.
-5. Install and review the component source.
-6. Migrate the selected page element to a registered React component slot, preserving its content, accessibility, responsive behavior and event handlers.
-7. Test the page at desktop/tablet/mobile sizes before publishing.
+2. Click inside a registered slot. The inspector selects the nearest slot boundary.
+3. Choose a built-in React Bits-compatible effect: SpotlightCard, Aurora, BlurText, GlareHover, TiltedCard or Magnet.
+4. Click **Apply replacement now**. The slot updates immediately in the preview and live page while retaining its original children, links, buttons, state and event handlers.
+5. Choose **Original component** or **Undo replacement** to revert.
 
-### Important implementation boundary
+Selections outside a registered slot remain style-editable but cannot use the one-click component swap. This is deliberate: a rendered DOM node is not its original React JSX source. Arbitrary runtime DOM replacement can break hydration, state, accessibility and event handlers. Extend coverage by wrapping additional page elements in `StudioSlot` and assigning stable IDs.
 
-The inspector can identify a rendered DOM element, but a browser DOM node is not the original React JSX source. Replacing arbitrary DOM with a React component at runtime is unsafe and brittle (React hydration, state, event handlers and server components can break). The current action therefore saves a selector-to-component upgrade plan; it does not silently rewrite page source. True one-click replacement requires pages to be migrated to explicit `StudioSlot`/component registry boundaries first.
+## Current scope
+
+- One-click visual renderer swaps are implemented for registered slots and persist in the Design Studio configuration.
+- The built-in effects are lightweight local implementations inspired by common React Bits interaction patterns; they are not automatic installation of every upstream React Bits component.
+- The registry browser remains a curated index with copy-command support. It does not execute package installation on the server.
+- Review responsive behavior, reduced-motion behavior and keyboard/accessibility before publishing.
