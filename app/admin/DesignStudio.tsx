@@ -3,13 +3,14 @@
 import { useRef, useState } from 'react';
 import {
   Palette, Layers3, Component, ImagePlus, Monitor, Tablet, Smartphone,
-  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2,
+  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles,
 } from 'lucide-react';
 import { DEFAULT_STUDIO, StudioBreakpoint, useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
 import { supabase } from '@/lib/supabaseClient';
 import CustomCssEditor from '@/components/design-studio/CustomCssEditor';
+import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
 
-type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css';
+type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
@@ -121,7 +122,7 @@ export default function DesignStudio() {
   const nav: {id:Panel;label:string;icon:any}[]=[
     {id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
     {id:'structure',label:'Page structure',icon:Layers3},{id:'components',label:'Components',icon:Component},
-    {id:'css',label:'Live CSS editor',icon:Code2},
+    {id:'css',label:'Live CSS editor',icon:Code2},{id:'reactbits',label:'React Bits Studio',icon:Sparkles},
     {id:'assets',label:'Asset library',icon:ImagePlus},
   ];
   const tokenValues = panel==='breakpoints'
@@ -150,7 +151,7 @@ export default function DesignStudio() {
       <main className="min-w-0 space-y-4">
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':'Asset management'}</h2>
+            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':'Asset management'}</h2>
               <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
@@ -172,6 +173,7 @@ export default function DesignStudio() {
             <p className="text-xs text-[var(--app-muted)]">Recipes generate CSS classes (for example <code>.studio-button</code>) that can be assigned to registered components. Existing bespoke JSX needs those classes applied to consume a recipe.</p>
           </div>}
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
+          {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio /></div>}
           {panel==='assets'&&<div className="mt-5 space-y-4">
             <div onClick={()=>fileRef.current?.click()} className="cursor-pointer rounded-2xl border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface-muted)] p-8 text-center"><Upload className="mx-auto mb-2 text-[var(--app-accent)]"/><p className="text-sm font-bold">Upload images, logos and visual assets</p><p className="mt-1 text-xs text-[var(--app-muted)]">Choose files from your device. Stored locally in this browser for this prototype.</p><input ref={fileRef} hidden type="file" multiple accept="image/*,image/svg+xml" onChange={e=>upload(e.target.files)}/></div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{config.assets.map(asset=><div key={asset.id} className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="grid aspect-square place-items-center bg-[var(--app-surface-muted)]"><img src={asset.data} alt={asset.name} className="max-h-full max-w-full object-contain"/></div><div className="flex items-center gap-2 p-2"><span className="min-w-0 flex-1 truncate text-[10px]">{asset.name}</span><button onClick={async()=>{if(asset.path) await supabase.storage.from('design-assets').remove([asset.path]);save({...config,assets:config.assets.filter(a=>a.id!==asset.id)});}} className="text-rose-400"><Trash2 size={13}/></button></div></div>)}</div>
