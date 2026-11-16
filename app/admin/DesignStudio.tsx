@@ -12,7 +12,7 @@ import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
 import VisualBlockBuilder from '@/components/design-studio/VisualBlockBuilder';
 import CanvasStudio from '@/components/design-studio/CanvasStudio';
 
-type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
+type Panel = 'canvas' | 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
