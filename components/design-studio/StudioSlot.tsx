@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useDesignStudio } from './DesignStudioProvider';
 import VisualBlockRenderer from './VisualBlockRenderer';
+import ReactBitsSlotReplacement from './ReactBitsSlotReplacement';
 
 export type StudioSlotProps = {
   id: string;
@@ -29,7 +30,7 @@ export default function StudioSlot({ id, children, className = '' }: StudioSlotP
   return (
     <div data-studio-slot={id} data-studio-component={upgrade} className={base} style={style} onPointerMove={upgrade === 'SpotlightCard' ? move : undefined}>
       {upgrade === 'Aurora' && <span aria-hidden="true" className="studio-slot-aurora-layer"><i /><i /><i /></span>}
-      <div className="studio-slot-content">{children}{blocks.map(block => <VisualBlockRenderer key={block.id} block={block} />)}</div>
+      <div className="studio-slot-content">{upgrade !== 'none' ? <ReactBitsSlotReplacement component={upgrade} >{children}</ReactBitsSlotReplacement> : children}{blocks.map(block => <VisualBlockRenderer key={block.id} block={block} />)}</div>
     </div>
   );
 }
