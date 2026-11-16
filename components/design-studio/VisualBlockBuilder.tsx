@@ -31,6 +31,9 @@ const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]>
     {id:'resources.header',label:'Resources header',group:'Resources page'},
     {id:'resources.subject-browser',label:'Subject browser',group:'Resources page'},
   ],
+  history: [{id:'history.page',label:'Attempt history canvas',group:'History page'}],
+  leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas',group:'Leaderboard page'}],
+  quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'}],
   home: [
     {id:'home.hero-title',label:'Hero title',group:'Home page'},
     {id:'home.hero-description',label:'Hero description',group:'Home page'},
