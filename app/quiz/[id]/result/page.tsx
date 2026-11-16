@@ -666,7 +666,7 @@ export default function QuizResultPage() {
               );
             })}
           </div>
-        </section>
+        </section></StudioSlot>
 
         {/* Bottom Actions */}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
