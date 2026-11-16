@@ -246,10 +246,9 @@ Use the same option order in both languages. correct must be an index from 0 to 
             ? 'Synthesizing Bilingual UPSC Paper…'
             : 'Synthesize Bilingual UPSC Paper'}
         </button>
-      </section>
+      </section></StudioSlot>
 
       {generatedQuiz && (
-        </section></StudioSlot>
       <StudioSlot id="admin.aigen.output"><section className="space-y-4">
           <div className="theme-surface flex flex-col justify-between gap-3 rounded-2xl p-5 sm:flex-row sm:items-center">
             <div>
@@ -323,7 +322,7 @@ Use the same option order in both languages. correct must be an index from 0 to 
               )}
             </article>
           ))}
-        </section>
+        </section></StudioSlot>
       )}
     </div>
   );
