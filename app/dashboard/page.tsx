@@ -484,7 +484,7 @@ export default function DashboardPage() {
         )}
 
         {/* Hero Banner */}
-        <StudioSlot id="dashboard.hero"><StudioSlot id="dashboard.stats"><StudioSlot id="dashboard.performance"><StudioSlot id="dashboard.activity"><section className="theme-surface relative overflow-hidden rounded-3xl p-6 sm:p-8">
+        <StudioSlot id="dashboard.hero"><section className="theme-surface relative overflow-hidden rounded-3xl p-6 sm:p-8">
           <div className="relative grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--app-accent)]">
@@ -548,10 +548,10 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        </section></StudioSlot></StudioSlot></StudioSlot></StudioSlot>
+        </section></StudioSlot>
 
         {/* Key Metrics Strip */}
-        <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StudioSlot id="dashboard.stats"><section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={BookOpen}
             label="Tests Evaluated"
@@ -580,12 +580,12 @@ export default function DashboardPage() {
             value={resourceCount}
             hint="Standard notes & PIB digests"
           />
-        </section>
+        </section></StudioSlot>
 
         {/* Main 2-Column Analytical Section */}
         <div className="mt-7 grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
           {/* Recommended Practice Modules */}
-          <section className="theme-surface rounded-3xl p-5 sm:p-6">
+          <StudioSlot id="dashboard.practice"><section className="theme-surface rounded-3xl p-5 sm:p-6">
             <div className="flex items-end justify-between gap-4">
               <div>
                 <h2 className="text-lg font-bold">
@@ -668,11 +668,11 @@ export default function DashboardPage() {
                 );
               })}
             </div>
-          </section>
+          </section></StudioSlot>
 
           {/* Right Column: Score Trend + GS Subject Proficiency */}
           <div className="space-y-6">
-            <section className="theme-surface rounded-3xl p-5 sm:p-6">
+            <StudioSlot id="dashboard.analytics"><section className="theme-surface rounded-3xl p-5 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-bold">
@@ -716,7 +716,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ) : null}
-            </section>
+            </section></StudioSlot>
 
             {/* GS Pillar Balance */}
             <section className="theme-surface rounded-3xl p-5 sm:p-6">
