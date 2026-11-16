@@ -553,12 +553,12 @@ export default function DashboardPage() {
 
         {/* Key Metrics Strip */}
         <StudioSlot id="dashboard.stats"><section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StudioSlot id="dashboard.stat-card"><StatCard
+          <StudioSlot id="dashboard.stat-tests"><StatCard
             icon={BookOpen}
             label="Tests Evaluated"
             value={attempts.length}
             hint="Completed Prelims & Sectional modules"
-          />
+          /></StudioSlot><StudioSlot id="dashboard.stat-mean">
           <StatCard
             icon={TrendingUp}
             label="Mean Score"
@@ -568,13 +568,13 @@ export default function DashboardPage() {
                 ? 'Above institutional cutoff (50%)'
                 : 'Focus on revision & elimination'
             }
-          />
+          /></StudioSlot><StudioSlot id="dashboard.stat-papers">
           <StatCard
             icon={Layers}
             label="Active Test Papers"
             value={quizzes.length}
             hint="Bilingual EN / HI papers ready"
-          />
+          /></StudioSlot><StudioSlot id="dashboard.stat-resources">
           <StatCard
             icon={FileText}
             label="Study Compendiums"
