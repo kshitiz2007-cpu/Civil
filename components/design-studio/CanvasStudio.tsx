@@ -49,7 +49,7 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];error:string
   const classAttr=opening.attributes.properties.find(p=>ts.isJsxAttribute(p)&&p.name.getText(source)==='className') as ts.JsxAttribute|undefined;
   const className=classAttr?.initializer&&ts.isStringLiteral(classAttr.initializer)?classAttr.initializer.text:'';
   const kind=tag==='div'&&rules[className]?.display==='grid'?'grid':TAG_KIND[tag];
-  if(!kind)return null;
+  if(!kind){if(tag.includes('-')||/^[A-Z]/.test(tag))unsupportedComponent=true;return null;}
   const idMatch=className.match(/node-([a-zA-Z0-9_-]+)/);
   const id=idMatch?'node-'+idMatch[1]:uid();
   const styles={...(rules[className]||{})};
