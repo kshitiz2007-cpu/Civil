@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Palette, Layers3, Component, ImagePlus, Monitor, Tablet, Smartphone,
   RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles, Save,
@@ -35,6 +35,14 @@ const TOKENS = [
   { key:'--studio-font-scale', label:'Font scale', type:'number' },
 ];
 const STARTER_SECTIONS = ['Announcement banner','Page header','Primary content','Secondary content','Footer'];
+const parseHexGradient = (value?: string) => {
+  if (!value) return null;
+  const match = value.match(/linear-gradient\\(\\s*([^,]+),(.+)\\)$/i);
+  if (!match) return null;
+  const stops = match[2].split(',').map(item => item.trim());
+  if ((stops.length !== 3 && stops.length !== 4) || !stops.every(item => /^#[0-9a-fA-F]{6}$/.test(item))) return null;
+  return { angle: match[1].trim(), stops };
+};
 const COMPONENT_PRESETS = [
   { id:'studio-button', name:'Button', values:{'background':'var(--app-accent)','color':'#06130f','border-radius':'12px','padding':'10px 16px','font-weight':'700'} },
   { id:'studio-card', name:'Card', values:{'background':'var(--app-panel)','border':'1px solid var(--app-border)','border-radius':'var(--studio-radius)','padding':'20px','box-shadow':'0 12px 32px rgba(0,0,0,.16)'} },
@@ -58,12 +66,42 @@ export default function DesignStudio() {
   const [upgradeChoice,setUpgradeChoice] = useState('SpotlightCard');
   const [gradientAngle,setGradientAngle] = useState('135deg');
   const [tokenGradientCount,setTokenGradientCount] = useState<3|4>(4);
+  const [tokenTextGradientCount,setTokenTextGradientCount] = useState<3|4>(4);
   const [tokenBackgroundStops,setTokenBackgroundStops] = useState(['#08110f','#164e63','#0ea5e9','#34d399']);
   const [tokenTextStops,setTokenTextStops] = useState(['#34d399','#38bdf8','#a78bfa','#f472b6']);
   const [gradientStopCount,setGradientStopCount] = useState<3|4>(4);
   const [gradientColors,setGradientColors] = useState(['#34d399','#38bdf8','#a78bfa','#f472b6']);
   const [textGradientColors,setTextGradientColors] = useState(['#f472b6','#a78bfa','#38bdf8','#34d399']);
   const [textGradientStopCount,setTextGradientStopCount] = useState<3|4>(3);
+  useEffect(() => {
+    const background = parseHexGradient(config.global['--app-bg']);
+    if (background) {
+      setTokenBackgroundStops([...background.stops, '#08110f', '#164e63', '#0ea5e9', '#34d399'].slice(0, 4));
+      setTokenGradientCount(background.stops.length as 3|4);
+      setGradientAngle(background.angle);
+    }
+    const text = parseHexGradient(config.global['--app-text-gradient']);
+    if (text) {
+      setTokenTextStops([...text.stops, '#34d399', '#38bdf8', '#a78bfa', '#f472b6'].slice(0, 4));
+      setTokenTextGradientCount(text.stops.length as 3|4);
+      setGradientAngle(text.angle);
+    }
+  }, [config.global]);
+  useEffect(() => {
+    if (!selectedElement) return;
+    const background = parseHexGradient(elementStyles.background);
+    const text = parseHexGradient(elementStyles['background-image']);
+    if (background) {
+      setGradientColors([...background.stops, '#34d399', '#38bdf8', '#a78bfa', '#f472b6'].slice(0, 4));
+      setGradientStopCount(background.stops.length as 3|4);
+      setGradientAngle(background.angle);
+    }
+    if (text) {
+      setTextGradientColors([...text.stops, '#f472b6', '#a78bfa', '#38bdf8', '#34d399'].slice(0, 4));
+      setTextGradientStopCount(text.stops.length as 3|4);
+      setGradientAngle(text.angle);
+    }
+  }, [selectedElement?.selector, elementStyles]);
   const [componentChoice,setComponentChoice] = useState('studio-button');
   const pageName = PAGE_OPTIONS.find(p=>p[0]===page)?.[1] || page;
   const sections = config.structure[page] || STARTER_SECTIONS;
@@ -185,12 +223,12 @@ export default function DesignStudio() {
             </section>
             <section className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 space-y-3">
               <div><h3 className="text-sm font-bold">Multi-stop text gradient</h3><p className="mt-1 text-[10px] text-[var(--app-muted)]">Save a reusable global text-gradient token. Add the <code>theme-gradient-text</code> class to text that should use it.</p></div>
-              <label className="block text-[10px] text-[var(--app-muted)]">Colour stops<select value={tokenGradientCount} onChange={e=>setTokenGradientCount(Number(e.target.value) as 3|4)} className="glass-input mt-1 w-full text-xs"><option value={3}>3 colours</option><option value={4}>4 colours</option></select></label>
-              <div className="grid grid-cols-2 gap-2">{tokenTextStops.slice(0,tokenGradientCount).map((v,i)=><label key={i} className="text-[10px] text-[var(--app-muted)]">Text HEX {i+1}<input value={v} onChange={e=>setTokenTextStops(old=>old.map((x,j)=>j===i?e.target.value:x))} className="glass-input mt-1 w-full font-mono text-xs" placeholder="#F472B6"/></label>)}</div>
+              <label className="block text-[10px] text-[var(--app-muted)]">Colour stops<select value={tokenTextGradientCount} onChange={e=>setTokenTextGradientCount(Number(e.target.value) as 3|4)} className="glass-input mt-1 w-full text-xs"><option value={3}>3 colours</option><option value={4}>4 colours</option></select></label>
+              <div className="grid grid-cols-2 gap-2">{tokenTextStops.slice(0,tokenTextGradientCount).map((v,i)=><label key={i} className="text-[10px] text-[var(--app-muted)]">Text HEX {i+1}<input value={v} onChange={e=>setTokenTextStops(old=>old.map((x,j)=>j===i?e.target.value:x))} className="glass-input mt-1 w-full font-mono text-xs" placeholder="#F472B6"/></label>)}</div>
               <label className="block text-[10px] text-[var(--app-muted)]">Direction<select value={gradientAngle} onChange={e=>setGradientAngle(e.target.value)} className="glass-input mt-1 w-full text-xs"><option value="90deg">90°</option><option value="120deg">120°</option><option value="135deg">135°</option><option value="180deg">180°</option><option value="225deg">225°</option><option value="270deg">270°</option></select></label>
-              <div className="h-10 rounded-lg border border-white/10" style={{background:tokenTextStops.slice(0,tokenGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))?'linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenGradientCount).join(',')+')':'transparent'}}/>
-              <p className="text-center text-lg font-extrabold" style={{backgroundImage:tokenTextStops.slice(0,tokenGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))?'linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenGradientCount).join(',')+')':'none',backgroundClip:'text',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Live text gradient preview</p>
-              <button type="button" onClick={()=>{if(!tokenTextStops.slice(0,tokenGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c)))return;update('--app-text-gradient','linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenGradientCount).join(',')+')');}} disabled={!tokenTextStops.slice(0,tokenGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))} className="theme-control w-full justify-center text-xs disabled:opacity-40">Save text gradient token</button>
+              <div className="h-10 rounded-lg border border-white/10" style={{background:tokenTextStops.slice(0,tokenTextGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))?'linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenTextGradientCount).join(',')+')':'transparent'}}/>
+              <p className="text-center text-lg font-extrabold" style={{backgroundImage:tokenTextStops.slice(0,tokenTextGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))?'linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenTextGradientCount).join(',')+')':'none',backgroundClip:'text',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Live text gradient preview</p>
+              <button type="button" onClick={()=>{if(!tokenTextStops.slice(0,tokenTextGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c)))return;update('--app-text-gradient','linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenTextGradientCount).join(',')+')');}} disabled={!tokenTextStops.slice(0,tokenTextGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))} className="theme-control w-full justify-center text-xs disabled:opacity-40">Save text gradient token</button>
             </section>
           </div>}
           {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="mt-5 grid gap-3 md:grid-cols-2">
