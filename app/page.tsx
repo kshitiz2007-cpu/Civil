@@ -163,10 +163,10 @@ export default function LoginPage() {
       <main className="relative z-10 max-w-6xl w-full mx-auto my-auto grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center py-8">
         {/* Left Institutional Overview */}
         <StudioSlot id="home.institutional-overview" className="min-w-0"><section className="space-y-6 pr-0 lg:pr-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-panel)] px-3.5 py-1.5 text-xs font-semibold text-[var(--app-accent)]">
+          <StudioSlot id="home.institutional-badge"><div className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-panel)] px-3.5 py-1.5 text-xs font-semibold text-[var(--app-accent)]">
             <Compass className="w-3.5 h-3.5" />
             <span>UPSC CSE Prelims & CSAT Computer-Based Evaluation System</span>
-          </div>
+          </div></StudioSlot>
 
           <StudioSlot id="home.hero-title" className="rounded-2xl"><h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.12]">
             Precision OMR telemetry & calm preparation for the{' '}
@@ -182,7 +182,7 @@ export default function LoginPage() {
             Hindi split-view, and 360° negative-marking calibration.
           </p></StudioSlot>
 
-          <div className="grid sm:grid-cols-3 gap-3.5 pt-2">
+          <StudioSlot id="home.feature-grid"><div className="grid sm:grid-cols-3 gap-3.5 pt-2">
             <StudioSlot id="home.feature-ev" className="rounded-2xl"><div className="theme-surface rounded-2xl p-4">
               <div className="flex items-center gap-2 text-sm font-bold">
                 <Scale className="w-4 h-4 text-[var(--app-accent)]" />
@@ -213,22 +213,22 @@ export default function LoginPage() {
                 Dholpur Dusk for 10-hour study blocks.
               </p>
             </div></StudioSlot>
-          </div>
+          </div></StudioSlot>
         </section></StudioSlot>
 
         {/* Right Sign-In & Instant Simulator Card */}
         <StudioSlot id="home.login-card" className="w-full max-w-md mx-auto rounded-3xl"><section className="theme-surface rounded-3xl p-7 sm:p-9 w-full">
-          <div className="w-13 h-13 rounded-2xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] flex items-center justify-center mb-5 text-[var(--app-accent)]">
+          <StudioSlot id="home.login-brand"><div className="w-13 h-13 rounded-2xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] flex items-center justify-center mb-5 text-[var(--app-accent)]">
             <Landmark className="w-6 h-6" />
-          </div>
+          </div></StudioSlot>
 
-          <h2 className="text-2xl font-bold tracking-tight">
+          <StudioSlot id="home.login-heading"><div><h2 className="text-2xl font-bold tracking-tight">
             Aspirant & Faculty Portal
           </h2>
           <p className="text-xs sm:text-sm text-[var(--app-muted)] mt-1.5 mb-6 leading-relaxed">
             Sign in with Google or launch the interactive UPSC Prelims Sanctuary
             immediately.
-          </p>
+          </p></div></StudioSlot>
 
           {authError && (
             <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
@@ -274,7 +274,7 @@ export default function LoginPage() {
             <span className="h-px flex-1 bg-[var(--app-border)]" />
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          <StudioSlot id="home.login-actions"><div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={() => router.push('/dashboard')}
               className="flex items-center justify-center gap-1.5 rounded-xl bg-[var(--app-accent)] px-3 py-3 text-xs font-bold text-slate-950 hover:opacity-90 transition"
@@ -289,9 +289,9 @@ export default function LoginPage() {
               <Layers className="w-3.5 h-3.5 text-[var(--app-accent)]" />
               <span>Launch Quiz Engine</span>
             </button>
-          </div>
+          </div></StudioSlot>
 
-          <div className="mt-6 space-y-2 border-t border-[var(--app-border)] pt-5 text-xs text-[var(--app-muted)]">
+          <StudioSlot id="home.login-assurances"><div className="mt-6 space-y-2 border-t border-[var(--app-border)] pt-5 text-xs text-[var(--app-muted)]">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[var(--app-accent)] shrink-0" />
               <span>Bilingual English & Devanagari Hindi CBT Interface</span>
@@ -300,15 +300,15 @@ export default function LoginPage() {
               <ShieldCheck className="w-4 h-4 text-[var(--app-accent)] shrink-0" />
               <span>Full Keyboard Navigation (1–4, Shift+1–4, N/P, M, Z)</span>
             </div>
-          </div>
+          </div></StudioSlot>
         </section></StudioSlot>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-6xl w-full mx-auto text-center sm:text-left flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--app-muted)] py-2 gap-2">
+      <StudioSlot id="home.footer"><footer className="relative z-10 max-w-6xl w-full mx-auto text-center sm:text-left flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--app-muted)] py-2 gap-2">
         <span>Gyankunj Civil Services Institution · Academic Evaluation Suite</span>
         <span>GS Paper I–IV · CSAT · All-India Prelims Simulator</span>
-      </footer>
+      </footer></StudioSlot>
     </div>
   );
 }
