@@ -408,7 +408,7 @@ export default function DesignStudio() {
         .ds-tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 5px;border-radius:8px;color:#91a4bf;font-size:10px;font-weight:700}.ds-tab.active{background:#1e3a5f;color:#bfdbfe}
         .ds-side-content{padding:13px;overflow:auto;max-height:calc(100vh - 230px)}.ds-section-title{font-size:9px;font-weight:800;letter-spacing:.16em;color:#7186a4;text-transform:uppercase;margin:4px 0 10px}
         .ds-page{width:100%;text-align:left;padding:10px;border-radius:9px;margin:3px 0;border:1px solid transparent;color:#b6c4d8}.ds-page strong{display:block;font-size:11px}.ds-page small{display:block;font-size:9px;color:#7186a4;margin-top:3px}.ds-page.active{background:#142b46;border-color:#2e5b8b;color:#eff6ff}
-        .ds-preview-wrap{min-width:0;display:flex;flex-direction:column;background:#101b2c}.ds-toolbar{height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #26364b;gap:10px}.ds-toolbar-label{font-size:10px;color:#b8c8de;display:flex;align-items:center;gap:7px}.ds-device{display:flex;gap:3px;padding:3px;background:#091321;border:1px solid #2b3c52;border-radius:8px}.ds-device button{padding:6px 9px;border-radius:5px;color:#8294ad}.ds-device button.active{background:#29486d;color:white}
+        .ds-preview-wrap{min-width:0;display:flex;flex-direction:column;background:#101b2c}.ds-toolbar{height:47px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #26364b;gap:10px}.ds-toolbar-label{font-size:10px;color:#b8c8de;display:flex;align-items:center;gap:7px}.ds-device{display:flex;gap:3px;padding:3px;background:#091321;border:1px solid #2b3c52;border-radius:8px}.ds-device button{padding:6px 9px;border-radius:5px;color:#8294ad}.ds-device button.active{background:#29486d;color:white}.ds-component-name{width:100%;margin-top:9px;background:#101e31;color:#e5edf8;border:1px solid #30435b;border-radius:7px;padding:8px;font-size:11px}
         .ds-canvas{background:#dce5ee;min-height:650px;flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:18px}.ds-frame{height:calc(100vh - 250px);min-height:650px;border:0;background:white;box-shadow:0 12px 40px #02061755;transition:width .2s;max-width:100%}
         .ds-hint{display:flex;align-items:center;gap:8px;padding:9px 13px;background:#10223a;border-top:1px solid #26364b;color:#91a4bf;font-size:10px}
         .ds-inspector{padding:14px;overflow:auto;max-height:calc(100vh - 230px)}.ds-field{display:block;margin:0 0 13px}.ds-field>span{display:block;font-size:10px;color:#aebdd1;margin-bottom:6px}.ds-field input,.ds-field select{width:100%;min-width:0;background:#101e31;color:#e5edf8;border:1px solid #30435b;border-radius:7px;padding:8px;font-size:11px;outline:none}.ds-field input:focus,.ds-field select:focus{border-color:#60a5fa}.ds-color-control{display:flex;gap:6px}.ds-color-control input[type=color]{width:35px;height:34px;padding:3px}.ds-number-control{display:flex;align-items:center;gap:7px}.ds-number-control small{white-space:nowrap;font-size:9px;color:#7186a4}.ds-number-control input{flex:1}
@@ -442,6 +442,9 @@ export default function DesignStudio() {
             <button className={panel === 'design' ? 'ds-tab active' : 'ds-tab'} onClick={() => setPanel('design')}><Palette size={13}/>Design</button>
             <button className={panel === 'inspector' ? 'ds-tab active' : 'ds-tab'} onClick={() => setPanel('inspector')}><Activity size={13}/>Inspect</button>
             <button className={panel === 'history' ? 'ds-tab active' : 'ds-tab'} onClick={() => setPanel('history')}><Clock3 size={13}/>History</button>
+            <button className={panel === 'structure' ? 'ds-tab active' : 'ds-tab'} onClick={() => setPanel('structure')}><GripVertical size={13}/>Layout</button>
+            <button className={panel === 'components' ? 'ds-tab active' : 'ds-tab'} onClick={() => setPanel('components')}><Layers3 size={13}/>Library</button>
+            <button className={panel === 'assets' ? 'ds-tab active' : 'ds-tab'} onClick={() => setPanel('assets')}><ImagePlus size={13}/>Assets</button>
           </div>
 
           {panel === 'pages' && <div className="ds-side-content">
@@ -451,6 +454,53 @@ export default function DesignStudio() {
             </button>)}
             <button className="ds-page" onClick={() => { setScope('all'); setPanel('design'); }}><strong>Global design system</strong><small>Tokens shared across every page</small></button>
             <p className="ds-muted" style={{marginTop:14}}>Choose a page, then click directly on an element in its live preview. Your changes are scoped to that page unless you edit global tokens.</p>
+          </div>}
+
+          {panel === 'structure' && <div className="ds-side-content">
+            <div className="ds-section-title">Page structure</div>
+            <p className="ds-muted">Drag sections, cards and layout containers directly inside the preview to reorder them. Bento records the new sibling order for this page.</p>
+            <div className="ds-empty"><GripVertical size={22} style={{margin:'0 auto 10px'}}/><strong>Drag to rearrange</strong><br/>Grab a section or card in the preview and drop it before or inside another container. Select an element to duplicate or remove it.</div>
+            <div className="ds-subhead"><span className="ds-section-title">Saved layout groups</span><span className="ds-muted">{Object.keys(design.structure?.[scope] || {}).length}</span></div>
+            {Object.entries(design.structure?.[scope] || {}).map(([parentId, childIds]) => <div className="ds-revision" key={parentId}><strong>Container {parentId}</strong><small>{childIds.length} ordered child elements</small><span className="ds-muted">{childIds.join(' → ')}</span></div>)}
+            {selected && <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:7,marginTop:14}}>
+              <button className="ds-btn" onClick={() => elementAction('duplicate')}><Copy size={12}/>Duplicate</button>
+              <button className="ds-btn" onClick={() => elementAction('delete')}><Trash2 size={12}/>Remove</button>
+            </div>}
+          </div>}
+
+          {panel === 'components' && <div className="ds-side-content">
+            <div className="ds-section-title">Reusable component library</div>
+            <p className="ds-muted">Save a selected element as a reusable styled component. Link other elements to it; future style edits sync across every linked instance.</p>
+            {selected && <div className="ds-selected"><strong>{selected.label}</strong><code>{selected.tag} · {selected.selector}</code>
+              <input className="ds-component-name" placeholder="Component name" value={componentName} onChange={e => setComponentName(e.target.value)} />
+              <button className="ds-btn ds-btn-primary" style={{marginTop:8,width:'100%',justifyContent:'center'}} onClick={saveComponent}><Layers3 size={12}/>Save selected as component</button>
+            </div>}
+            {!Object.keys(design.components || {}).length && <div className="ds-empty">Your reusable library is empty. Select a card, button or section, then save it here.</div>}
+            {Object.entries(design.components || {}).map(([id, component]) => <div className="ds-revision" key={id}>
+              <strong>{component.name}</strong><small>{Object.keys(component.styles || {}).length} shared style properties</small>
+              <button className="ds-btn" disabled={!selected} onClick={() => applyComponent(id)}><Check size={11}/>Link to selected element</button>
+              <button className="ds-btn" style={{marginLeft:6}} onClick={() => { const next=structuredClone(design); delete next.components?.[id]; Object.values(next.componentBindings || {}).forEach(bindings => Object.keys(bindings).forEach(selector => { if (bindings[selector] === id) delete bindings[selector]; })); remember(next); }}>Delete</button>
+            </div>)}
+          </div>}
+
+          {panel === 'assets' && <div className="ds-side-content">
+            <div className="ds-section-title">Bento asset library</div>
+            <p className="ds-muted">Upload images and reuse them on any page. Select an element in the preview first to apply an image as its content or background.</p>
+            <label className="ds-btn ds-btn-primary" style={{width:'100%',justifyContent:'center',cursor:uploading?'wait':'pointer'}}>
+              <Upload size={13}/>{uploading ? 'Uploading…' : 'Upload image'}
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/avif" disabled={uploading} style={{display:'none'}} onChange={e => { void uploadAsset(e.target.files?.[0]); e.currentTarget.value=''; }} />
+            </label>
+            {assetError && <p className="ds-muted" style={{color:'#fca5a5'}}>{assetError}</p>}
+            <div className="ds-section-title" style={{marginTop:18}}>Uploaded assets · {assets.length}</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:8}}>
+              {assets.map(asset => <div key={asset.id} style={{border:'1px solid #30435b',borderRadius:9,padding:7,minWidth:0}}>
+                <img src={asset.public_url} alt={asset.name} style={{width:'100%',height:76,objectFit:'cover',borderRadius:6,background:'#091321'}} />
+                <div style={{fontSize:9,color:'#cbd5e1',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',margin:'6px 0'}}>{asset.name}</div>
+                <button className="ds-btn" style={{width:'100%',justifyContent:'center',padding:6}} disabled={!selected} onClick={() => useAsset(asset)}>Use asset</button>
+                <button className="ds-btn" style={{width:'100%',justifyContent:'center',padding:6,marginTop:4}} onClick={() => deleteAsset(asset)}><Trash2 size={10}/>Delete</button>
+              </div>)}
+            </div>
+            {!assets.length && <div className="ds-empty" style={{marginTop:10}}>No assets uploaded yet.</div>}
           </div>}
 
           {panel === 'design' && <div className="ds-side-content">
@@ -463,7 +513,12 @@ export default function DesignStudio() {
           {panel === 'inspector' && <div className="ds-inspector">
             {selected ? <>
               <div className="ds-selected"><strong>{selected.label || selected.tag}</strong><code>{selected.tag} · {selected.selector}</code></div>
-              <div className="ds-section-title">Element appearance</div>
+              <div className="ds-section-title">Element appearance · {device}</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:7,marginBottom:12}}>
+                <button className="ds-btn" onClick={() => elementAction('duplicate')}><Copy size={12}/>Duplicate</button>
+                <button className="ds-btn" onClick={() => elementAction('delete')}><Trash2 size={12}/>Delete</button>
+              </div>
+              {selected.componentId && <p className="ds-muted">Linked component: {design.components?.[selected.componentId]?.name || selected.componentId}. Style changes sync across its linked instances.</p>}
               {styleFields.map(field => {
                 const current = (selectedStyles[field.key] ?? selected.styles[field.key] ?? (field.key === 'borderWidth' ? '0px' : field.key === 'gap' ? '0px' : field.key === 'opacity' ? '1' : ''));
                 return <div key={field.key} style={{position:'relative'}}>
@@ -506,7 +561,7 @@ export default function DesignStudio() {
               onLoad={sendPreview}
             />
           </div>
-          <div className="ds-hint"><MousePointer2 size={13}/><span>Editor mode is on · Click an element to select it · Preview changes are not public until you publish</span></div>
+          <div className="ds-hint"><MousePointer2 size={13}/><span>Drag blocks to reorder · Click to inspect · {device} styles are edited independently · Changes are not public until published</span></div>
         </section>
       </div>
     </div>
