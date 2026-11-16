@@ -177,19 +177,24 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     setSaveError(null);
     try {
       const nextPublished = latest.current.draft;
-      // The shared database row contains published config only; private drafts stay in Admin local storage.
-      const { error } = await supabase.from('design_studio_config')
-        .upsert({ id: 'global', config: nextPublished }, { onConflict: 'id' });
+      // Persist the published snapshot in Supabase and require a successful read-back.
+      // Draft edits remain local until the admin explicitly publishes them.
+      const { data, error } = await supabase.from('design_studio_config')
+        .upsert({ id: 'global', config: nextPublished }, { onConflict: 'id' })
+        .select('config').single();
       if (error) throw error;
-      const envelope = { ...latest.current, published: nextPublished };
+      if (!data?.config) throw new Error('Publish could not be verified: the database returned no saved configuration.');
+      const verified = decodeEnvelope(data.config).published;
+      const envelope = { ...latest.current, published: verified };
       latest.current = envelope;
-      dirty.current = false;
-      setPublished(nextPublished);
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); } catch {}
+      if (latest.current.draft === nextPublished) dirty.current = false;
+      setPublished(verified);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); }
+      catch { setSaveError('Published to the cloud, but this browser could not update its local cache.'); }
       return true;
     } catch (error) {
       console.error('Visual designer publish failed:', error);
-      setSaveError(error instanceof Error ? error.message : 'Publish failed. Check Supabase permissions and connection.');
+      setSaveError(error instanceof Error ? error.message : 'Publish failed. Check Supabase table permissions, admin role and connection.');
       return false;
     } finally { setIsSaving(false); }
   };
@@ -220,7 +225,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     const componentCss = Object.entries(config.components).map(([name, styles]) => `.${name}{${declarations(styles)}}`).join('');
     const elementCss = Object.entries(config.elementStyles || {}).filter(([key]) => key.startsWith(`${pageKey}::`)).map(([key, styles]) => `${key.slice(pageKey.length + 2)}{${declarations(styles)}}`).join('');
     return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}${
-      componentCss + elementCss +
+      componentCss + '.theme-gradient-text{background-image:var(--app-text-gradient);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}' + elementCss +
       responsive('tablet','(min-width:768px) and (max-width:1023px)') +
       responsive('mobile','(max-width:767px)') + (config.customCss || '')
     }`;
