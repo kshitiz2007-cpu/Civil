@@ -404,3 +404,24 @@ button {
 .app-theme .max-w-7xl {
   max-width: var(--studio-content-width, 80rem);
 }
+
+
+/* Registered React Bits-compatible design studio slots */
+.studio-slot { position: relative; isolation: isolate; transition: transform .25s ease, box-shadow .25s ease, filter .25s ease; }
+.studio-slot-content { position: relative; z-index: 1; }
+.studio-slot-SpotlightCard { overflow: hidden; background: radial-gradient(260px circle at var(--studio-x,50%) var(--studio-y,50%), color-mix(in srgb, var(--app-accent) 22%, transparent), transparent 72%); }
+.studio-slot-SpotlightCard:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--app-accent) 50%, transparent), 0 16px 42px color-mix(in srgb, var(--app-accent) 12%, transparent); }
+.studio-slot-Aurora { overflow: hidden; }
+.studio-slot-aurora-layer { position: absolute; z-index: 0; inset: -35%; overflow: hidden; pointer-events: none; filter: blur(42px); opacity: .32; }
+.studio-slot-aurora-layer i { position: absolute; width: 48%; aspect-ratio: 1; border-radius: 50%; background: var(--app-accent); animation: studio-aurora-drift 12s ease-in-out infinite alternate; }
+.studio-slot-aurora-layer i:nth-child(2) { right: 4%; top: 12%; background: var(--app-secondary); animation-delay: -4s; }
+.studio-slot-aurora-layer i:nth-child(3) { left: 35%; bottom: -10%; background: #8b5cf6; animation-delay: -8s; }
+@keyframes studio-aurora-drift { to { transform: translate3d(18%,12%,0) scale(1.15); } }
+.studio-slot-BlurText .studio-slot-content { animation: studio-blur-reveal .8s ease both; }
+@keyframes studio-blur-reveal { from { opacity: 0; filter: blur(12px); transform: translateY(10px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+.studio-slot-GlareHover { overflow: hidden; }
+.studio-slot-GlareHover::after { content: ""; position: absolute; inset: -100%; z-index: 2; pointer-events: none; opacity: 0; background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,.16) 50%, transparent 58%); transform: translateX(-35%); transition: opacity .25s ease, transform .65s ease; }
+.studio-slot-GlareHover:hover::after { opacity: 1; transform: translateX(35%); }
+.studio-slot-TiltedCard:hover { transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-3px); }
+.studio-slot-Magnet:hover { transform: translateY(-4px) scale(1.012); filter: drop-shadow(0 12px 20px color-mix(in srgb, var(--app-accent) 22%, transparent)); }
+@media (prefers-reduced-motion: reduce) { .studio-slot, .studio-slot * { animation: none !important; transition: none !important; } }
