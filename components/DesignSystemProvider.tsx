@@ -77,9 +77,9 @@ export function designCss(design: BentoDesign, page: string) {
     :root {
       --studio-bg:${v.background}; --studio-surface:${v.surface}; --studio-text:${v.text};
       --studio-muted:${v.muted}; --studio-accent:${v.accent}; --studio-border:${v.border};
-      --studio-radius:${v.radius}px; --studio-spacing:${v.spacing}px;
+      --studio-radius:${v.radius}px; --studio-spacing:${v.spacing}px; --studio-font:${JSON.stringify(v.font)},sans-serif;
     }
-    body { background:var(--studio-bg)!important; color:var(--studio-text)!important; font-family:${JSON.stringify(v.font)},sans-serif!important; }
+    body { background:var(--studio-bg)!important; color:var(--studio-text)!important; font-family:var(--studio-font)!important; }
     .app-theme { background:var(--studio-bg)!important; color:var(--studio-text)!important; }
     .theme-surface,.theme-surface-solid,.glass-card,.dashboard-panel,.dashboard-recent,.dashboard-metric-card,.rb-spotlight-card,.quizzes-subject-card,.resources-subject-card {
       background:var(--studio-surface)!important; border-color:var(--studio-border)!important;
