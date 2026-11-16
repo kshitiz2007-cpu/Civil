@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -40,6 +40,7 @@ export function useDesignStudio() {
 export function DesignStudioProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [config, setConfig] = useState<StudioConfig>(DEFAULT_STUDIO);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
