@@ -7,6 +7,7 @@ import { Code2, Eye, Layers3, Monitor, Plus, Smartphone, Tablet, Trash2, Undo2, 
 type NodeKind = 'section'|'heading'|'text'|'button'|'card'|'image'|'grid'|'input'|'navbar';
 type DesignNode = { id:string; kind:NodeKind; name:string; text:string; styles:Record<string,string>; children?:DesignNode[] };
 type Device = 'desktop'|'tablet'|'mobile';
+const STORAGE_KEY='civil-canvas-studio-v1';
 const uid=()=> 'node-'+Math.random().toString(36).slice(2,9);
 const makeNode=(kind:NodeKind):DesignNode=>({
  id:uid(),kind,name:kind[0].toUpperCase()+kind.slice(1),
@@ -46,6 +47,7 @@ function buildDocument(compiled:string,css:string){
 }
 export default function CanvasStudio(){
  const [nodes,setNodes]=useState<DesignNode[]>([]);
+ const [loaded,setLoaded]=useState(false);
  const [selected,setSelected]=useState<string|null>(null);
  const [device,setDevice]=useState<Device>('desktop');
  const [mode,setMode]=useState<'design'|'code'>('design');
@@ -54,13 +56,15 @@ export default function CanvasStudio(){
  const [history,setHistory]=useState<DesignNode[][]>([]),[future,setFuture]=useState<DesignNode[][]>([]);
  const [preview,setPreview]=useState(true);
  const frame=useRef<HTMLIFrameElement>(null);
+ useEffect(()=>{try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const saved=JSON.parse(raw);if(Array.isArray(saved))setNodes(saved);}}catch{}finally{setLoaded(true);}},[]);
+ useEffect(()=>{if(loaded){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(nodes));}catch{}}},[nodes,loaded]);
  const selectedNode=useMemo(()=>{const walk=(list:DesignNode[]):DesignNode|undefined=>{for(const n of list){if(n.id===selected)return n;const found=walk(n.children||[]);if(found)return found;}return undefined;};return walk(nodes);},[nodes,selected]);
  const generatedJsx=useMemo(()=> 'const App = () => (\n<div className="canvas-root">\n'+nodes.map(n=>nodeToJsx(n,1)).join('\n')+'\n</div>\n);', [nodes]);
  const generatedCss=useMemo(()=>nodes.map(n=>'.node-'+n.id+'{'+cssText(n.styles)+'}').join('\n'),[nodes]);
  useEffect(()=>{if(mode==='design'){setJsx(generatedJsx);setCss(generatedCss);}},[generatedJsx,generatedCss,mode]);
- const compiledResult=useMemo(()=>{try{const result=ts.transpileModule(jsx,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.None,jsx:ts.JsxEmit.React,jsxFactory:'h',jsxFragmentFactory:'h.Fragment',strict:false}});return {code:result.outputText,error:''};}catch(e){return {code:'',error:e instanceof Error?e.message:'Unable to compile TSX'};}},[jsx]);
+ const compiledResult=useMemo(()=>{try{const result=ts.transpileModule(jsx,{reportDiagnostics:true,compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.None,jsx:ts.JsxEmit.React,jsxFactory:'h',jsxFragmentFactory:'h.Fragment',strict:false}});const diagnostic=result.diagnostics?.find(d=>d.category===ts.DiagnosticCategory.Error);return {code:diagnostic?'':result.outputText,error:diagnostic?ts.flattenDiagnosticMessageText(diagnostic.messageText,' ') :''};}catch(e){return {code:'',error:e instanceof Error?e.message:'Unable to compile TSX'};}},[jsx]);
  const compiled=compiledResult.code,codeError=compiledResult.error;
- useEffect(()=>{if(frame.current&&preview&&compiled)frame.current.srcdoc=buildDocument(compiled,css);},[compiled,css,preview]);
+ useEffect(()=>{if(frame.current&&preview)frame.current.srcdoc=compiled?buildDocument(compiled,css):buildDocument('const App = () => { throw new Error('+JSON.stringify(codeError||'Fix the TSX compile error to continue')+'); };','');},[compiled,css,preview,codeError]);
  const commit=(next:DesignNode[])=>{setHistory(h=>[...h.slice(-29),nodes]);setFuture([]);setNodes(next);};
  const updateNode=(id:string,patch:Partial<DesignNode>)=>{const walk=(list:DesignNode[]):DesignNode[]=>list.map(n=>n.id===id?{...n,...patch}: {...n,children:n.children?walk(n.children):undefined});commit(walk(nodes));};
  const insert=(kind:NodeKind,parentId?:string)=>{const n=makeNode(kind);if(parentId){const walk=(list:DesignNode[]):DesignNode[]=>list.map(x=>x.id===parentId?{...x,children:[...(x.children||[]),n]}:{...x,children:x.children?walk(x.children):undefined});commit(walk(nodes));}else commit([...nodes,n]);setSelected(n.id);};
@@ -69,7 +73,8 @@ export default function CanvasStudio(){
  const undo=()=>{if(!history.length)return;setFuture(f=>[nodes,...f]);setNodes(history[history.length-1]);setHistory(h=>h.slice(0,-1));};
  const redo=()=>{if(!future.length)return;setHistory(h=>[...h,nodes]);setNodes(future[0]);setFuture(f=>f.slice(1));};
  const updateStyle=(key:string,value:string)=>{if(!selectedNode)return;updateNode(selectedNode.id,{styles:{...selectedNode.styles,[key]:value}});};
- const exportCode=()=>{const blob=new Blob([jsx+'\n\n/* styles.css */\n'+css],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='civil-studio-component.txt';a.click();URL.revokeObjectURL(url);};
+ const download=(name:string,value:string,type:string)=>{const url=URL.createObjectURL(new Blob([value],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);};
+ const exportCode=()=>{download('CanvasPage.tsx',jsx,'text/plain');download('styles.css',css,'text/css');};
  const palette:NodeKind[]=['section','navbar','heading','text','button','card','grid','image','input'];
  const renderNode=(node:DesignNode)=>{const Tag=node.kind==='navbar'?'nav':node.kind==='grid'?'div':node.kind==='card'?'article':node.kind==='heading'?'h1':node.kind==='text'?'p':node.kind==='button'?'button':node.kind==='image'?'div':node.kind==='input'?'div':'section';return <div key={node.id} onClick={e=>{e.stopPropagation();setSelected(node.id);}} className={'relative group cursor-pointer '+(selected===node.id?'outline outline-2 outline-violet-400 outline-offset-2':'hover:outline hover:outline-1 hover:outline-violet-300')} style={{...node.styles,position:'relative'}}>{node.kind==='image'?<div style={{height:node.styles.height||'180px',display:'grid',placeItems:'center',background:'#263449',borderRadius:node.styles.borderRadius||'12px',color:'#cbd5e1'}}>Image / upload asset</div>:node.kind==='input'?<input placeholder={node.text} readOnly style={{...node.styles,pointerEvents:'none'}}/>:node.kind==='button'?<button type="button" style={node.styles}>{node.text}</button>:<Tag style={node.kind==='heading'||node.kind==='text'?node.styles:undefined}>{node.kind==='navbar'?<strong>{node.text}</strong>:node.kind==='grid'?node.text:node.kind==='card'?node.text:node.kind==='section'?node.text:node.text}</Tag>}{node.children?.map(renderNode)}<span className="absolute -top-2 -right-2 hidden group-hover:block rounded bg-violet-500 px-1.5 py-0.5 text-[9px] text-white">{node.name}</span></div>;};
  return <div className="overflow-hidden rounded-2xl border border-[var(--app-border)] bg-[#0d1020] text-slate-100">
