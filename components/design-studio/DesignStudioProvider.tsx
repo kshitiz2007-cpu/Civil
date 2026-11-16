@@ -136,7 +136,12 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
 
     supabase.from('design_studio_config').select('config').eq('id', 'global').maybeSingle()
       .then(({ data, error }) => {
-        if (!alive || error || !data?.config) return;
+        if (!alive) return;
+        if (error) {
+          console.error('Design Studio cloud load failed:', error);
+          return;
+        }
+        if (!data?.config) return;
         const remote = decodeEnvelope(data.config);
         const remotePublished = remote.published;
         const nextDraft = hasLocalDraft.current || dirty.current ? latest.current.draft : remotePublished;
@@ -176,15 +181,27 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     setIsSaving(true);
     setSaveError(null);
     try {
+      const { data: authData, error: authError } = await supabase.auth.getSession();
+      if (authError) throw new Error('Could not verify your admin session: ' + authError.message);
+      if (!authData.session?.user) throw new Error('Your admin session has expired. Sign in again, then publish.');
       const nextPublished = latest.current.draft;
-      // Persist the published snapshot in Supabase and require a successful read-back.
-      // Draft edits remain local until the admin explicitly publishes them.
+      // Persist the complete StudioConfig as one atomic JSONB snapshot.
+      // Draft edits remain browser-local until the admin explicitly publishes them.
       const { data, error } = await supabase.from('design_studio_config')
-        .upsert({ id: 'global', config: nextPublished }, { onConflict: 'id' })
-        .select('config').single();
-      if (error) throw error;
-      if (!data?.config) throw new Error('Publish could not be verified: the database returned no saved configuration.');
-      const verified = decodeEnvelope(data.config).published;
+        .upsert({ id: 'global', config: nextPublished, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+        .select('id,config,updated_at').single();
+      if (error) {
+        const code = (error as { code?: string }).code || '';
+        if (code === '42P01' || code === 'PGRST205' || /relation .*design_studio_config.* does not exist|could not find the table/i.test(error.message)) {
+          throw new Error('The design_studio_config table is missing. Apply supabase/migrations/20261116190000_design_studio_config_persistence.sql in Supabase SQL Editor, then retry.');
+        }
+        if (code === '42501' || /row-level security|permission denied|not allowed/i.test(error.message)) {
+          throw new Error('Supabase blocked publishing. Apply the Design Studio persistence migration and confirm your signed-in account is an admin in public.profiles (role = admin), or uses an approved admin email.');
+        }
+        throw new Error('Supabase publish failed (' + (code || 'unknown') + '): ' + error.message);
+      }
+      if (!data?.config || data.id !== 'global') throw new Error('Publish could not be verified: Supabase returned no saved global configuration.');
+      const verified = mergeConfig(data.config as Partial<StudioConfig>);
       const envelope = { ...latest.current, published: verified };
       latest.current = envelope;
       if (latest.current.draft === nextPublished) dirty.current = false;
