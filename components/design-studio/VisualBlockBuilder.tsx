@@ -17,48 +17,28 @@ const CATALOG: Omit<VisualBlock, 'id'>[] = [
 ];
 const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]> = {
  home: [
-  {id:'home.topbar',label:'Login top bar',group:'Login page'},{id:'home.institutional-overview',label:'Institutional overview',group:'Login page'},
-  {id:'home.hero-title',label:'Hero title',group:'Login page'},{id:'home.hero-description',label:'Hero description',group:'Login page'},
-  {id:'home.feature-ev',label:'Expected value feature',group:'Login page'},{id:'home.feature-deduction',label:'Statement deduction feature',group:'Login page'},
-  {id:'home.feature-themes',label:'Theme feature',group:'Login page'},{id:'home.login-card',label:'Sign-in card',group:'Login page'},
+  ...['home.topbar|Login top bar','home.institutional-overview|Institutional overview','home.institutional-badge|Institution badge','home.hero-title|Hero title','home.hero-description|Hero description','home.feature-grid|Feature grid','home.feature-ev|Expected value feature','home.feature-deduction|Statement deduction feature','home.feature-themes|Theme feature','home.login-card|Sign-in card','home.login-brand|Sign-in brand','home.login-heading|Sign-in heading','home.login-actions|Portal actions','home.login-assurances|Sign-in assurances','home.footer|Page footer'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Login page'};}),
  ],
  dashboard: [
-  {id:'dashboard.sidebar',label:'Desktop navigation',group:'Dashboard'},{id:'dashboard.header',label:'Dashboard header',group:'Dashboard'},
-  {id:'dashboard.hero',label:'Hero overview',group:'Dashboard'},{id:'dashboard.stats',label:'Statistics strip',group:'Dashboard'},
-  {id:'dashboard.practice',label:'Recommended practice',group:'Dashboard'},{id:'dashboard.analytics',label:'Performance analytics',group:'Dashboard'},
-  {id:'dashboard.mobile-navigation',label:'Mobile navigation',group:'Dashboard'},
+  ...['dashboard.sidebar|Desktop navigation','dashboard.header|Dashboard header','dashboard.broadcast-notice|Academic notice','dashboard.hero|Hero overview','dashboard.hero-metric|Hero metric','dashboard.stats|Statistics strip','dashboard.stat-tests|Tests statistic','dashboard.stat-mean|Mean score statistic','dashboard.stat-papers|Active papers statistic','dashboard.stat-resources|Resources statistic','dashboard.practice|Recommended practice','dashboard.practice-card|Practice paper card','dashboard.analytics|Performance analytics','dashboard.analytics-layout|Analytics layout','dashboard.mobile-navigation|Mobile navigation'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Dashboard'};}),
  ],
  quiz: [
-  {id:'quiz.toolbar',label:'Quiz toolbar',group:'Quiz player'},{id:'quiz.question-telemetry',label:'Question telemetry',group:'Quiz player'},
-  {id:'quiz.question-workspace',label:'Question workspace',group:'Quiz player'},{id:'quiz.question-and-options',label:'Question and options',group:'Quiz player'},
-  {id:'quiz.bottom-navigation',label:'Question navigation',group:'Quiz player'},{id:'quiz.question-palette',label:'Question palette',group:'Quiz player'},
-  {id:'quiz.result.toolbar',label:'Result toolbar',group:'Quiz result'},{id:'quiz.result.scorecard',label:'Result scorecard',group:'Quiz result'},
+  ...['quiz.toolbar|Quiz toolbar','quiz.question-workspace|Question workspace','quiz.question-telemetry|Question telemetry','quiz.question-and-options|Question card','quiz.answer-option|Individual answer option','quiz.bottom-navigation|Question navigation','quiz.question-palette|Question palette','quiz.palette-item|Palette item','quiz.result.toolbar|Result toolbar','quiz.result.scorecard|Result scorecard','quiz.result.solution-review|Solution review','quiz.result.answer-card|Result answer card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Quiz player / result'};}),
  ],
  quizzes: [
-  {id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'},{id:'quizzes.header',label:'Catalogue header',group:'Quiz catalogue'},
-  {id:'quizzes.subject-browser',label:'Subject browser',group:'Quiz catalogue'},{id:'quizzes.paper-browser',label:'Paper browser',group:'Quiz catalogue'},
+  ...['quizzes.page|Quiz catalogue canvas','quizzes.header|Catalogue header','quizzes.subject-browser|Subject browser','quizzes.subject-card|Subject tile','quizzes.paper-browser|Paper browser','quizzes.paper-card|Individual paper card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Quiz catalogue'};}),
  ],
  resources: [
-  {id:'resources.sidebar',label:'Library navigation',group:'Resources'},{id:'resources.header',label:'Resources header',group:'Resources'},
-  {id:'resources.subject-browser',label:'Subject browser',group:'Resources'},{id:'resources.material-browser',label:'Material browser',group:'Resources'},
+  ...['resources.sidebar|Library navigation','resources.header|Resources header','resources.subject-browser|Subject browser','resources.subject-card|Subject tile','resources.material-browser|Material browser','resources.material-card|Resource card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Resources'};}),
  ],
  history: [
-  {id:'history.page',label:'Attempt history canvas',group:'History'},{id:'history.sidebar',label:'History navigation',group:'History'},
-  {id:'history.header',label:'History header',group:'History'},{id:'history.attempt-list',label:'Attempt list',group:'History'},
+  ...['history.page|Attempt history canvas','history.sidebar|History navigation','history.header|History header','history.attempt-list|Attempt list','history.attempt-card|Individual attempt'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'History'};}),
  ],
  leaderboard: [
-  {id:'leaderboard.page',label:'Leaderboard canvas',group:'Leaderboard'},{id:'leaderboard.header',label:'Leaderboard header',group:'Leaderboard'},
-  {id:'leaderboard.rankings',label:'Rankings list',group:'Leaderboard'},
+  ...['leaderboard.page|Leaderboard canvas','leaderboard.header|Leaderboard header','leaderboard.rankings|Rankings list','leaderboard.rank-card|Individual rank card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Leaderboard'};}),
  ],
  admin: [
-  {id:'admin.sidebar',label:'Admin navigation',group:'Admin console'},{id:'admin.main-content',label:'Admin workspace',group:'Admin console'},
-  {id:'admin.design-studio',label:'Visual Designer',group:'Admin console'},{id:'admin.overview',label:'Command center',group:'Admin console'},
-  {id:'admin.inbox',label:'Mentor inbox',group:'Admin console'},{id:'admin.quizzes',label:'Quiz manager',group:'Admin console'},
-  {id:'admin.aigen',label:'AI paper setter',group:'Admin console'},{id:'admin.resources',label:'Resource manager',group:'Admin console'},
-  {id:'admin.students',label:'Student directory',group:'Admin console'},{id:'admin.analytics',label:'Analytics',group:'Admin console'},
-  {id:'admin.payments',label:'Payments',group:'Admin console'},{id:'admin.csvimport',label:'CSV importer',group:'Admin console'},
-  {id:'admin.scheduled.header',label:'Live mock heading',group:'Admin console'},{id:'admin.scheduled.form',label:'Live mock form',group:'Admin console'},
-  {id:'admin.scheduled.list',label:'Scheduled mocks',group:'Admin console'},
+  ...['admin.sidebar|Admin navigation','admin.main-content|Admin workspace','admin.design-studio|Visual Designer','admin.overview|Command center','admin.inbox|Mentor inbox','admin.quizzes|Quiz manager','admin.aigen|AI paper setter','admin.resources|Resource manager','admin.students|Student directory','admin.analytics|Analytics','admin.payments|Payments','admin.csvimport|CSV importer','admin.scheduled.header|Live mock heading','admin.scheduled.form|Live mock form','admin.scheduled.list|Scheduled mocks','admin.overview.header|Overview header','admin.overview.telemetry|Overview telemetry','admin.inbox.composer|Inbox composer','admin.quizzes.header|Quiz manager header','admin.aigen.header|AI builder header','admin.aigen.configuration|AI builder configuration','admin.aigen.output|Generated paper output','admin.resources.header|Resource manager header','admin.resources.publish-form|Resource publish form','admin.students.header|Student directory header','admin.analytics.dashboard|Analytics dashboard','admin.payments.header|Payments header','admin.csv.header|CSV importer header','admin.csv.workspace|CSV import workspace'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Admin console'};}),
  ],
 };
 const makeId = () => `block-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
