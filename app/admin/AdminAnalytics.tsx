@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -256,7 +258,7 @@ export default function AdminAnalytics() {
   };
 
   return (
-    <section className="space-y-6 text-[var(--app-text)]">
+    <StudioSlot id="admin.analytics.dashboard"><section className="space-y-6 text-[var(--app-text)]">
       {/* Header */}
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -672,7 +674,7 @@ export default function AdminAnalytics() {
           )}
         </div>
       </div>
-    </section>
+    </section></StudioSlot>
   );
 }
 
