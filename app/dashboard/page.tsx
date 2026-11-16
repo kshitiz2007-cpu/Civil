@@ -447,7 +447,7 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="relative z-10 mx-auto max-w-7xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
         {/* Top Header */}
-        <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
+        <StudioSlot id="dashboard.header"><header className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--app-accent)]">
               Civil Services Academic Sanctuary
@@ -469,7 +469,7 @@ export default function DashboardPage() {
             </button>
             <ThemeSelector />
           </div>
-        </header>
+        </header></StudioSlot>
 
         {/* Optional Institutional Broadcast Notice */}
         {broadcastNotice && (
