@@ -132,9 +132,9 @@ export default function DesignStudio() {
   const visibleTokens = panel==='breakpoints' ? TOKENS : TOKENS;
   return <div className="space-y-5 text-[var(--app-text)]">
     <header className="flex flex-wrap items-end justify-between gap-4">
-      <div><p className="text-[11px] font-bold uppercase tracking-[.18em] text-[var(--app-accent)]">Admin / Experience architecture</p>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Design System Studio</h1>
-        <p className="mt-1 max-w-2xl text-sm text-[var(--app-muted)]">One control room for the application’s visual language, page-level overrides, reusable style recipes and responsive design tokens.</p>
+      <div><p className="text-[11px] font-bold uppercase tracking-[.18em] text-[var(--app-accent)]">Admin / Visual Website Designer</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Visual Website Designer</h1>
+        <p className="mt-1 max-w-2xl text-sm text-[var(--app-muted)]">Select a page, inspect its real elements, customize styles and effects, then save the design to the shared application configuration.</p>
       </div>
       <div className="flex gap-2">
         <button onClick={()=>setPreview(v=>!v)} className="theme-control"><Eye size={15}/>{preview?'Hide':'Show'} preview</button>
@@ -143,7 +143,7 @@ export default function DesignStudio() {
     </header>
     <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="theme-surface h-fit rounded-2xl p-2">
-        <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--app-muted)]">Studio workspace</p>
+        <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--app-muted)]">Designer tools</p>
         {nav.map(item=>{const Icon=item.icon;return <button key={item.id} onClick={()=>setPanel(item.id)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${panel===item.id?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)] hover:bg-[var(--app-surface-muted)]'}`}><Icon size={17}/>{item.label}</button>;})}
         <div className="mx-2 my-3 border-t border-[var(--app-border)]"/>
         <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-[var(--app-muted)]">Responsive target</div>
@@ -182,10 +182,10 @@ export default function DesignStudio() {
           </div>}
         </section>
         {preview&&<section className="theme-surface overflow-hidden rounded-2xl">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] px-4 py-3"><div className="flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><b className="text-xs">Live application preview</b><span className="text-[10px] text-[var(--app-muted)]">{pageName} · {previewUrl}</span></div><div className="flex gap-1">{(['desktop','tablet','mobile'] as StudioBreakpoint[]).map(bp=><button key={bp} onClick={()=>setBreakpoint(bp)} className={`rounded-lg p-2 ${breakpoint===bp?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)]'}`}>{bp==='desktop'?<Monitor size={15}/>:bp==='tablet'?<Tablet size={15}/>:<Smartphone size={15}/>}</button>)}</div></div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] px-4 py-3"><div className="flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><b className="text-xs">Live page canvas</b><span className="text-[10px] text-[var(--app-muted)]">{pageName} · {previewUrl}</span></div><div className="flex gap-1">{(['desktop','tablet','mobile'] as StudioBreakpoint[]).map(bp=><button key={bp} onClick={()=>setBreakpoint(bp)} className={`rounded-lg p-2 ${breakpoint===bp?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)]'}`}>{bp==='desktop'?<Monitor size={15}/>:bp==='tablet'?<Tablet size={15}/>:<Smartphone size={15}/>}</button>)}</div></div>
           <div className="flex justify-center bg-[#101018] p-2 sm:p-4"><div className="overflow-hidden rounded-xl border border-white/15 bg-white shadow-2xl transition-all" style={{width:breakpoint==='mobile'?390:breakpoint==='tablet'?768:'100%',maxWidth:'100%'}}><iframe ref={previewFrame} key={page} title={`Actual ${pageName} page preview`} src={previewUrl} onLoad={handlePreviewLoad} className="block h-[680px] w-full bg-white" style={{border:0}}/></div></div>
           <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="border-t border-[var(--app-border)] p-4"><div className="flex items-center justify-between gap-2"><div><p className="text-xs font-bold">Element inspector</p><p className="mt-1 text-[10px] text-[var(--app-muted)]">Click any element inside the live page to select it and edit its styles.</p></div>{selectedElement&&<button onClick={clearElementSelection} className="theme-control text-xs">Deselect</button>}</div>
+            <div className="border-t border-[var(--app-border)] p-4"><div className="flex items-center justify-between gap-2"><div><p className="text-xs font-bold">Selected element</p><p className="mt-1 text-[10px] text-[var(--app-muted)]">Click any element inside the live page to select it and edit its styles.</p></div>{selectedElement&&<button onClick={clearElementSelection} className="theme-control text-xs">Deselect</button>}</div>
               {selectedElement?<div className="mt-3 rounded-xl border border-violet-400/30 bg-violet-400/10 p-3"><p className="text-[10px] uppercase tracking-wider text-violet-300">Selected element</p><code className="mt-1 block break-all text-xs">{selectedElement.label}</code><code className="mt-1 block break-all text-[10px] text-[var(--app-muted)]">{selectedElement.selector}</code></div>:<div className="mt-3 rounded-xl border border-dashed border-[var(--app-border)] p-5 text-center text-xs text-[var(--app-muted)]">No element selected · tap a heading, card, button, section or any other page element</div>}
             </div>
             <div className="border-t border-[var(--app-border)] p-4 lg:border-l"><div className="flex gap-1 rounded-lg bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setInspectorTab('style')} className={`flex-1 rounded-md px-2 py-1.5 text-xs ${inspectorTab==='style'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Style</button><button onClick={()=>setInspectorTab('effects')} className={`flex-1 rounded-md px-2 py-1.5 text-xs ${inspectorTab==='effects'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Effects</button></div>
