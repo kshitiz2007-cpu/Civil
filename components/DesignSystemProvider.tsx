@@ -127,18 +127,18 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       const parts: string[] = [];
       let current: Element | null = element;
       while (current && current !== document.body && parts.length < 6) {
-        const html = current as HTMLElement;
-        let part = current.tagName.toLowerCase();
+        const node = current as HTMLElement;
+        let part = node.tagName.toLowerCase();
         const stableClasses = Array.from(current.classList).filter(c => !/^(hover:|focus:|active:|group|peer)/.test(c)).slice(0, 3);
         if (stableClasses.length) part += stableClasses.map(c => `.${CSS.escape(c)}`).join('');
-        const parent: HTMLElement | null = current.parentElement;
-        if (parent) {
-          const siblings: Element[] = Array.from(parent.children).filter((s: Element) => s.tagName === current!.tagName);
-          if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(current) + 1})`;
+        const parentElement: HTMLElement | null = node.parentElement as HTMLElement | null;
+        if (parentElement) {
+          const siblings = (Array.from(parentElement.children) as Element[]).filter((s: Element) => s.tagName === node.tagName);
+          if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(node) + 1})`;
         }
         parts.unshift(part);
-        if (current.parentElement === document.body) break;
-        current = parent;
+        if (parentElement === document.body) break;
+        current = parentElement;
       }
       return parts.join(' > ');
     };
@@ -160,7 +160,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
         type: 'BENTO_ELEMENT_SELECTED',
         selector: selectorFor(element),
         tag: element.tagName.toLowerCase(),
-        label: (element.innerText || element.getAttribute('aria-label') || element.tagName).trim().replace(/\s+/g, ' ').slice(0, 90),
+        label: ((element as HTMLElement).innerText || element.getAttribute('aria-label') || element.tagName).trim().replace(/\s+/g, ' ').slice(0, 90),
         classes: Array.from(element.classList).slice(0, 8),
         styles: {
           color: computed.color,
