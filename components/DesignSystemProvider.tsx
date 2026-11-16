@@ -20,6 +20,10 @@ export type BentoDesign = {
   global: DesignValues;
   pages: Record<string, Partial<DesignValues>>;
   elements?: Record<string, Record<string, ElementDesign>>;
+  responsive?: Record<string, { tokens?: Partial<DesignValues>; elements?: Record<string, ElementDesign> }>;
+  components?: Record<string, { name: string; styles: ElementDesign }>;
+  structure?: Record<string, Record<string, string[]>>;
+  hidden?: Record<string, string[]>;
 };
 export const DEFAULT_DESIGN: BentoDesign = {
   global: {
@@ -62,6 +66,12 @@ function safeStyleValue(property: string, raw: string) {
 
 export function designCss(design: BentoDesign, page: string) {
   const v = { ...design.global, ...(design.pages?.[page] || {}) };
+  const mobile = design.responsive?.[page + ':mobile']?.tokens || {};
+  const tablet = design.responsive?.[page + ':tablet']?.tokens || {};
+  const tokenVars = (tokens: Partial<DesignValues>) => Object.entries(tokens).map(([key, value]) => {
+    const names: Record<string, string> = { background:'--studio-bg', surface:'--studio-surface', text:'--studio-text', muted:'--studio-muted', accent:'--studio-accent', border:'--studio-border', radius:'--studio-radius', spacing:'--studio-spacing', font:'--studio-font' };
+    const name = names[key]; return name ? name + ':' + (key === 'radius' || key === 'spacing' ? value + 'px' : key === 'font' ? JSON.stringify(value) + ',sans-serif' : value) + ';' : '';
+  }).join('');
   return `
     :root {
       --studio-bg:${v.background}; --studio-surface:${v.surface}; --studio-text:${v.text};
@@ -85,6 +95,8 @@ export function designCss(design: BentoDesign, page: string) {
     .dashboard-gradient-text { background-image:linear-gradient(100deg,var(--studio-accent),var(--studio-text))!important; }
     button,a,input,select,textarea { accent-color:var(--studio-accent); }
     [data-bento-page="${page}"] { --studio-page-spacing:var(--studio-spacing); }
+    @media (min-width:768px) and (max-width:1023px) { :root { ${tokenVars(tablet)} } }
+    @media (max-width:767px) { :root { ${tokenVars(mobile)} } }
   `;
 }
 
@@ -118,10 +130,28 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       document.querySelectorAll('[data-bento-editor-selected="true"]').forEach(el => {
         el.removeAttribute('data-bento-editor-selected');
       });
+      const breakpoint = window.innerWidth <= 767 ? 'mobile' : window.innerWidth <= 1023 ? 'tablet' : 'desktop';
       const scoped = {
         ...(next.elements?.global || {}),
         ...(next.elements?.[page] || {}),
+        ...(next.responsive?.[page + ':' + breakpoint]?.elements || {}),
       };
+      Object.entries(next.components || {}).forEach(([id, component]) => {
+        document.querySelectorAll('[data-bento-component="' + CSS.escape(id) + '"]').forEach(node => {
+          Object.entries(component.styles || {}).forEach(([property, raw]) => {
+            const value = safeStyleValue(property, String(raw));
+            if (value) (node as HTMLElement).style.setProperty(property.replace(/[A-Z]/g, m => '-' + m.toLowerCase()), value, 'important');
+          });
+        });
+      });
+      (next.hidden?.[page] || []).forEach(id => {
+        const node = document.querySelector('[data-bento-node-id="' + CSS.escape(id) + '"]') as HTMLElement | null;
+        if (node) node.style.setProperty('display', 'none', 'important');
+      });
+      Object.entries(next.structure?.[page] || {}).forEach(([parentId, childIds]) => {
+        const parent = document.querySelector('[data-bento-node-id="' + CSS.escape(parentId) + '"]');
+        if (parent) childIds.forEach(id => { const child = document.querySelector('[data-bento-node-id="' + CSS.escape(id) + '"]'); if (child && child.parentElement === parent) parent.appendChild(child); });
+      });
       Object.entries(scoped).forEach(([selector, properties]) => {
         try {
           const element = document.querySelector(selector) as HTMLElement | null;
@@ -144,7 +174,14 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       });
     };
 
+    const ensureNodeId = (element: Element) => {
+      let id = element.getAttribute('data-bento-node-id');
+      if (!id) { id = 'bn-' + Math.random().toString(36).slice(2, 11); element.setAttribute('data-bento-node-id', id); }
+      return id;
+    };
     const selectorFor = (element: Element) => {
+      const nodeId = element.getAttribute('data-bento-node-id');
+      if (nodeId) return '[data-bento-node-id="' + CSS.escape(nodeId) + '"]';
       if ((element as HTMLElement).id) return `#${CSS.escape((element as HTMLElement).id)}`;
       const parts: string[] = [];
       let current: Element | null = element;
@@ -175,12 +212,15 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       event.stopPropagation();
       event.stopImmediatePropagation();
       selectedElement = element;
+      ensureNodeId(element);
       document.querySelectorAll('[data-bento-editor-selected="true"]').forEach(el => el.removeAttribute('data-bento-editor-selected'));
       element.setAttribute('data-bento-editor-selected', 'true');
       const computed = getComputedStyle(element);
       window.parent.postMessage({
         type: 'BENTO_ELEMENT_SELECTED',
         selector: selectorFor(element),
+        nodeId: ensureNodeId(element),
+        componentId: element.getAttribute('data-bento-component'),
         tag: element.tagName.toLowerCase(),
         label: ((element as HTMLElement).innerText || element.getAttribute('aria-label') || element.tagName).trim().replace(/\s+/g, ' ').slice(0, 90),
         classes: Array.from(element.classList).slice(0, 8),
@@ -207,9 +247,39 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       }, window.location.origin);
     };
 
+    const onDragStart = (event: DragEvent) => {
+      if (!editorMode) return;
+      const target = event.target as HTMLElement | null;
+      const node = target?.closest('section,article,header,nav,aside,main,div,ul,ol,li') as HTMLElement | null;
+      if (!node || node === document.body || node.closest('[data-bento-studio-ignore="true"]')) return;
+      ensureNodeId(node);
+      event.dataTransfer?.setData('text/bento-node', ensureNodeId(node));
+      if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+    };
+    const onDragOver = (event: DragEvent) => { if (editorMode && event.dataTransfer?.types.includes('text/bento-node')) event.preventDefault(); };
+    const onDrop = (event: DragEvent) => {
+      if (!editorMode) return;
+      const sourceId = event.dataTransfer?.getData('text/bento-node');
+      const target = event.target as HTMLElement | null;
+      const destination = target?.closest('section,article,header,nav,aside,main,div,ul,ol,li') as HTMLElement | null;
+      const source = sourceId ? document.querySelector('[data-bento-node-id="' + CSS.escape(sourceId) + '"]') as HTMLElement | null : null;
+      if (!source || !destination || source === destination || source.contains(destination) || destination.closest('[data-bento-studio-ignore="true"]')) return;
+      event.preventDefault();
+      const parent = destination.parentElement;
+      if (!parent || source.parentElement !== parent) destination.appendChild(source);
+      else if (event.clientY < destination.getBoundingClientRect().top + destination.offsetHeight / 2) parent.insertBefore(source, destination);
+      else parent.insertBefore(source, destination.nextSibling);
+      const parentNode = source.parentElement;
+      if (parentNode) window.parent.postMessage({ type:'BENTO_STRUCTURE_UPDATED', parentId:ensureNodeId(parentNode), childIds:Array.from(parentNode.children).map(child => ensureNodeId(child)) }, window.location.origin);
+    };
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
       if (event.data?.type === 'BENTO_DESIGN_PREVIEW') apply(event.data.design as BentoDesign);
+      if (event.data?.type === 'BENTO_COMPONENT_MARK' && selectedElement) { selectedElement.setAttribute('data-bento-component', String(event.data.id)); apply(activeDesign); }
+      if (event.data?.type === 'BENTO_ELEMENT_ACTION' && selectedElement) {
+        if (event.data.action === 'duplicate') { const clone = selectedElement.cloneNode(true) as HTMLElement; clone.removeAttribute('data-bento-node-id'); selectedElement.parentElement?.insertBefore(clone, selectedElement.nextSibling); const parent = selectedElement.parentElement; if (parent) window.parent.postMessage({ type:'BENTO_STRUCTURE_UPDATED', parentId:ensureNodeId(parent), childIds:Array.from(parent.children).map(child => ensureNodeId(child)) }, window.location.origin); }
+        if (event.data.action === 'delete') { const nodeId = ensureNodeId(selectedElement); selectedElement.remove(); window.parent.postMessage({ type:'BENTO_ELEMENT_DELETED', nodeId }, window.location.origin); selectedElement = null; }
+      }
       if (event.data?.type === 'BENTO_EDITOR_MODE') {
         editorMode = Boolean(event.data.enabled);
         document.body.style.cursor = editorMode ? 'crosshair' : '';
@@ -231,9 +301,18 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       }
     };
     window.addEventListener('message', onMessage);
+    document.addEventListener('dragstart', onDragStart, true);
+    document.addEventListener('dragover', onDragOver, true);
+    document.addEventListener('drop', onDrop, true);
+    const onResize = () => apply(activeDesign);
+    window.addEventListener('resize', onResize);
     void load();
     return () => {
       window.removeEventListener('message', onMessage);
+      document.removeEventListener('dragstart', onDragStart, true);
+      document.removeEventListener('dragover', onDragOver, true);
+      document.removeEventListener('drop', onDrop, true);
+      window.removeEventListener('resize', onResize);
       previousOverrides.forEach((properties, element) => properties.forEach((original, property) => {
         if (original.value) element.style.setProperty(property, original.value, original.priority);
         else element.style.removeProperty(property);
