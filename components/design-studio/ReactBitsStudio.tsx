@@ -106,7 +106,7 @@ export default function ReactBitsStudio({ page, config, save, previewUrl }: { pa
  useEffect(()=>{try{const raw=localStorage.getItem(STORE);if(raw)setSaved(JSON.parse(raw));}catch{}},[]);
  useEffect(()=>{if(!liveBlockId)return;const key=page+'::'+targetSlot;const current=config.slotBlocks?.[key]||[];const nextBlocks=current.map(block=>block.id===liveBlockId?{...block,component:runtimeId as VisualBlock['component'],title:name.trim()||active.name,text:previewText,buttonLabel:previewText,styles:{...(block.styles||{}),accent,borderRadius:radius+'px'}}:block);if(nextBlocks.some(block=>block.id===liveBlockId))save({...config,slotBlocks:{...(config.slotBlocks||{}),[key]:nextBlocks}});},[accent,radius,previewText,liveBlockId]);
  const active=STARTERS.find(x=>x.id===selected)||saved.find(x=>x.id===selected)||STARTERS[0];
- const choose=(bit:Bit)=>{setSelected(bit.id);setName(bit.name);setSource(bit.source);setCss(bit.css);setMessage('');};
+ const choose=(bit:Bit)=>{setLiveBlockId(null);setLiveMessage('');setSelected(bit.id);setName(bit.name);setSource(bit.source);setCss(bit.css);setMessage('');};
  const persist=(items:Bit[])=>{setSaved(items);try{localStorage.setItem(STORE,JSON.stringify(items));}catch{setMessage('Browser storage is full; copy your code as a backup.');}};
  const copy=async(value:string,label:string)=>{try{await navigator.clipboard.writeText(value);setMessage(label+' copied.');}catch{setMessage('Clipboard access is unavailable in this browser.');}};
  const saveCurrent=()=>{const item:Bit={...active,id:selected.startsWith('custom-')?selected:'custom-'+selected,name:name.trim()||'My component',source,css};persist([...saved.filter(x=>x.id!==item.id),item]);setSelected(item.id);setMessage('Source saved in this browser.');};
