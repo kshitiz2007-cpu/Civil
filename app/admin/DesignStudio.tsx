@@ -37,7 +37,7 @@ const TOKENS = [
 const STARTER_SECTIONS = ['Announcement banner','Page header','Primary content','Secondary content','Footer'];
 const parseHexGradient = (value?: string) => {
   if (!value) return null;
-  const match = value.match(/linear-gradient\\(\\s*([^,]+),(.+)\\)$/i);
+  const match = value.match(/linear-gradient\(\s*([^,]+),(.+)\)$/i);
   if (!match) return null;
   const stops = match[2].split(',').map(item => item.trim());
   if ((stops.length !== 3 && stops.length !== 4) || !stops.every(item => /^#[0-9a-fA-F]{6}$/.test(item))) return null;
