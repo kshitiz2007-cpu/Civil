@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Check, Code2, Copy, RotateCcw, ShieldAlert } from 'lucide-react';
-import { DEFAULT_STUDIO, useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
+import { useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
 
 const STARTER_CSS = `/* Global CSS — selectors, component styles, responsive rules and animations */
 :root {
@@ -40,7 +40,7 @@ export default function CustomCssEditor() {
   const apply = (value: string) => {
     setDraft(value);
     const lower = value.toLowerCase();
-    if (/@import\\b/.test(lower) || /url\\(\\s*['"]?\\s*javascript:/i.test(value) || /expression\\s*\\(/i.test(value) || /<\\/style/i.test(value)) {
+    if (lower.includes('@import') || lower.includes('javascript:') || lower.includes('expression(') || lower.includes('</style')) {
       setError('For safety, @import, javascript URLs, CSS expressions and style-tag closing sequences are not allowed.');
       setApplied(false);
       return;
