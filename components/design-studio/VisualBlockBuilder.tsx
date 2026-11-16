@@ -16,33 +16,50 @@ const CATALOG: Omit<VisualBlock, 'id'>[] = [
   { type:'divider', title:'Divider', effect:'none' },
 ];
 const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]> = {
-  dashboard: [
-    {id:'dashboard.header',label:'Dashboard header',group:'Main dashboard'},
-    {id:'dashboard.hero',label:'Hero overview',group:'Main dashboard'},
-    {id:'dashboard.stats',label:'Statistics strip',group:'Main dashboard'},
-    {id:'dashboard.practice',label:'Recommended practice',group:'Practice area'},
-    {id:'dashboard.analytics',label:'Performance analytics',group:'Analytics area'},
-  ],
-  quiz: [
-    {id:'quiz.toolbar',label:'Quiz toolbar',group:'Quiz page'},
-    {id:'quiz.question-workspace',label:'Question workspace',group:'Quiz page'},
-    {id:'quiz.question-palette',label:'Question palette',group:'Quiz page'},
-  ],
-  quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'}],
-  resources: [
-    {id:'resources.header',label:'Resources header',group:'Resources page'},
-    {id:'resources.subject-browser',label:'Subject browser',group:'Resources page'},
-  ],
-  history: [{id:'history.page',label:'Attempt history canvas',group:'History page'}],
-  leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas',group:'Leaderboard page'}],
-  home: [
-    {id:'home.hero-title',label:'Hero title',group:'Home page'},
-    {id:'home.hero-description',label:'Hero description',group:'Home page'},
-    {id:'home.feature-ev',label:'Expected value feature',group:'Home page'},
-    {id:'home.feature-deduction',label:'Statement deduction feature',group:'Home page'},
-    {id:'home.feature-themes',label:'Theme feature',group:'Home page'},
-    {id:'home.login-card',label:'Sign-in card',group:'Home page'},
-  ],
+ home: [
+  {id:'home.topbar',label:'Login top bar',group:'Login page'},{id:'home.institutional-overview',label:'Institutional overview',group:'Login page'},
+  {id:'home.hero-title',label:'Hero title',group:'Login page'},{id:'home.hero-description',label:'Hero description',group:'Login page'},
+  {id:'home.feature-ev',label:'Expected value feature',group:'Login page'},{id:'home.feature-deduction',label:'Statement deduction feature',group:'Login page'},
+  {id:'home.feature-themes',label:'Theme feature',group:'Login page'},{id:'home.login-card',label:'Sign-in card',group:'Login page'},
+ ],
+ dashboard: [
+  {id:'dashboard.sidebar',label:'Desktop navigation',group:'Dashboard'},{id:'dashboard.header',label:'Dashboard header',group:'Dashboard'},
+  {id:'dashboard.hero',label:'Hero overview',group:'Dashboard'},{id:'dashboard.stats',label:'Statistics strip',group:'Dashboard'},
+  {id:'dashboard.practice',label:'Recommended practice',group:'Dashboard'},{id:'dashboard.analytics',label:'Performance analytics',group:'Dashboard'},
+  {id:'dashboard.mobile-navigation',label:'Mobile navigation',group:'Dashboard'},
+ ],
+ quiz: [
+  {id:'quiz.toolbar',label:'Quiz toolbar',group:'Quiz player'},{id:'quiz.question-telemetry',label:'Question telemetry',group:'Quiz player'},
+  {id:'quiz.question-workspace',label:'Question workspace',group:'Quiz player'},{id:'quiz.question-and-options',label:'Question and options',group:'Quiz player'},
+  {id:'quiz.bottom-navigation',label:'Question navigation',group:'Quiz player'},{id:'quiz.question-palette',label:'Question palette',group:'Quiz player'},
+  {id:'quiz.result.toolbar',label:'Result toolbar',group:'Quiz result'},
+ ],
+ quizzes: [
+  {id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'},{id:'quizzes.header',label:'Catalogue header',group:'Quiz catalogue'},
+  {id:'quizzes.subject-browser',label:'Subject browser',group:'Quiz catalogue'},{id:'quizzes.paper-browser',label:'Paper browser',group:'Quiz catalogue'},
+ ],
+ resources: [
+  {id:'resources.sidebar',label:'Library navigation',group:'Resources'},{id:'resources.header',label:'Resources header',group:'Resources'},
+  {id:'resources.subject-browser',label:'Subject browser',group:'Resources'},{id:'resources.material-browser',label:'Material browser',group:'Resources'},
+ ],
+ history: [
+  {id:'history.page',label:'Attempt history canvas',group:'History'},{id:'history.sidebar',label:'History navigation',group:'History'},
+  {id:'history.header',label:'History header',group:'History'},{id:'history.attempt-list',label:'Attempt list',group:'History'},
+ ],
+ leaderboard: [
+  {id:'leaderboard.page',label:'Leaderboard canvas',group:'Leaderboard'},{id:'leaderboard.header',label:'Leaderboard header',group:'Leaderboard'},
+  {id:'leaderboard.rankings',label:'Rankings list',group:'Leaderboard'},
+ ],
+ admin: [
+  {id:'admin.sidebar',label:'Admin navigation',group:'Admin console'},{id:'admin.main-content',label:'Admin workspace',group:'Admin console'},
+  {id:'admin.design-studio',label:'Visual Designer',group:'Admin console'},{id:'admin.overview',label:'Command center',group:'Admin console'},
+  {id:'admin.inbox',label:'Mentor inbox',group:'Admin console'},{id:'admin.quizzes',label:'Quiz manager',group:'Admin console'},
+  {id:'admin.aigen',label:'AI paper setter',group:'Admin console'},{id:'admin.resources',label:'Resource manager',group:'Admin console'},
+  {id:'admin.students',label:'Student directory',group:'Admin console'},{id:'admin.analytics',label:'Analytics',group:'Admin console'},
+  {id:'admin.payments',label:'Payments',group:'Admin console'},{id:'admin.csvimport',label:'CSV importer',group:'Admin console'},
+  {id:'admin.scheduled.header',label:'Live mock heading',group:'Admin console'},{id:'admin.scheduled.form',label:'Live mock form',group:'Admin console'},
+  {id:'admin.scheduled.list',label:'Scheduled mocks',group:'Admin console'},
+ ],
 };
 const makeId = () => `block-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
 
