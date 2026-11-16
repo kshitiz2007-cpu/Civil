@@ -217,7 +217,7 @@ export default function StudentsManager() {
                     batchMap[student.id] || 'Foundation 2027';
 
                   return (
-                    <StudioSlot id="admin.students.row" key={student.id}><tr
+                    <tr
                       key={student.id}
                       className="hover:bg-[var(--app-surface-muted)] transition-colors"
                     >
@@ -323,7 +323,7 @@ export default function StudentsManager() {
                           </button>
                         </div>
                       </td>
-                    </tr></StudioSlot>
+                    </tr>
                   );
                 })}
               </tbody>
