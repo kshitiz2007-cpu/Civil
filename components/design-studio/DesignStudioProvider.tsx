@@ -139,6 +139,12 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
         if (!alive) return;
         if (error) {
           console.error('Design Studio cloud load failed:', error);
+          const code = (error as { code?: string }).code || '';
+          if (code === '42P01' || code === 'PGRST205' || /relation .*design_studio_config.* does not exist|could not find the table/i.test(error.message)) {
+            setSaveError('Cloud publishing is not configured yet. Apply supabase/migrations/20261116190000_design_studio_config_persistence.sql in Supabase SQL Editor.');
+          } else if (code === '42501' || /permission denied|row-level security/i.test(error.message)) {
+            setSaveError('Cloud configuration cannot be read. Apply the Design Studio persistence migration and its public SELECT grant/policy in Supabase.');
+          }
           return;
         }
         if (!data?.config) return;
