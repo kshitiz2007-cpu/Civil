@@ -14,6 +14,7 @@ export type StudioConfig = {
   elementStyles: Record<string, Record<string, string>>;
   structure: Record<string, string[]>;
   assets: { id: string; name: string; type: string; data: string; path?: string }[];
+  customCss: string;
 };
 const STORAGE_KEY = 'gyankunj-design-studio-v1';
 export const DEFAULT_STUDIO: StudioConfig = {
@@ -27,7 +28,7 @@ export const DEFAULT_STUDIO: StudioConfig = {
     '--studio-content-width': '1280px', '--studio-spacing': '16px',
   },
   pages: {}, breakpoints: { desktop: {}, tablet: {}, mobile: {} },
-  pageBreakpoints: {}, components: {}, elementStyles: {}, structure: {}, assets: [],
+  pageBreakpoints: {}, components: {}, elementStyles: {}, structure: {}, assets: [], customCss: '',
 };
 const StudioContext = createContext<{ config: StudioConfig; save: (v: StudioConfig) => void } | null>(null);
 export function useDesignStudio() {
@@ -81,7 +82,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     const elementCss = Object.entries(config.elementStyles || {}).filter(([key]) => key.startsWith(`${pageKey}::`)).map(([key, styles]) => `${key.slice(pageKey.length + 2)}{${declarations(styles)}}`).join("");
     return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}` + componentCss + elementCss +
       responsive('tablet','(min-width:768px) and (max-width:1023px)') +
-      responsive('mobile','(max-width:767px)');
+      responsive('mobile','(max-width:767px)') + (config.customCss || '');
   }, [config, pageKey]);
   useEffect(() => {
     document.documentElement.dataset.studioPage = pageKey;
