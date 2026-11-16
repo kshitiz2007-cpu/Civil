@@ -478,7 +478,7 @@ export default function StudentQuizzesPage() {
                 )
               )}
             </div>
-          </div>
+          </div></StudioSlot>
         )}
       </main>
     </StudioSlot>
