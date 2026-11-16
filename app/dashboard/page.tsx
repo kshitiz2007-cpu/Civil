@@ -443,7 +443,7 @@ export default function DashboardPage() {
             <LogOut className="h-4 w-4" />
           </button>
         </div>
-      </aside>
+      </aside></StudioSlot>
 
       {/* Main Content */}
       <main className="relative z-10 mx-auto max-w-7xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
