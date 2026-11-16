@@ -14,13 +14,14 @@ const STARTERS:Bit[] = [
 const STORE='design-studio-react-bits-v1';
 
 const PAGE_SLOTS: Record<string, { id: string; label: string }[]> = {
- home: [{id:'home.hero-title',label:'Hero title'},{id:'home.hero-description',label:'Hero description'},{id:'home.feature-ev',label:'Expected value feature'},{id:'home.feature-deduction',label:'Statement deduction feature'},{id:'home.feature-themes',label:'Theme feature'},{id:'home.login-card',label:'Sign-in card'}],
- dashboard: [{id:'dashboard.header',label:'Dashboard header'},{id:'dashboard.hero',label:'Hero overview'},{id:'dashboard.stats',label:'Statistics strip'},{id:'dashboard.practice',label:'Recommended practice'},{id:'dashboard.analytics',label:'Performance analytics'}],
- quiz: [{id:'quiz.toolbar',label:'Quiz toolbar'},{id:'quiz.question-workspace',label:'Question workspace'},{id:'quiz.question-palette',label:'Question palette'}],
- quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas'}],
- resources: [{id:'resources.header',label:'Resources header'},{id:'resources.subject-browser',label:'Subject browser'}],
- history: [{id:'history.page',label:'Attempt history canvas'}],
- leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas'}],
+ home: [{id:'home.topbar',label:'Login top bar'},{id:'home.institutional-overview',label:'Institutional overview'},{id:'home.hero-title',label:'Hero title'},{id:'home.hero-description',label:'Hero description'},{id:'home.feature-ev',label:'Expected value feature'},{id:'home.feature-deduction',label:'Statement deduction feature'},{id:'home.feature-themes',label:'Theme feature'},{id:'home.login-card',label:'Sign-in card'}],
+ dashboard: [{id:'dashboard.sidebar',label:'Desktop navigation'},{id:'dashboard.header',label:'Dashboard header'},{id:'dashboard.hero',label:'Hero overview'},{id:'dashboard.stats',label:'Statistics strip'},{id:'dashboard.practice',label:'Recommended practice'},{id:'dashboard.analytics',label:'Performance analytics'},{id:'dashboard.mobile-navigation',label:'Mobile navigation'}],
+ quiz: [{id:'quiz.toolbar',label:'Quiz toolbar'},{id:'quiz.question-telemetry',label:'Question telemetry'},{id:'quiz.question-workspace',label:'Question workspace'},{id:'quiz.question-and-options',label:'Question and answer options'},{id:'quiz.bottom-navigation',label:'Question navigation'},{id:'quiz.question-palette',label:'Question palette'},{id:'quiz.result.toolbar',label:'Result toolbar'}],
+ quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas'},{id:'quizzes.header',label:'Catalogue header'},{id:'quizzes.subject-browser',label:'Subject browser'},{id:'quizzes.paper-browser',label:'Paper browser'}],
+ resources: [{id:'resources.sidebar',label:'Library navigation'},{id:'resources.header',label:'Resources header'},{id:'resources.subject-browser',label:'Subject browser'},{id:'resources.material-browser',label:'Material browser'}],
+ history: [{id:'history.page',label:'Attempt history canvas'},{id:'history.sidebar',label:'History navigation'},{id:'history.header',label:'History header'},{id:'history.attempt-list',label:'Attempt list'}],
+ leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas'},{id:'leaderboard.header',label:'Leaderboard header'},{id:'leaderboard.rankings',label:'Rankings list'}],
+ admin: [{id:'admin.sidebar',label:'Admin navigation'},{id:'admin.main-content',label:'Admin workspace'},{id:'admin.design-studio',label:'Visual Designer'},{id:'admin.overview',label:'Command center'},{id:'admin.inbox',label:'Mentor inbox'},{id:'admin.quizzes',label:'Quiz manager'},{id:'admin.aigen',label:'AI paper setter'},{id:'admin.resources',label:'Resource manager'},{id:'admin.students',label:'Student directory'},{id:'admin.analytics',label:'Analytics'},{id:'admin.payments',label:'Payments'},{id:'admin.csvimport',label:'CSV importer'},{id:'admin.scheduled.header',label:'Live mock heading'},{id:'admin.scheduled.form',label:'Live mock form'},{id:'admin.scheduled.list',label:'Scheduled mocks'}],
 };
 
 export default function ReactBitsStudio({ page, config, save }: { page: string; config: StudioConfig; save: (next: StudioConfig) => void }) {
