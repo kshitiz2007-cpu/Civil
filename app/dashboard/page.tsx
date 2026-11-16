@@ -131,10 +131,11 @@ export default function DashboardPage() {
           count = rRes.count;
 
           if (
+            !new URLSearchParams(window.location.search).has('studioPreview') && (
             profile?.role === 'admin' ||
             session.user.email === 'kshitiz2007@gmail.com' ||
             session.user.email === 'admin@civilprep.in'
-          ) {
+          )) {
             window.location.href = '/admin';
             return;
           }
