@@ -46,11 +46,23 @@ const styleFields: Field[] = [
   { key: 'backgroundColor', label: 'Background', type: 'color' },
   { key: 'borderColor', label: 'Border colour', type: 'color' },
   { key: 'borderWidth', label: 'Border width', suffix: 'px' },
+  { key: 'borderStyle', label: 'Border style', type: 'select', options: ['none', 'solid', 'dashed', 'dotted', 'double'] },
   { key: 'borderRadius', label: 'Corner radius', suffix: 'px' },
-  { key: 'padding', label: 'Padding', suffix: 'px' },
-  { key: 'margin', label: 'Margin', suffix: 'px' },
+  { key: 'padding', label: 'Padding (all sides)', suffix: 'px' },
+  { key: 'paddingTop', label: 'Padding top', suffix: 'px' },
+  { key: 'paddingRight', label: 'Padding right', suffix: 'px' },
+  { key: 'paddingBottom', label: 'Padding bottom', suffix: 'px' },
+  { key: 'paddingLeft', label: 'Padding left', suffix: 'px' },
+  { key: 'margin', label: 'Margin (all sides)', suffix: 'px' },
+  { key: 'marginTop', label: 'Margin top', suffix: 'px' },
+  { key: 'marginRight', label: 'Margin right', suffix: 'px' },
+  { key: 'marginBottom', label: 'Margin bottom', suffix: 'px' },
+  { key: 'marginLeft', label: 'Margin left', suffix: 'px' },
   { key: 'width', label: 'Width', suffix: 'px / %' },
+  { key: 'minWidth', label: 'Minimum width', suffix: 'px' },
   { key: 'maxWidth', label: 'Maximum width', suffix: 'px' },
+  { key: 'height', label: 'Height', suffix: 'px' },
+  { key: 'maxHeight', label: 'Maximum height', suffix: 'px' },
   { key: 'minHeight', label: 'Minimum height', suffix: 'px' },
   { key: 'fontSize', label: 'Font size', suffix: 'px' },
   { key: 'fontWeight', label: 'Font weight', type: 'select', options: ['300', '400', '500', '600', '700', '800', '900'] },
@@ -58,6 +70,11 @@ const styleFields: Field[] = [
   { key: 'lineHeight', label: 'Line height', suffix: 'px' },
   { key: 'textAlign', label: 'Text alignment', type: 'select', options: ['left', 'center', 'right', 'justify'] },
   { key: 'display', label: 'Display', type: 'select', options: ['block', 'flex', 'grid', 'inline-flex', 'inline-block', 'none'] },
+  { key: 'flexDirection', label: 'Flex direction', type: 'select', options: ['row', 'column', 'row-reverse', 'column-reverse'] },
+  { key: 'flexWrap', label: 'Flex wrap', type: 'select', options: ['nowrap', 'wrap', 'wrap-reverse'] },
+  { key: 'justifyContent', label: 'Justify content', type: 'select', options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'] },
+  { key: 'alignItems', label: 'Align items', type: 'select', options: ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'] },
+  { key: 'overflow', label: 'Overflow', type: 'select', options: ['visible', 'hidden', 'auto', 'scroll'] },
   { key: 'gap', label: 'Flex / grid gap', suffix: 'px' },
   { key: 'opacity', label: 'Opacity', suffix: '0–1' },
   { key: 'boxShadow', label: 'Box shadow', type: 'text' },
@@ -111,8 +128,9 @@ export default function DesignStudio() {
     if (!selected) return;
     const next = structuredClone(design);
     next.elements = next.elements || {};
-    next.elements[scope] = next.elements[scope] || {};
-    next.elements[scope][selected.selector] = {
+    const elementScope = scope === 'all' ? 'global' : scope;
+    next.elements[elementScope] = next.elements[elementScope] || {};
+    next.elements[elementScope][selected.selector] = {
       ...(next.elements[scope][selected.selector] || {}),
       [key]: value,
     };
@@ -122,10 +140,11 @@ export default function DesignStudio() {
   const clearElementStyle = (key: string) => {
     if (!selected) return;
     const next = structuredClone(design);
-    const values = next.elements?.[scope]?.[selected.selector];
+    const elementScope = scope === 'all' ? 'global' : scope;
+    const values = next.elements?.[elementScope]?.[selected.selector];
     if (values) {
       delete values[key];
-      if (!Object.keys(values).length) delete next.elements![scope][selected.selector];
+      if (!Object.keys(values).length) delete next.elements![elementScope][selected.selector];
     }
     remember(next);
   };
@@ -238,7 +257,7 @@ export default function DesignStudio() {
 
   const resetPage = () => {
     const next = structuredClone(design);
-    if (scope === 'all') next.global = DEFAULT_DESIGN.global;
+    if (scope === 'all') { next.global = DEFAULT_DESIGN.global; delete next.elements?.global; }
     else {
       delete next.pages[scope];
       delete next.elements?.[scope];
