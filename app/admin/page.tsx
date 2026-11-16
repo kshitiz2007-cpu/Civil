@@ -13,10 +13,12 @@ import PaymentsManager from './PaymentsManager';
 import StudentsManager from './StudentsManager';
 import QuizManager from './QuizManager';
 import AdminAnalytics from './AdminAnalytics';
+import DesignStudio from './DesignStudio';
 import ThemeSelector from '@/components/ThemeSelector';
 
 import {
   LayoutDashboard,
+  Palette,
   FileQuestion,
   Users,
   FileText,
@@ -37,6 +39,7 @@ import {
 
 const ADMIN_TABS = [
   { id: 'overview', label: 'Command Center', icon: LayoutDashboard },
+  { id: 'designstudio', label: 'Design System Studio', icon: Palette },
   { id: 'analytics', label: 'Performance Observation', icon: Activity },
   { id: 'quizzes', label: 'Test Engine Control', icon: FileQuestion },
   { id: 'students', label: 'Aspirant Directory', icon: Users },
@@ -241,6 +244,7 @@ export default function AdminPage() {
       {/* Main Content Area */}
       <main className="relative z-10 h-screen w-full flex-1 overflow-y-auto p-4 md:p-8">
         <div className="max-w-7xl mx-auto w-full">
+          {activeTab === 'designstudio' && <DesignStudio />}
           {activeTab === 'overview' && (
             <AdminOverview setActiveTab={setActiveTab} />
           )}
