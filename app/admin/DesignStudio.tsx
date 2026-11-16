@@ -12,7 +12,7 @@ import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
 import VisualBlockBuilder from '@/components/design-studio/VisualBlockBuilder';
 import CanvasStudio from '@/components/design-studio/CanvasStudio';
 
-type Panel = 'canvas' | 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
+type Panel = 'canvas' | 'global' | 'pages' | 'breakpoints' | 'structure' | 'layout' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
@@ -44,6 +44,7 @@ export default function DesignStudio() {
   const { config, save, publish, discard, isSaving, saveError, isPublished } = useDesignStudio();
   const [panel,setPanel] = useState<Panel>('global');
   const [page,setPage] = useState('home');
+  const [layoutSlot,setLayoutSlot] = useState('');
   const [breakpoint,setBreakpoint] = useState<StudioBreakpoint>('desktop');
   const [scope,setScope] = useState<'global'|'page'>('global');
   const [dragIndex,setDragIndex] = useState<number|null>(null);
@@ -135,7 +136,7 @@ export default function DesignStudio() {
   };
   const nav: {id:Panel;label:string;icon:any}[]=[
     {id:'canvas',label:'Blank canvas studio',icon:Sparkles},{id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
-    {id:'structure',label:'Page structure',icon:Layers3},{id:'components',label:'Components',icon:Component},
+    {id:'structure',label:'Page blueprint',icon:Layers3},{id:'layout',label:'Layout & sizing',icon:Monitor},{id:'components',label:'Components',icon:Component},
     {id:'css',label:'Live CSS editor',icon:Code2},{id:'reactbits',label:'React Bits Studio',icon:Sparkles},
     {id:'assets',label:'Asset library',icon:ImagePlus},
   ];
@@ -168,12 +169,12 @@ export default function DesignStudio() {
       <main className="min-w-0 space-y-4">
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold">{panel==='canvas'?'Canvas-first visual builder':panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
+            <div><h2 className="font-bold">{panel==='canvas'?'Canvas-first visual builder':panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page blueprint':panel==='layout'?'Live layout & sizing':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
               <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
           {panel==='canvas'&&<div className="mt-5"><CanvasStudio /></div>}
-          {(panel==='pages'||panel==='structure'||panel==='breakpoints'||panel==='builder'||panel==='reactbits')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>{setPage(e.target.value);setSelectedElement(null);setElementStyles({});}} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
+          {(panel==='pages'||panel==='structure'||panel==='layout'||panel==='breakpoints'||panel==='builder'||panel==='reactbits')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>{setPage(e.target.value);setSelectedElement(null);setElementStyles({});}} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
           {(panel==='global'||panel==='pages')&&<div className="mt-5 grid gap-3 lg:grid-cols-2">
             <section className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 space-y-3">
               <div><h3 className="text-sm font-bold">Multi-stop background gradient</h3><p className="mt-1 text-[10px] text-[var(--app-muted)]">Set 3 or 4 HEX colours for the application background token.</p></div>
@@ -198,6 +199,51 @@ export default function DesignStudio() {
               <span className="mb-2 flex items-center justify-between text-xs font-semibold">{token.label}<code className="text-[10px] text-[var(--app-muted)]">{token.key}</code></span>
               <div className="flex gap-2"><input aria-label={token.label+' value'} value={value} type={token.type==='number'?'number':'text'} onChange={e=>update(token.key,e.target.value)} placeholder={token.type==='color'?'#34d399 or linear-gradient(...)':scope==='page'?'Inherit global value':'Set value'} className="glass-input min-w-0 flex-1 text-xs"/>{scope==='page'&&value&&<button title="Clear override" onClick={()=>{const next={...config,pages:{...config.pages,[page]:{...(config.pages[page]||{})}}};delete next.pages[page][token.key];save(next);}} className="theme-control"><RotateCcw size={13}/></button>}</div>
             </label>;})}
+          </div>}
+          {panel==='layout'&&<div className="mt-5 space-y-4">
+            <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 text-xs leading-5 text-[var(--app-muted)]">
+              Reorder registered page sections and edit their live width, height, spacing and layout properties. These controls apply to real <code>StudioSlot</code> sections in the selected page, not just the saved blueprint.
+            </div>
+            {(()=>{
+              const knownSlots:Record<string,string[]> = {
+                home:['home.topbar','home.institutional-overview','home.institutional-badge','home.hero-title','home.hero-description','home.feature-grid','home.feature-ev','home.feature-deduction','home.feature-themes','home.login-card','home.login-brand','home.login-heading','home.login-actions','home.login-assurances','home.footer'],
+                admin:['admin.sidebar','admin.main-content','admin.design-studio','admin.overview','admin.inbox','admin.quizzes','admin.aigen','admin.resources','admin.students','admin.analytics','admin.payments','admin.csvimport','admin.scheduled.header','admin.scheduled.form','admin.scheduled.list']
+              };
+              const prefix=page+'::';
+              const discovered=Object.keys(config.slotOrder||{}).filter(k=>k.startsWith(prefix)).map(k=>k.slice(prefix.length));
+              const styled=Object.keys(config.elementStyles||{}).filter(k=>k.startsWith(prefix+'[data-studio-slot=')).map(k=>k.slice(prefix.length).match(/data-studio-slot="([^"]+)"/)?.[1]).filter(Boolean) as string[];
+              const slots=Array.from(new Set([...(knownSlots[page]||[]),...discovered,...styled]));
+              const selector='[data-studio-slot="'+layoutSlot+'"]';
+              const styleKey=prefix+selector;
+              const styles=config.elementStyles?.[styleKey]||{};
+              const ordered=[...slots].sort((a,b)=>(config.slotOrder[prefix+a]??slots.indexOf(a))-(config.slotOrder[prefix+b]??slots.indexOf(b)));
+              const moveSlot=(id:string,delta:number)=>{
+                const current=[...ordered];const from=current.indexOf(id);const to=Math.max(0,Math.min(current.length-1,from+delta));
+                if(from===to)return;const [item]=current.splice(from,1);current.splice(to,0,item);
+                const next={...config.slotOrder};current.forEach((slot,index)=>{next[prefix+slot]=index;});save({...config,slotOrder:next});
+              };
+              const setSlotStyle=(key:string,value:string)=>{
+                const next={...styles};if(value.trim())next[key]=value;else delete next[key];
+                save({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:next}});
+              };
+              return <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(260px,.8fr)]">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between"><h3 className="text-sm font-bold">Registered page sections</h3><span className="text-[10px] text-[var(--app-muted)]">{slots.length} slots detected</span></div>
+                  {ordered.map((slot,index)=><div key={slot} onClick={()=>setLayoutSlot(slot)} className={'flex items-center gap-2 rounded-xl border p-2.5 transition '+(layoutSlot===slot?'border-[var(--app-accent)] bg-[var(--app-accent-soft)]':'border-[var(--app-border)] bg-[var(--app-surface-muted)]')}>
+                    <button onClick={()=>setLayoutSlot(slot)} className="min-w-0 flex-1 text-left"><span className="block truncate text-xs font-semibold">{slot}</span><span className="text-[10px] text-[var(--app-muted)]">Order {index+1} · live section</span></button>
+                    <button aria-label={'Move '+slot+' up'} disabled={index===0} onClick={e=>{e.stopPropagation();moveSlot(slot,-1);}} className="theme-control px-2 disabled:opacity-30">↑</button>
+                    <button aria-label={'Move '+slot+' down'} disabled={index===ordered.length-1} onClick={e=>{e.stopPropagation();moveSlot(slot,1);}} className="theme-control px-2 disabled:opacity-30">↓</button>
+                  </div>)}
+                  {!slots.length&&<p className="rounded-xl border border-dashed border-[var(--app-border)] p-5 text-center text-xs text-[var(--app-muted)]">No registered sections found for this page yet.</p>}
+                </div>
+                <div className="h-fit space-y-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
+                  <div><h3 className="text-sm font-bold">Section dimensions</h3><p className="mt-1 break-all text-[10px] text-[var(--app-muted)]">{layoutSlot||'Select a section to edit'}</p></div>
+                  {layoutSlot&&[['width','Width','100%'],['max-width','Maximum width','none'],['min-height','Minimum height','0px'],['height','Height','auto'],['padding','Padding','16px'],['margin','Margin','0 auto'],['gap','Gap','16px'],['border-radius','Corner radius','18px']].map(([key,label,placeholder])=><label key={key} className="block"><span className="mb-1 block text-[10px] font-semibold text-[var(--app-muted)]">{label}</span><input value={styles[key]||''} onChange={e=>setSlotStyle(key,e.target.value)} placeholder={placeholder} className="glass-input w-full text-xs"/></label>)}
+                  {layoutSlot&&<button onClick={()=>{save({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:{}}});}} className="theme-control w-full justify-center text-xs"><RotateCcw size={13}/>Reset section sizing</button>}
+                  <p className="text-[10px] leading-5 text-[var(--app-muted)]">Tip: use CSS values such as <code>min(100%, 900px)</code>, <code>clamp(16px, 3vw, 40px)</code> or <code>auto</code>. Reordering works within the section's existing flex/grid parent.</p>
+                </div>
+              </div>;
+            })()}
           </div>}
           {panel==='structure'&&<div className="mt-5 space-y-3">
             <div className="rounded-xl border border-dashed border-[var(--app-border-strong)] p-3 text-xs text-[var(--app-muted)]">Drag sections to reorder the page blueprint. This creates editable layout metadata; connecting arbitrary existing JSX to a fully dynamic renderer requires migrating that page to registered studio blocks.</div>
