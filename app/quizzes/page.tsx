@@ -2,6 +2,7 @@
 export const dynamic = 'force-dynamic';
 
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { FALLBACK_QUIZZES } from '@/lib/mockData';
@@ -173,7 +174,7 @@ export default function StudentQuizzesPage() {
   }
 
   return (
-    <div className="app-theme text-[var(--app-text)] min-h-screen">
+    <StudioSlot id="quizzes.page" className="app-theme text-[var(--app-text)] min-h-screen">
       {/* Desktop Sidebar */}
       <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
@@ -480,6 +481,6 @@ export default function StudentQuizzesPage() {
           </div>
         )}
       </main>
-    </div>
+    </StudioSlot>
   );
 }

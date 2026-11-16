@@ -39,7 +39,7 @@ import {
 
 const ADMIN_TABS = [
   { id: 'overview', label: 'Command Center', icon: LayoutDashboard },
-  { id: 'designstudio', label: 'Design System Studio', icon: Palette },
+  { id: 'designstudio', label: 'Visual Website Designer', icon: Palette },
   { id: 'analytics', label: 'Performance Observation', icon: Activity },
   { id: 'quizzes', label: 'Test Engine Control', icon: FileQuestion },
   { id: 'students', label: 'Aspirant Directory', icon: Users },

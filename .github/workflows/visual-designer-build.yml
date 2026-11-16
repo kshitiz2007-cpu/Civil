@@ -1,0 +1,21 @@
+name: Visual Designer Build
+on:
+  pull_request:
+    branches: [recovery/original-full-app]
+  push:
+    branches: [feature/unified-visual-website-designer]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies and refresh lockfile
+        run: npm install --no-audit --no-fund
+      - name: Type-check and production build
+        run: |
+          npx tsc --noEmit
+          npm run build

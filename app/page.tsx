@@ -35,9 +35,11 @@ export default function LoginPage() {
         return;
       }
 
+      const studioPreview = new URLSearchParams(window.location.search).has('studioPreview');
       if (
-        session.user.email === 'kshitiz2007@gmail.com' ||
-        session.user.email === 'admin@civilprep.in'
+        !studioPreview &&
+        (session.user.email === 'kshitiz2007@gmail.com' ||
+          session.user.email === 'admin@civilprep.in')
       ) {
         window.location.href = '/admin';
         return;
@@ -56,7 +58,7 @@ export default function LoginPage() {
         }
 
         if (mounted) {
-          if (data?.role === 'admin') {
+          if (data?.role === 'admin' && !new URLSearchParams(window.location.search).has('studioPreview')) {
             window.location.href = '/admin';
           } else {
             window.location.href = '/dashboard';

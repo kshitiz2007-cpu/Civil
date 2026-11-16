@@ -3,14 +3,15 @@
 import { useRef, useState } from 'react';
 import {
   Palette, Layers3, Component, ImagePlus, Monitor, Tablet, Smartphone,
-  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles,
+  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles, Save,
 } from 'lucide-react';
 import { DEFAULT_STUDIO, StudioBreakpoint, useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
 import { supabase } from '@/lib/supabaseClient';
 import CustomCssEditor from '@/components/design-studio/CustomCssEditor';
 import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
+import VisualBlockBuilder from '@/components/design-studio/VisualBlockBuilder';
 
-type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits';
+type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
@@ -39,7 +40,7 @@ const COMPONENT_PRESETS = [
   { id:'studio-input', name:'Input', values:{'background':'var(--app-surface-muted)','color':'var(--app-text)','border':'1px solid var(--app-border)','border-radius':'12px','padding':'10px 12px'} },
 ];
 export default function DesignStudio() {
-  const { config, save } = useDesignStudio();
+  const { config, save, publish, discard, isSaving, saveError, isPublished } = useDesignStudio();
   const [panel,setPanel] = useState<Panel>('global');
   const [page,setPage] = useState('home');
   const [breakpoint,setBreakpoint] = useState<StudioBreakpoint>('desktop');
@@ -79,7 +80,8 @@ export default function DesignStudio() {
     }
     return parts.join(' > ');
   };
-  const previewUrl = page==='quiz' ? '/quiz/upsc-gs1-polity-01' : page==='dashboard' ? '/dashboard?studioPreview=1' : (PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/');
+  const previewPath = page==='quiz' ? '/quiz/upsc-gs1-polity-01' : (PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/');
+  const previewUrl = `${previewPath}${previewPath.includes('?')?'&':'?'}studioPreview=1`;
   const handlePreviewLoad = () => {
     const doc=previewFrame.current?.contentDocument; if(!doc) return;
     let style=doc.getElementById('studio-inspector-overlay') as HTMLStyleElement|null;
@@ -132,18 +134,21 @@ export default function DesignStudio() {
   const visibleTokens = panel==='breakpoints' ? TOKENS : TOKENS;
   return <div className="space-y-5 text-[var(--app-text)]">
     <header className="flex flex-wrap items-end justify-between gap-4">
-      <div><p className="text-[11px] font-bold uppercase tracking-[.18em] text-[var(--app-accent)]">Admin / Experience architecture</p>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Design System Studio</h1>
-        <p className="mt-1 max-w-2xl text-sm text-[var(--app-muted)]">One control room for the application’s visual language, page-level overrides, reusable style recipes and responsive design tokens.</p>
+      <div><p className="text-[11px] font-bold uppercase tracking-[.18em] text-[var(--app-accent)]">Admin / Visual Website Designer</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Visual Website Designer</h1>
+        <p className="mt-1 max-w-2xl text-sm text-[var(--app-muted)]">Select a page, inspect its real elements, customize styles and effects, then save the design to the shared application configuration.</p>
       </div>
       <div className="flex gap-2">
         <button onClick={()=>setPreview(v=>!v)} className="theme-control"><Eye size={15}/>{preview?'Hide':'Show'} preview</button>
+        <button onClick={discard} className="theme-control"><RotateCcw size={15}/>Discard draft</button>
         <button onClick={reset} className="theme-control"><RotateCcw size={15}/>Reset</button>
+        <button onClick={()=>void publish()} disabled={isSaving||isPublished} className="theme-control border-[var(--app-accent)] bg-[var(--app-accent)] text-slate-950 disabled:opacity-50"><Save size={15}/>{isSaving?'Saving…':isPublished?'Published':'Publish changes'}</button>
       </div>
+      {saveError&&<p className="w-full text-right text-xs text-rose-400">Cloud save failed: {saveError}</p>}
     </header>
     <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="theme-surface h-fit rounded-2xl p-2">
-        <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--app-muted)]">Studio workspace</p>
+        <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--app-muted)]">Designer tools</p>
         {nav.map(item=>{const Icon=item.icon;return <button key={item.id} onClick={()=>setPanel(item.id)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${panel===item.id?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)] hover:bg-[var(--app-surface-muted)]'}`}><Icon size={17}/>{item.label}</button>;})}
         <div className="mx-2 my-3 border-t border-[var(--app-border)]"/>
         <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-[var(--app-muted)]">Responsive target</div>
@@ -152,11 +157,11 @@ export default function DesignStudio() {
       <main className="min-w-0 space-y-4">
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':'Asset management'}</h2>
+            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
               <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
-          {(panel==='pages'||panel==='structure'||panel==='breakpoints')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>setPage(e.target.value)} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
+          {(panel==='pages'||panel==='structure'||panel==='breakpoints'||panel==='builder')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>{setPage(e.target.value);setSelectedElement(null);setElementStyles({});}} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
           {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="mt-5 grid gap-3 md:grid-cols-2">
             {visibleTokens.map(token=>{const value=tokenValues[token.key]??(scope==='page'&&panel!=='breakpoints'?'':config.global[token.key]??'');return <label key={token.key} className="block rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
               <span className="mb-2 flex items-center justify-between text-xs font-semibold">{token.label}<code className="text-[10px] text-[var(--app-muted)]">{token.key}</code></span>
@@ -175,6 +180,7 @@ export default function DesignStudio() {
           </div>}
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
           {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio /></div>}
+          {panel==='builder'&&<div className="mt-5"><VisualBlockBuilder page={page} selectedSlot={selectedElement?.slotId} config={config} save={save}/></div>}
           {panel==='assets'&&<div className="mt-5 space-y-4">
             <div onClick={()=>fileRef.current?.click()} className="cursor-pointer rounded-2xl border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface-muted)] p-8 text-center"><Upload className="mx-auto mb-2 text-[var(--app-accent)]"/><p className="text-sm font-bold">Upload images, logos and visual assets</p><p className="mt-1 text-xs text-[var(--app-muted)]">Choose files from your device. Stored locally in this browser for this prototype.</p><input ref={fileRef} hidden type="file" multiple accept="image/*,image/svg+xml" onChange={e=>upload(e.target.files)}/></div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{config.assets.map(asset=><div key={asset.id} className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="grid aspect-square place-items-center bg-[var(--app-surface-muted)]"><img src={asset.data} alt={asset.name} className="max-h-full max-w-full object-contain"/></div><div className="flex items-center gap-2 p-2"><span className="min-w-0 flex-1 truncate text-[10px]">{asset.name}</span><button onClick={async()=>{if(asset.path) await supabase.storage.from('design-assets').remove([asset.path]);save({...config,assets:config.assets.filter(a=>a.id!==asset.id)});}} className="text-rose-400"><Trash2 size={13}/></button></div></div>)}</div>
@@ -182,10 +188,10 @@ export default function DesignStudio() {
           </div>}
         </section>
         {preview&&<section className="theme-surface overflow-hidden rounded-2xl">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] px-4 py-3"><div className="flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><b className="text-xs">Live application preview</b><span className="text-[10px] text-[var(--app-muted)]">{pageName} · {previewUrl}</span></div><div className="flex gap-1">{(['desktop','tablet','mobile'] as StudioBreakpoint[]).map(bp=><button key={bp} onClick={()=>setBreakpoint(bp)} className={`rounded-lg p-2 ${breakpoint===bp?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)]'}`}>{bp==='desktop'?<Monitor size={15}/>:bp==='tablet'?<Tablet size={15}/>:<Smartphone size={15}/>}</button>)}</div></div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] px-4 py-3"><div className="flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><b className="text-xs">Live page canvas</b><span className="text-[10px] text-[var(--app-muted)]">{pageName} · {previewUrl}</span></div><div className="flex gap-1">{(['desktop','tablet','mobile'] as StudioBreakpoint[]).map(bp=><button key={bp} onClick={()=>setBreakpoint(bp)} className={`rounded-lg p-2 ${breakpoint===bp?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)]'}`}>{bp==='desktop'?<Monitor size={15}/>:bp==='tablet'?<Tablet size={15}/>:<Smartphone size={15}/>}</button>)}</div></div>
           <div className="flex justify-center bg-[#101018] p-2 sm:p-4"><div className="overflow-hidden rounded-xl border border-white/15 bg-white shadow-2xl transition-all" style={{width:breakpoint==='mobile'?390:breakpoint==='tablet'?768:'100%',maxWidth:'100%'}}><iframe ref={previewFrame} key={page} title={`Actual ${pageName} page preview`} src={previewUrl} onLoad={handlePreviewLoad} className="block h-[680px] w-full bg-white" style={{border:0}}/></div></div>
           <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="border-t border-[var(--app-border)] p-4"><div className="flex items-center justify-between gap-2"><div><p className="text-xs font-bold">Element inspector</p><p className="mt-1 text-[10px] text-[var(--app-muted)]">Click any element inside the live page to select it and edit its styles.</p></div>{selectedElement&&<button onClick={clearElementSelection} className="theme-control text-xs">Deselect</button>}</div>
+            <div className="border-t border-[var(--app-border)] p-4"><div className="flex items-center justify-between gap-2"><div><p className="text-xs font-bold">Selected element</p><p className="mt-1 text-[10px] text-[var(--app-muted)]">Click any element inside the live page to select it and edit its styles.</p></div>{selectedElement&&<button onClick={clearElementSelection} className="theme-control text-xs">Deselect</button>}</div>
               {selectedElement?<div className="mt-3 rounded-xl border border-violet-400/30 bg-violet-400/10 p-3"><p className="text-[10px] uppercase tracking-wider text-violet-300">Selected element</p><code className="mt-1 block break-all text-xs">{selectedElement.label}</code><code className="mt-1 block break-all text-[10px] text-[var(--app-muted)]">{selectedElement.selector}</code></div>:<div className="mt-3 rounded-xl border border-dashed border-[var(--app-border)] p-5 text-center text-xs text-[var(--app-muted)]">No element selected · tap a heading, card, button, section or any other page element</div>}
             </div>
             <div className="border-t border-[var(--app-border)] p-4 lg:border-l"><div className="flex gap-1 rounded-lg bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setInspectorTab('style')} className={`flex-1 rounded-md px-2 py-1.5 text-xs ${inspectorTab==='style'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Style</button><button onClick={()=>setInspectorTab('effects')} className={`flex-1 rounded-md px-2 py-1.5 text-xs ${inspectorTab==='effects'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Effects</button></div>
