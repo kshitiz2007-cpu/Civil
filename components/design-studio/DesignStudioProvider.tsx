@@ -93,7 +93,30 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const dirty = useRef(false);
 
   useEffect(() => {
-    setIsAdminView(pathname.startsWith('/admin') || new URLSearchParams(window.location.search).has('studioPreview'));
+    let active = true;
+    const wantsDraft = pathname.startsWith('/admin') || new URLSearchParams(window.location.search).has('studioPreview');
+    if (!wantsDraft) {
+      setIsAdminView(false);
+      return () => { active = false; };
+    }
+    const verifyAdmin = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) { if (active) setIsAdminView(false); return; }
+        const email = session.user.email || '';
+        if (email === 'kshitiz2007@gmail.com' || email === 'admin@civilprep.in') {
+          if (active) setIsAdminView(true);
+          return;
+        }
+        const { data: profile } = await supabase.from('profiles')
+          .select('role').eq('id', session.user.id).maybeSingle();
+        if (active) setIsAdminView(profile?.role === 'admin');
+      } catch {
+        if (active) setIsAdminView(false);
+      }
+    };
+    void verifyAdmin();
+    return () => { active = false; };
   }, [pathname]);
 
   useEffect(() => {
