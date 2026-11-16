@@ -93,7 +93,7 @@ export default function HistoryPage() {
 
   return (
     <StudioSlot id="history.page" className="app-theme min-h-screen text-[var(--app-text)]">
-      <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
+      <StudioSlot id="history.sidebar" className="fixed inset-y-0 left-0 z-20 hidden w-64 md:block"><aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] text-[var(--app-accent)]">
             <Landmark className="h-5 w-5" />
@@ -159,7 +159,7 @@ export default function HistoryPage() {
       </aside></StudioSlot>
 
       <main className="relative z-10 mx-auto max-w-5xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <StudioSlot id="history.header"><header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <button
               onClick={() => router.push('/dashboard')}
@@ -177,7 +177,7 @@ export default function HistoryPage() {
             </div>
           </div>
           <ThemeSelector />
-        </header>
+        </header></StudioSlot>
 
         <div className="theme-surface rounded-3xl overflow-hidden divide-y divide-[var(--app-border)]">
           {attempts.map((attempt) => {
