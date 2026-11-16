@@ -156,7 +156,7 @@ export default function HistoryPage() {
             <LogOut className="h-4 w-4" />
           </button>
         </div>
-      </aside>
+      </aside></StudioSlot>
 
       <main className="relative z-10 mx-auto max-w-5xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -290,7 +290,7 @@ export default function HistoryPage() {
               </div>
             );
           })}
-        </div>
+        </div></StudioSlot>
       </main>
     </StudioSlot>
   );
