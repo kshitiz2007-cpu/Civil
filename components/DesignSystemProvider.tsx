@@ -22,6 +22,7 @@ export type BentoDesign = {
   elements?: Record<string, Record<string, ElementDesign>>;
   responsive?: Record<string, { tokens?: Partial<DesignValues>; elements?: Record<string, ElementDesign> }>;
   components?: Record<string, { name: string; styles: ElementDesign }>;
+  componentBindings?: Record<string, Record<string, string>>;
   structure?: Record<string, Record<string, string[]>>;
   hidden?: Record<string, string[]>;
 };
@@ -130,6 +131,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       document.querySelectorAll('[data-bento-editor-selected="true"]').forEach(el => {
         el.removeAttribute('data-bento-editor-selected');
       });
+      document.querySelectorAll('section,article,header,nav,aside,main,div,ul,ol,li').forEach(node => ensureNodeId(node));
       const breakpoint = window.innerWidth <= 767 ? 'mobile' : window.innerWidth <= 1023 ? 'tablet' : 'desktop';
       const scoped = {
         ...(next.elements?.global || {}),
@@ -184,7 +186,14 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
 
     const ensureNodeId = (element: Element) => {
       let id = element.getAttribute('data-bento-node-id');
-      if (!id) { id = 'bn-' + Math.random().toString(36).slice(2, 11); element.setAttribute('data-bento-node-id', id); }
+      if (!id) {
+        const html = element as HTMLElement;
+        const signature = [element.tagName, html.id || '', Array.from(element.classList).sort().join('.'), (html.innerText || element.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 80)].join('|');
+        let hash = 2166136261;
+        for (let i = 0; i < signature.length; i++) hash = Math.imul(hash ^ signature.charCodeAt(i), 16777619);
+        id = 'bn-' + (hash >>> 0).toString(36);
+        element.setAttribute('data-bento-node-id', id);
+      }
       return id;
     };
     const selectorFor = (element: Element) => {
