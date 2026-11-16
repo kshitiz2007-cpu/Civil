@@ -193,6 +193,7 @@ export default function DesignStudio() {
         <button onClick={reset} className="theme-control"><RotateCcw size={15}/>Reset</button>
         <button onClick={()=>void publish()} disabled={isSaving||isPublished} className="theme-control border-[var(--app-accent)] bg-[var(--app-accent)] text-slate-950 disabled:opacity-50"><Save size={15}/>{isSaving?'Saving…':isPublished?'Published':'Publish changes'}</button>
       </div>
+      <p className={`w-full text-right text-xs ${isPublished?'text-emerald-400':'text-amber-300'}`}>{isPublished?'All current changes are published to the cloud.':'Draft auto-saved locally · publish to make changes persistent for everyone.'}</p>
       {saveError&&<p className="w-full text-right text-xs text-rose-400">Cloud save failed: {saveError}</p>}
     </header>
     <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
@@ -207,7 +208,7 @@ export default function DesignStudio() {
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div><h2 className="font-bold">{panel==='canvas'?'Canvas-first visual builder':panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
-              <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
+              <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Draft changes auto-save in this browser and preview live. Publish changes to sync the complete design to every visitor and device.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
           {panel==='canvas'&&<div className="mt-5"><CanvasStudio /></div>}
