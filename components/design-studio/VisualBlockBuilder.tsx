@@ -23,18 +23,18 @@ const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]>
     {id:'dashboard.practice',label:'Recommended practice',group:'Practice area'},
     {id:'dashboard.analytics',label:'Performance analytics',group:'Analytics area'},
   ],
-  quizzes: [
+  quiz: [
     {id:'quiz.toolbar',label:'Quiz toolbar',group:'Quiz page'},
     {id:'quiz.question-workspace',label:'Question workspace',group:'Quiz page'},
     {id:'quiz.question-palette',label:'Question palette',group:'Quiz page'},
   ],
+  quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'}],
   resources: [
     {id:'resources.header',label:'Resources header',group:'Resources page'},
     {id:'resources.subject-browser',label:'Subject browser',group:'Resources page'},
   ],
   history: [{id:'history.page',label:'Attempt history canvas',group:'History page'}],
   leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas',group:'Leaderboard page'}],
-  quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'}],
   home: [
     {id:'home.hero-title',label:'Hero title',group:'Home page'},
     {id:'home.hero-description',label:'Hero description',group:'Home page'},
