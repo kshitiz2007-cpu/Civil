@@ -203,7 +203,7 @@ export default function StudentResourcesPage() {
             <LogOut className="h-4 w-4" />
           </button>
         </div>
-      </aside>
+      </aside></StudioSlot>
 
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
         <StudioSlot id="resources.header"><header className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -281,7 +281,7 @@ export default function StudentResourcesPage() {
         )}
 
         {activeSubject && (
-          <div className="space-y-6">
+          <StudioSlot id="resources.material-browser"><div className="space-y-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--app-muted)]" />
               <input
@@ -376,7 +376,7 @@ export default function StudentResourcesPage() {
                 )
               )}
             </div>
-          </div>
+          </div></StudioSlot>
         )}
       </main>
     </div>
