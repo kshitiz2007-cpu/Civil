@@ -198,6 +198,10 @@ export default function DesignStudio() {
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin || event.source !== frame.current?.contentWindow) return;
+      if (event.data?.type === 'BENTO_PREVIEW_READY') {
+        // The preview iframe has hydrated; resend the latest design and editor mode.
+        sendPreview();
+      }
       if (event.data?.type === 'BENTO_STRUCTURE_UPDATED') {
         const next = structuredClone(design);
         next.structure = next.structure || {};
