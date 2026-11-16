@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import {
   Palette, Layers3, Component, ImagePlus, Monitor, Tablet, Smartphone,
-  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles,
+  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles, Save,
 } from 'lucide-react';
 import { DEFAULT_STUDIO, StudioBreakpoint, useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
 import { supabase } from '@/lib/supabaseClient';
@@ -40,7 +40,7 @@ const COMPONENT_PRESETS = [
   { id:'studio-input', name:'Input', values:{'background':'var(--app-surface-muted)','color':'var(--app-text)','border':'1px solid var(--app-border)','border-radius':'12px','padding':'10px 12px'} },
 ];
 export default function DesignStudio() {
-  const { config, save, publish, discard, isSaving, isPublished } = useDesignStudio();
+  const { config, save, publish, discard, isSaving, saveError, isPublished } = useDesignStudio();
   const [panel,setPanel] = useState<Panel>('global');
   const [page,setPage] = useState('home');
   const [breakpoint,setBreakpoint] = useState<StudioBreakpoint>('desktop');
@@ -143,6 +143,7 @@ export default function DesignStudio() {
         <button onClick={reset} className="theme-control"><RotateCcw size={15}/>Reset</button>
         <button onClick={()=>void publish()} disabled={isSaving||isPublished} className="theme-control border-[var(--app-accent)] bg-[var(--app-accent)] text-slate-950 disabled:opacity-50"><Save size={15}/>{isSaving?'Saving…':isPublished?'Published':'Publish changes'}</button>
       </div>
+      {saveError&&<p className="w-full text-right text-xs text-rose-400">Cloud save failed: {saveError}</p>}
     </header>
     <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="theme-surface h-fit rounded-2xl p-2">
