@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GripVertical, Plus, Trash2, ArrowUp, ArrowDown, Save, Layers3 } from 'lucide-react';
 import type { StudioConfig, VisualBlock } from './DesignStudioProvider';
 import VisualBlockRenderer from './VisualBlockRenderer';
@@ -55,6 +55,7 @@ export default function VisualBlockBuilder({
   const [draggedIndex,setDraggedIndex] = useState<number|null>(null);
   const [draggedBlock,setDraggedBlock] = useState<Omit<VisualBlock,'id'>|null>(null);
   const [editing,setEditing] = useState<string|null>(null);
+  useEffect(()=>{setActiveSlot(SLOT_REGISTRY[page]?.[0]?.id || '');setEditing(null);},[page]);
   const slot = selectedSlot || activeSlot;
   const key = `${page}::${slot}`;
   const blocks = config.slotBlocks?.[key] || [];
