@@ -30,6 +30,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 interface Resource {
   id: string;
@@ -232,7 +233,7 @@ export default function StudentResourcesPage() {
         </header>
 
         {!activeSubject && (
-          <section>
+          <StudioSlot id="resources.subject-browser"><section>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-muted)] flex items-center gap-2">
                 <FolderOpen className="w-4 h-4 text-[var(--app-accent)]" />
@@ -276,7 +277,7 @@ export default function StudentResourcesPage() {
                 );
               })}
             </div>
-          </section>
+          </section></StudioSlot>
         )}
 
         {activeSubject && (
