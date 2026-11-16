@@ -249,7 +249,7 @@ export default function StudentResourcesPage() {
                 const Icon = subject.icon;
                 const count = getResourceCount(subject.id);
                 return (
-                  <button
+                  <StudioSlot id="resources.subject-card" key={subject.id}><button
                     key={subject.id}
                     onClick={() => setActiveSubject(subject.id)}
                     className="theme-surface text-left p-5 rounded-3xl transition-all hover:-translate-y-0.5 hover:border-[var(--app-accent)] group"
@@ -273,7 +273,7 @@ export default function StudentResourcesPage() {
                         Browse <ChevronRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
-                  </button>
+                  </button></StudioSlot>
                 );
               })}
             </div>
@@ -329,7 +329,7 @@ export default function StudentResourcesPage() {
                         {isOpen && (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             {sectionResources.map((resource) => (
-                              <div
+                              <StudioSlot id="resources.material-card" key={resource.id}><div
                                 key={resource.id}
                                 className="theme-surface rounded-2xl p-5 flex items-center justify-between gap-4 hover:border-[var(--app-accent)] transition"
                               >
@@ -366,7 +366,7 @@ export default function StudentResourcesPage() {
                                     <ExternalLink className="w-4 h-4" />
                                   )}
                                 </a>
-                              </div>
+                              </div></StudioSlot>
                             ))}
                           </div>
                         )}
