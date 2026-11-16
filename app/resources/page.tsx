@@ -281,7 +281,7 @@ export default function StudentResourcesPage() {
         )}
 
         {activeSubject && (
-          <div className="space-y-6">
+          <StudioSlot id="resources.material-browser"><div className="space-y-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--app-muted)]" />
               <input
@@ -376,7 +376,7 @@ export default function StudentResourcesPage() {
                 )
               )}
             </div>
-          </div>
+          </div></StudioSlot>
         )}
       </main>
     </div>
