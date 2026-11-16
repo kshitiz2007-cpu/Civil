@@ -50,7 +50,7 @@ export default function CanvasStudio(){
  const [device,setDevice]=useState<Device>('desktop');
  const [mode,setMode]=useState<'design'|'code'>('design');
  const [leftOpen,setLeftOpen]=useState(true),[rightOpen,setRightOpen]=useState(true);
- const [jsx,setJsx]=useState(''),[css,setCss]=useState(''),[codeError,setCodeError]=useState('');
+ const [jsx,setJsx]=useState(''),[css,setCss]=useState('');
  const [history,setHistory]=useState<DesignNode[][]>([]),[future,setFuture]=useState<DesignNode[][]>([]);
  const [preview,setPreview]=useState(true);
  const frame=useRef<HTMLIFrameElement>(null);
