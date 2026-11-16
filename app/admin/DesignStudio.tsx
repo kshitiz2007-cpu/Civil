@@ -10,8 +10,9 @@ import { supabase } from '@/lib/supabaseClient';
 import CustomCssEditor from '@/components/design-studio/CustomCssEditor';
 import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
 import VisualBlockBuilder from '@/components/design-studio/VisualBlockBuilder';
+import CanvasStudio from '@/components/design-studio/CanvasStudio';
 
-type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
+type Panel = 'canvas' | 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
@@ -123,7 +124,7 @@ export default function DesignStudio() {
     save({...config,assets:[...config.assets,...additions]});
   };
   const nav: {id:Panel;label:string;icon:any}[]=[
-    {id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
+    {id:'canvas',label:'Blank canvas studio',icon:Sparkles},{id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
     {id:'structure',label:'Page structure',icon:Layers3},{id:'components',label:'Components',icon:Component},
     {id:'css',label:'Live CSS editor',icon:Code2},{id:'reactbits',label:'React Bits Studio',icon:Sparkles},
     {id:'assets',label:'Asset library',icon:ImagePlus},
@@ -157,10 +158,11 @@ export default function DesignStudio() {
       <main className="min-w-0 space-y-4">
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
+            <div><h2 className="font-bold">{panel==='canvas'?'Canvas-first visual builder':panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
               <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
+          {panel==='canvas'&&<div className="mt-5"><CanvasStudio /></div>}
           {(panel==='pages'||panel==='structure'||panel==='breakpoints'||panel==='builder'||panel==='reactbits')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>{setPage(e.target.value);setSelectedElement(null);setElementStyles({});}} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
           {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="mt-5 grid gap-3 md:grid-cols-2">
             {visibleTokens.map(token=>{const value=tokenValues[token.key]??(scope==='page'&&panel!=='breakpoints'?'':config.global[token.key]??'');return <label key={token.key} className="block rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
