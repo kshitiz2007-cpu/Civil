@@ -98,11 +98,19 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     let activeDesign: BentoDesign = DEFAULT_DESIGN;
     let editorMode = false;
     let selectedElement: Element | null = null;
+    const previousOverrides = new Map<HTMLElement, Map<string, { value: string; priority: string }>>();
 
     const apply = (next: BentoDesign) => {
       if (!next || !next.global) return;
       activeDesign = next;
-      style!.textContent = designCss(next, page);
+      previousOverrides.forEach((properties, element) => {
+        properties.forEach((original, property) => {
+          if (original.value) element.style.setProperty(property, original.value, original.priority);
+          else element.style.removeProperty(property);
+        });
+      });
+      previousOverrides.clear();
+      style!.textContent = designCss(next, page) + '[data-bento-editor-selected="true"]{outline:2px solid #3b82f6!important;outline-offset:2px!important;cursor:crosshair!important;}';
       document.querySelectorAll('[data-bento-editor-selected="true"]').forEach(el => {
         el.removeAttribute('data-bento-editor-selected');
       });
@@ -116,7 +124,17 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
           if (!element) return;
           Object.entries(properties || {}).forEach(([property, raw]) => {
             const value = safeStyleValue(property, String(raw));
-            if (value) element.style.setProperty(property.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`), value, 'important');
+            if (value) {
+              const cssProperty = property.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);
+              if (!previousOverrides.has(element)) previousOverrides.set(element, new Map());
+              if (!previousOverrides.get(element)!.has(cssProperty)) {
+                previousOverrides.get(element)!.set(cssProperty, {
+                  value: element.style.getPropertyValue(cssProperty),
+                  priority: element.style.getPropertyPriority(cssProperty),
+                });
+              }
+              element.style.setProperty(cssProperty, value, 'important');
+            }
           });
         } catch { /* Ignore stale selectors after a page update. */ }
       });
@@ -212,6 +230,11 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     void load();
     return () => {
       window.removeEventListener('message', onMessage);
+      previousOverrides.forEach((properties, element) => properties.forEach((original, property) => {
+        if (original.value) element.style.setProperty(property, original.value, original.priority);
+        else element.style.removeProperty(property);
+      }));
+      previousOverrides.clear();
       document.removeEventListener('click', onClick, true);
       document.body.style.cursor = '';
     };
