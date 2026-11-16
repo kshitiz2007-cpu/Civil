@@ -656,7 +656,7 @@ export default function QuizPlayerPage() {
       )}
 
       {/* Top Examination Command Bar */}
-      <header className="theme-surface-solid sticky top-0 z-30 border-b border-[var(--app-border)]">
+      <StudioSlot id="quiz.toolbar"><header className="theme-surface-solid sticky top-0 z-30 border-b border-[var(--app-border)]">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
           <div className="flex items-center gap-3">
             <button
@@ -833,7 +833,7 @@ export default function QuizPlayerPage() {
             style={{ width: `${progress}%` }}
           />
         </div>
-      </header>
+      </header></StudioSlot>
 
       {/* Main Examination Workspace */}
       <main
@@ -1264,7 +1264,7 @@ export default function QuizPlayerPage() {
 
         {/* Right UPSC 6-State Smart Question Palette */}
         {!zenMode && (
-          <aside className="theme-surface h-fit rounded-3xl p-5 lg:sticky lg:top-20 space-y-4">
+          <StudioSlot id="quiz.question-palette"><aside className="theme-surface h-fit rounded-3xl p-5 lg:sticky lg:top-20 space-y-4">
             <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
               <div>
                 <h2 className="text-sm font-bold">Smart OMR Palette</h2>
@@ -1422,7 +1422,7 @@ export default function QuizPlayerPage() {
             >
               {submitting ? 'Submitting Evaluation…' : 'Finish & Submit OMR'}
             </button>
-          </aside>
+          </aside></StudioSlot>
         )}
       </main>
 
