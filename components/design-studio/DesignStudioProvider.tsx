@@ -82,6 +82,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const [isAdminView, setIsAdminView] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const writeQueue = useRef<Promise<boolean>>(Promise.resolve(true));
   const latest = useRef<StudioEnvelope>({ __studioVersion: 2, draft: DEFAULT_STUDIO, published: DEFAULT_STUDIO });
 
   useEffect(() => {
