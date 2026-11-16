@@ -66,8 +66,8 @@ function safeStyleValue(property: string, raw: string) {
 
 export function designCss(design: BentoDesign, page: string) {
   const v = { ...design.global, ...(design.pages?.[page] || {}) };
-  const mobile = design.responsive?.[page + ':mobile']?.tokens || {};
-  const tablet = design.responsive?.[page + ':tablet']?.tokens || {};
+  const mobile = { ...(design.responsive?.['global:mobile']?.tokens || {}), ...(design.responsive?.[page + ':mobile']?.tokens || {}) };
+  const tablet = { ...(design.responsive?.['global:tablet']?.tokens || {}), ...(design.responsive?.[page + ':tablet']?.tokens || {}) };
   const tokenVars = (tokens: Partial<DesignValues>) => Object.entries(tokens).map(([key, value]) => {
     const names: Record<string, string> = { background:'--studio-bg', surface:'--studio-surface', text:'--studio-text', muted:'--studio-muted', accent:'--studio-accent', border:'--studio-border', radius:'--studio-radius', spacing:'--studio-spacing', font:'--studio-font' };
     const name = names[key]; return name ? name + ':' + (key === 'radius' || key === 'spacing' ? value + 'px' : key === 'font' ? JSON.stringify(value) + ',sans-serif' : value) + ';' : '';
@@ -157,6 +157,14 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
           const element = document.querySelector(selector) as HTMLElement | null;
           if (!element) return;
           Object.entries(properties || {}).forEach(([property, raw]) => {
+            if (property === 'assetUrl') {
+              const url = String(raw);
+              if (/^https:\/\//i.test(url) && !/[\"'<>]/.test(url)) {
+                if (element instanceof HTMLImageElement) element.src = url;
+                else element.style.setProperty('background-image', 'url("' + url + '")', 'important');
+              }
+              return;
+            }
             const value = safeStyleValue(property, String(raw));
             if (value) {
               const cssProperty = property.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);
@@ -275,6 +283,10 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
       if (event.data?.type === 'BENTO_DESIGN_PREVIEW') apply(event.data.design as BentoDesign);
+      if (event.data?.type === 'BENTO_ELEMENT_ASSET' && selectedElement) {
+        const url = String(event.data.url || '');
+        if (/^https:\/\//i.test(url) && !/[\"'<>]/.test(url)) { if (selectedElement instanceof HTMLImageElement) selectedElement.src = url; else (selectedElement as HTMLElement).style.backgroundImage = 'url("' + url + '")'; }
+      }
       if (event.data?.type === 'BENTO_COMPONENT_MARK' && selectedElement) { selectedElement.setAttribute('data-bento-component', String(event.data.id)); apply(activeDesign); }
       if (event.data?.type === 'BENTO_ELEMENT_ACTION' && selectedElement) {
         if (event.data.action === 'duplicate') { const clone = selectedElement.cloneNode(true) as HTMLElement; clone.removeAttribute('data-bento-node-id'); selectedElement.parentElement?.insertBefore(clone, selectedElement.nextSibling); const parent = selectedElement.parentElement; if (parent) window.parent.postMessage({ type:'BENTO_STRUCTURE_UPDATED', parentId:ensureNodeId(parent), childIds:Array.from(parent.children).map(child => ensureNodeId(child)) }, window.location.origin); }
@@ -283,9 +295,13 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       if (event.data?.type === 'BENTO_EDITOR_MODE') {
         editorMode = Boolean(event.data.enabled);
         document.body.style.cursor = editorMode ? 'crosshair' : '';
-        if (editorMode) document.addEventListener('click', onClick, true);
+        if (editorMode) {
+          document.querySelectorAll('section,article,header,nav,aside,main,div,ul,ol,li').forEach(node => { (node as HTMLElement).draggable = true; });
+          document.addEventListener('click', onClick, true);
+        }
         else {
           document.removeEventListener('click', onClick, true);
+          document.querySelectorAll('[draggable="true"]').forEach(node => { (node as HTMLElement).draggable = false; });
           document.querySelectorAll('[data-bento-editor-selected="true"]').forEach(el => el.removeAttribute('data-bento-editor-selected'));
           selectedElement = null;
         }
