@@ -7,7 +7,8 @@ import { supabase } from '@/lib/supabaseClient';
 export type StudioBreakpoint = 'desktop' | 'tablet' | 'mobile';
 export type VisualBlock = {
   id: string;
-  type: 'heading' | 'text' | 'button' | 'card' | 'icon' | 'stat' | 'image' | 'divider';
+  type: 'heading' | 'text' | 'button' | 'card' | 'icon' | 'stat' | 'image' | 'divider' | 'reactBit';
+  component?: 'blur-text' | 'aurora' | 'spotlight-card' | 'magnet-button';
   title: string;
   text?: string;
   buttonLabel?: string;
