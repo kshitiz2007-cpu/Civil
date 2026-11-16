@@ -42,6 +42,26 @@ const COMPONENT_PRESETS = [
 ];
 export default function DesignStudio() {
   const { config, save, publish, discard, isSaving, saveError, isPublished } = useDesignStudio();
+  const undoStack = useRef<import('@/components/design-studio/DesignStudioProvider').StudioConfig[]>([]);
+  const redoStack = useRef<import('@/components/design-studio/DesignStudioProvider').StudioConfig[]>([]);
+  const commit = (next: import('@/components/design-studio/DesignStudioProvider').StudioConfig) => {
+    undoStack.current.push(config);
+    if (undoStack.current.length > 60) undoStack.current.shift();
+    redoStack.current = [];
+    save(next);
+  };
+  const undo = () => {
+    const previous = undoStack.current.pop();
+    if (!previous) return;
+    redoStack.current.push(config);
+    save(previous);
+  };
+  const redo = () => {
+    const next = redoStack.current.pop();
+    if (!next) return;
+    undoStack.current.push(config);
+    save(next);
+  };
   const [panel,setPanel] = useState<Panel>('global');
   const [page,setPage] = useState('home');
   const [layoutSlot,setLayoutSlot] = useState('');
@@ -73,12 +93,12 @@ export default function DesignStudio() {
       const next={...config, breakpoints:{...config.breakpoints}, pageBreakpoints:{...config.pageBreakpoints}};
       if(scope==='global') next.breakpoints[breakpoint]={...next.breakpoints[breakpoint],[key]:value};
       else next.pageBreakpoints[page]={...(next.pageBreakpoints[page]||{}),[breakpoint]:{...(next.pageBreakpoints[page]?.[breakpoint]||{}),[key]:value}};
-      save(next); return;
+      commit(next); return;
     }
-    if(scope==='global') save({...config,global:{...config.global,[key]:value}});
-    else save({...config,pages:{...config.pages,[page]:{...(config.pages[page]||{}),[key]:value}}});
+    if(scope==='global') commit({...config,global:{...config.global,[key]:value}});
+    else commit({...config,pages:{...config.pages,[page]:{...(config.pages[page]||{}),[key]:value}}});
   };
-  const updateComponent = (key:string,value:string) => save({...config,components:{...config.components,[componentChoice]:{...(config.components[componentChoice]||{}),[key]:value}}});
+  const updateComponent = (key:string,value:string) => commit({...config,components:{...config.components,[componentChoice]:{...(config.components[componentChoice]||{}),[key]:value}}});
   const selectorFor = (el:Element):string => {
     if ((el as HTMLElement).id) return `#${CSS.escape((el as HTMLElement).id)}`;
     const parts:string[]=[]; let node:Element|null=el;
@@ -102,21 +122,21 @@ export default function DesignStudio() {
     doc.addEventListener('click',(event)=>{const clicked=(event.target as Element)?.closest?.('body *');if(!clicked)return;event.preventDefault();event.stopPropagation();const slot=clicked.closest('[data-studio-slot]') as HTMLElement|null;const el=clicked as HTMLElement;doc.querySelectorAll('[data-studio-picked]').forEach(x=>x.removeAttribute('data-studio-picked'));el.setAttribute('data-studio-picked','');const selector=selectorFor(el);const stableClasses=Array.from(el.classList).filter(x=>!x.startsWith('hover:')&&!x.startsWith('focus:')&&!x.startsWith('data-')&&!['data-studio-picked','data-studio-hover'].includes(x));const matchingSelector=(el.id?'#'+CSS.escape(el.id):stableClasses.length?el.tagName.toLowerCase()+'.'+stableClasses.map(x=>CSS.escape(x)).join('.'):selector);setSelectedElement({selector,matchingSelector,label:el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+(el.classList.length?'.'+Array.from(el.classList).slice(0,2).join('.'): ''),slotId:slot?.dataset.studioSlot});setElementStyleScope('matching');setElementStyles(config.elementStyles?.[page+'::'+matchingSelector]||config.elementStyles?.[page+'::'+selector]||{});},true);
     const saved=config.elementStyles||{};Object.entries(saved).filter(([key])=>key.startsWith(`${page}::`)).forEach(([key,styles])=>{const selector=key.slice(page.length+2);try{doc.querySelectorAll(selector).forEach(el=>Object.assign((el as HTMLElement).style,styles));}catch{}});
   };
-  const updateElementStyle=(key:string,value:string)=>{if(!selectedElement)return;const next={...elementStyles,[key]:value};setElementStyles(next);const targetSelector=elementStyleScope==='matching'?selectedElement.matchingSelector:selectedElement.selector;save({...config,elementStyles:{...(config.elementStyles||{}),[`${page}::${targetSelector}`]:next}});const doc=previewFrame.current?.contentDocument;try{doc?.querySelectorAll(targetSelector).forEach(el=>(el as HTMLElement).style.setProperty(key,value));}catch{}};
-  const updateElementStyles=(styles:Record<string,string>)=>{if(!selectedElement)return;const next={...elementStyles,...styles};setElementStyles(next);const targetSelector=elementStyleScope==='matching'?selectedElement.matchingSelector:selectedElement.selector;save({...config,elementStyles:{...(config.elementStyles||{}),[`${page}::${targetSelector}`]:next}});const doc=previewFrame.current?.contentDocument;try{doc?.querySelectorAll(targetSelector).forEach(el=>Object.entries(styles).forEach(([key,value])=>(el as HTMLElement).style.setProperty(key,value)));}catch{}};
+  const updateElementStyle=(key:string,value:string)=>{if(!selectedElement)return;const next={...elementStyles,[key]:value};setElementStyles(next);const targetSelector=elementStyleScope==='matching'?selectedElement.matchingSelector:selectedElement.selector;commit({...config,elementStyles:{...(config.elementStyles||{}),[`${page}::${targetSelector}`]:next}});const doc=previewFrame.current?.contentDocument;try{doc?.querySelectorAll(targetSelector).forEach(el=>(el as HTMLElement).style.setProperty(key,value));}catch{}};
+  const updateElementStyles=(styles:Record<string,string>)=>{if(!selectedElement)return;const next={...elementStyles,...styles};setElementStyles(next);const targetSelector=elementStyleScope==='matching'?selectedElement.matchingSelector:selectedElement.selector;commit({...config,elementStyles:{...(config.elementStyles||{}),[`${page}::${targetSelector}`]:next}});const doc=previewFrame.current?.contentDocument;try{doc?.querySelectorAll(targetSelector).forEach(el=>Object.entries(styles).forEach(([key,value])=>(el as HTMLElement).style.setProperty(key,value)));}catch{}};
   const clearElementSelection=()=>{const doc=previewFrame.current?.contentDocument;doc?.querySelectorAll('[data-studio-picked]').forEach(x=>x.removeAttribute('data-studio-picked'));setSelectedElement(null);setElementStyles({});};
   const moveSection=(from:number,to:number)=>{
     if(to<0||to>=sections.length)return;
     const next=[...sections]; const [item]=next.splice(from,1); next.splice(to,0,item);
-    save({...config,structure:{...config.structure,[page]:next}});
+    commit({...config,structure:{...config.structure,[page]:next}});
   };
-  const addSection=()=>{if(!newSection.trim())return;save({...config,structure:{...config.structure,[page]:[...sections,newSection.trim()]}});setNewSection('');};
+  const addSection=()=>{if(!newSection.trim())return;commit({...config,structure:{...config.structure,[page]:[...sections,newSection.trim()]}});setNewSection('');};
   const addPreset=()=>{
     const preset=COMPONENT_PRESETS.find(x=>x.id===componentChoice);
     if(!preset)return;
-    save({...config,components:{...config.components,[preset.id]:config.components[preset.id]||preset.values}});
+    commit({...config,components:{...config.components,[preset.id]:config.components[preset.id]||preset.values}});
   };
-  const reset=()=>{if(window.confirm('Reset all design tokens, page overrides, components and layout metadata to defaults?'))save(DEFAULT_STUDIO);};
+  const reset=()=>{if(window.confirm('Reset all design tokens, page overrides, components and layout metadata to defaults?'))commit(DEFAULT_STUDIO);};
   const upload=async(files:FileList|null)=>{
     if(!files)return;
     const additions=await Promise.all(Array.from(files).map(async file=>{
@@ -132,7 +152,7 @@ export default function DesignStudio() {
         const reader=new FileReader();reader.onload=()=>resolve({id,name:file.name,type:file.type,data:String(reader.result)});reader.onerror=reject;reader.readAsDataURL(file);
       });
     }));
-    save({...config,assets:[...config.assets,...additions]});
+    commit({...config,assets:[...config.assets,...additions]});
   };
   const nav: {id:Panel;label:string;icon:any}[]=[
     {id:'canvas',label:'Blank canvas studio',icon:Sparkles},{id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
@@ -150,7 +170,9 @@ export default function DesignStudio() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Visual Website Designer</h1>
         <p className="mt-1 max-w-2xl text-sm text-[var(--app-muted)]">Select a page, inspect its real elements, customize styles and effects, then save the design to the shared application configuration.</p>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
+        <button onClick={undo} disabled={!undoStack.current.length} className="theme-control disabled:opacity-35"><RotateCcw size={14}/>Undo</button>
+        <button onClick={redo} disabled={!redoStack.current.length} className="theme-control disabled:opacity-35"><RotateCcw size={14} className="scale-x-[-1]"/>Redo</button>
         <button onClick={()=>setPreview(v=>!v)} className="theme-control"><Eye size={15}/>{preview?'Hide':'Show'} preview</button>
         <button onClick={discard} className="theme-control"><RotateCcw size={15}/>Discard draft</button>
         <button onClick={reset} className="theme-control"><RotateCcw size={15}/>Reset</button>
@@ -197,7 +219,7 @@ export default function DesignStudio() {
           {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="mt-5 grid gap-3 md:grid-cols-2">
             {visibleTokens.map(token=>{const value=tokenValues[token.key]??(scope==='page'&&panel!=='breakpoints'?'':config.global[token.key]??'');return <label key={token.key} className="block rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
               <span className="mb-2 flex items-center justify-between text-xs font-semibold">{token.label}<code className="text-[10px] text-[var(--app-muted)]">{token.key}</code></span>
-              <div className="flex gap-2"><input aria-label={token.label+' value'} value={value} type={token.type==='number'?'number':'text'} onChange={e=>update(token.key,e.target.value)} placeholder={token.type==='color'?'#34d399 or linear-gradient(...)':scope==='page'?'Inherit global value':'Set value'} className="glass-input min-w-0 flex-1 text-xs"/>{scope==='page'&&value&&<button title="Clear override" onClick={()=>{const next={...config,pages:{...config.pages,[page]:{...(config.pages[page]||{})}}};delete next.pages[page][token.key];save(next);}} className="theme-control"><RotateCcw size={13}/></button>}</div>
+              <div className="flex gap-2"><input aria-label={token.label+' value'} value={value} type={token.type==='number'?'number':'text'} onChange={e=>update(token.key,e.target.value)} placeholder={token.type==='color'?'#34d399 or linear-gradient(...)':scope==='page'?'Inherit global value':'Set value'} className="glass-input min-w-0 flex-1 text-xs"/>{scope==='page'&&value&&<button title="Clear override" onClick={()=>{const next={...config,pages:{...config.pages,[page]:{...(config.pages[page]||{})}}};delete next.pages[page][token.key];commit(next);}} className="theme-control"><RotateCcw size={13}/></button>}</div>
             </label>;})}
           </div>}
           {panel==='layout'&&<div className="mt-5 space-y-4">
@@ -220,11 +242,11 @@ export default function DesignStudio() {
               const moveSlot=(id:string,delta:number)=>{
                 const current=[...ordered];const from=current.indexOf(id);const to=Math.max(0,Math.min(current.length-1,from+delta));
                 if(from===to)return;const [item]=current.splice(from,1);current.splice(to,0,item);
-                const next={...config.slotOrder};current.forEach((slot,index)=>{next[prefix+slot]=index;});save({...config,slotOrder:next});
+                const next={...config.slotOrder};current.forEach((slot,index)=>{next[prefix+slot]=index;});commit({...config,slotOrder:next});
               };
               const setSlotStyle=(key:string,value:string)=>{
                 const next={...styles};if(value.trim())next[key]=value;else delete next[key];
-                save({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:next}});
+                commit({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:next}});
               };
               return <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(260px,.8fr)]">
                 <div className="space-y-2">
@@ -238,8 +260,8 @@ export default function DesignStudio() {
                 </div>
                 <div className="h-fit space-y-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
                   <div><h3 className="text-sm font-bold">Section dimensions</h3><p className="mt-1 break-all text-[10px] text-[var(--app-muted)]">{layoutSlot||'Select a section to edit'}</p></div>
-                  {layoutSlot&&[['width','Width','100%'],['max-width','Maximum width','none'],['min-height','Minimum height','0px'],['height','Height','auto'],['padding','Padding','16px'],['margin','Margin','0 auto'],['gap','Gap','16px'],['border-radius','Corner radius','18px']].map(([key,label,placeholder])=><label key={key} className="block"><span className="mb-1 block text-[10px] font-semibold text-[var(--app-muted)]">{label}</span><input value={styles[key]||''} onChange={e=>setSlotStyle(key,e.target.value)} placeholder={placeholder} className="glass-input w-full text-xs"/></label>)}
-                  {layoutSlot&&<button onClick={()=>{save({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:{}}});}} className="theme-control w-full justify-center text-xs"><RotateCcw size={13}/>Reset section sizing</button>}
+                  {layoutSlot&&[['width','Width','100%'],['max-width','Maximum width','none'],['min-height','Minimum height','0px'],['height','Height','auto'],['padding','Padding','16px'],['margin','Margin','0 auto'],['display','Display','block / flex / grid'],['grid-template-columns','Grid columns','repeat(3, minmax(0, 1fr))'],['grid-template-rows','Grid rows','auto'],['gap','Gap','16px'],['justify-content','Justify content','center'],['align-items','Align items','center'],['border-radius','Corner radius','18px']].map(([key,label,placeholder])=><label key={key} className="block"><span className="mb-1 block text-[10px] font-semibold text-[var(--app-muted)]">{label}</span><input value={styles[key]||''} onChange={e=>setSlotStyle(key,e.target.value)} placeholder={placeholder} className="glass-input w-full text-xs"/></label>)}
+                  {layoutSlot&&<button onClick={()=>{commit({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:{}}});}} className="theme-control w-full justify-center text-xs"><RotateCcw size={13}/>Reset section sizing</button>}
                   <p className="text-[10px] leading-5 text-[var(--app-muted)]">Tip: use CSS values such as <code>min(100%, 900px)</code>, <code>clamp(16px, 3vw, 40px)</code> or <code>auto</code>. Reordering works within the section's existing flex/grid parent.</p>
                 </div>
               </div>;
@@ -247,12 +269,12 @@ export default function DesignStudio() {
           </div>}
           {panel==='structure'&&<div className="mt-5 space-y-3">
             <div className="rounded-xl border border-dashed border-[var(--app-border-strong)] p-3 text-xs text-[var(--app-muted)]">Drag sections to reorder the page blueprint. This creates editable layout metadata; connecting arbitrary existing JSX to a fully dynamic renderer requires migrating that page to registered studio blocks.</div>
-            {sections.map((section,index)=><div key={`${section}-${index}`} draggable onDragStart={()=>setDragIndex(index)} onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragIndex!==null)moveSection(dragIndex,index);setDragIndex(null);}} className={`flex items-center gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 ${dragIndex===index?'opacity-40':''}`}><GripVertical size={17} className="cursor-grab text-[var(--app-muted)]"/><span className="grid size-7 place-items-center rounded-lg bg-[var(--app-accent-soft)] text-xs font-bold text-[var(--app-accent)]">{index+1}</span><span className="flex-1 text-sm font-semibold">{section}</span><button onClick={()=>moveSection(index,index-1)} className="theme-control px-2">↑</button><button onClick={()=>moveSection(index,index+1)} className="theme-control px-2">↓</button><button onClick={()=>save({...config,structure:{...config.structure,[page]:sections.filter((_,i)=>i!==index)}})} className="theme-control px-2 text-rose-400"><Trash2 size={14}/></button></div>)}
+            {sections.map((section,index)=><div key={`${section}-${index}`} draggable onDragStart={()=>setDragIndex(index)} onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragIndex!==null)moveSection(dragIndex,index);setDragIndex(null);}} className={`flex items-center gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 ${dragIndex===index?'opacity-40':''}`}><GripVertical size={17} className="cursor-grab text-[var(--app-muted)]"/><span className="grid size-7 place-items-center rounded-lg bg-[var(--app-accent-soft)] text-xs font-bold text-[var(--app-accent)]">{index+1}</span><span className="flex-1 text-sm font-semibold">{section}</span><button onClick={()=>moveSection(index,index-1)} className="theme-control px-2">↑</button><button onClick={()=>moveSection(index,index+1)} className="theme-control px-2">↓</button><button onClick={()=>commit({...config,structure:{...config.structure,[page]:sections.filter((_,i)=>i!==index)}})} className="theme-control px-2 text-rose-400"><Trash2 size={14}/></button></div>)}
             <div className="flex gap-2"><input value={newSection} onChange={e=>setNewSection(e.target.value)} placeholder="New section name…" className="glass-input flex-1 text-sm"/><button onClick={addSection} className="theme-control"><Plus size={15}/>Add section</button></div>
           </div>}
           {panel==='components'&&<div className="mt-5 space-y-4">
             <div className="flex flex-wrap gap-2"><select value={componentChoice} onChange={e=>setComponentChoice(e.target.value)} className="glass-input min-w-44 text-xs">{COMPONENT_PRESETS.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><button onClick={addPreset} className="theme-control"><Plus size={14}/>Add recipe</button></div>
-            <div className="grid gap-3 md:grid-cols-2">{Object.entries(config.components).map(([id,styles])=><div key={id} className="rounded-xl border border-[var(--app-border)] p-3"><div className="mb-2 flex items-center justify-between"><b className="text-sm">{id.replace('studio-','')}</b><button onClick={()=>{const next={...config.components};delete next[id];save({...config,components:next});}} className="text-rose-400"><Trash2 size={14}/></button></div>{Object.entries(styles).map(([key,value])=><label key={key} className="mb-2 block"><span className="text-[10px] text-[var(--app-muted)]">{key}</span><input value={value} onChange={e=>save({...config,components:{...config.components,[id]:{...styles,[key]:e.target.value}}})} className="glass-input mt-1 w-full text-xs"/></label>)}<div className="mt-3"><div className={id} style={styles as React.CSSProperties}>{id==='studio-button'?'Button preview':id==='studio-input'?<input className={id} placeholder="Input preview"/>:'Card component preview'}</div></div></div>)}</div>
+            <div className="grid gap-3 md:grid-cols-2">{Object.entries(config.components).map(([id,styles])=><div key={id} className="rounded-xl border border-[var(--app-border)] p-3"><div className="mb-2 flex items-center justify-between"><b className="text-sm">{id.replace('studio-','')}</b><button onClick={()=>{const next={...config.components};delete next[id];commit({...config,components:next});}} className="text-rose-400"><Trash2 size={14}/></button></div>{Object.entries(styles).map(([key,value])=><label key={key} className="mb-2 block"><span className="text-[10px] text-[var(--app-muted)]">{key}</span><input value={value} onChange={e=>commit({...config,components:{...config.components,[id]:{...styles,[key]:e.target.value}}})} className="glass-input mt-1 w-full text-xs"/></label>)}<div className="mt-3"><div className={id} style={styles as React.CSSProperties}>{id==='studio-button'?'Button preview':id==='studio-input'?<input className={id} placeholder="Input preview"/>:'Card component preview'}</div></div></div>)}</div>
             <p className="text-xs text-[var(--app-muted)]">Recipes generate CSS classes (for example <code>.studio-button</code>) that can be assigned to registered components. Existing bespoke JSX needs those classes applied to consume a recipe.</p>
           </div>}
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
@@ -260,7 +282,7 @@ export default function DesignStudio() {
           {panel==='builder'&&<div className="mt-5"><VisualBlockBuilder page={page} selectedSlot={selectedElement?.slotId} config={config} save={save}/></div>}
           {panel==='assets'&&<div className="mt-5 space-y-4">
             <div onClick={()=>fileRef.current?.click()} className="cursor-pointer rounded-2xl border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface-muted)] p-8 text-center"><Upload className="mx-auto mb-2 text-[var(--app-accent)]"/><p className="text-sm font-bold">Upload images, logos and visual assets</p><p className="mt-1 text-xs text-[var(--app-muted)]">Choose files from your device. Stored locally in this browser for this prototype.</p><input ref={fileRef} hidden type="file" multiple accept="image/*,image/svg+xml" onChange={e=>upload(e.target.files)}/></div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{config.assets.map(asset=><div key={asset.id} className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="grid aspect-square place-items-center bg-[var(--app-surface-muted)]"><img src={asset.data} alt={asset.name} className="max-h-full max-w-full object-contain"/></div><div className="flex items-center gap-2 p-2"><span className="min-w-0 flex-1 truncate text-[10px]">{asset.name}</span><button onClick={async()=>{if(asset.path) await supabase.storage.from('design-assets').remove([asset.path]);save({...config,assets:config.assets.filter(a=>a.id!==asset.id)});}} className="text-rose-400"><Trash2 size={13}/></button></div></div>)}</div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{config.assets.map(asset=><div key={asset.id} className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="grid aspect-square place-items-center bg-[var(--app-surface-muted)]"><img src={asset.data} alt={asset.name} className="max-h-full max-w-full object-contain"/></div><div className="flex items-center gap-2 p-2"><span className="min-w-0 flex-1 truncate text-[10px]">{asset.name}</span><button onClick={async()=>{if(asset.path) await supabase.storage.from('design-assets').remove([asset.path]);commit({...config,assets:config.assets.filter(a=>a.id!==asset.id)});}} className="text-rose-400"><Trash2 size={13}/></button></div></div>)}</div>
             {!config.assets.length&&<p className="text-center text-xs text-[var(--app-muted)]">Your asset library is empty.</p>}
           </div>}
         </section>
@@ -284,8 +306,8 @@ export default function DesignStudio() {
                     <select value={upgradeChoice} onChange={e=>setUpgradeChoice(e.target.value)} className="glass-input mt-2 w-full text-xs">
                       {["none","SpotlightCard","Aurora","BlurText","GlareHover","TiltedCard","Magnet","ShinyText","GradientText","FuzzyText","SplitText","TextPressure","DecryptedText","CountUp","Particles","Beams","Dither","Silk","Lightning","Galaxy","Orb","Waves","StarBorder","ElectricBorder","FadeContent","AnimatedContent","ScrollReveal","ScrollFloat","TrueFocus","CardSwap","Masonry","Stack","Carousel","InfiniteScroll","Dock","ProfileCard","GlassIcons","Stepper","Folder","PillNav","FlowingMenu","PixelTransition","ClickSpark","TargetCursor","ShadcnButton","ShadcnCard","ShadcnBadge","ShadcnInput","ShadcnTabs","ShadcnDialog","ShadcnAccordion","ShadcnAvatar","ShadcnAlert","ShadcnProgress","ShadcnSkeleton","ShadcnSeparator","ShadcnTooltip","ShadcnDropdownMenu","ShadcnSheet","ShadcnSelect","ShadcnSwitch","ShadcnCheckbox","ShadcnSlider","ShadcnTable"].map(name=><option key={name} value={name}>{name==='none'?'Original component':name}</option>)}
                     </select>
-                    <button onClick={()=>{const key=page+'::'+selectedElement.slotId;const next={...config.componentUpgrades};if(upgradeChoice==='none')delete next[key];else next[key]={component:upgradeChoice,variant:'built-in-slot',updatedAt:new Date().toISOString()};save({...config,componentUpgrades:next});}} className="theme-control mt-3 w-full justify-center text-xs"><Sparkles size={13}/>{upgradeChoice==='none'?'Restore original component':'Apply replacement now'}</button>
-                    {config.componentUpgrades?.[page+'::'+selectedElement.slotId]&&<button onClick={()=>{const next={...config.componentUpgrades};delete next[page+'::'+selectedElement.slotId!];save({...config,componentUpgrades:next});}} className="theme-control mt-2 w-full justify-center text-xs"><RotateCcw size={13}/>Undo replacement</button>}
+                    <button onClick={()=>{const key=page+'::'+selectedElement.slotId;const next={...config.componentUpgrades};if(upgradeChoice==='none')delete next[key];else next[key]={component:upgradeChoice,variant:'built-in-slot',updatedAt:new Date().toISOString()};commit({...config,componentUpgrades:next});}} className="theme-control mt-3 w-full justify-center text-xs"><Sparkles size={13}/>{upgradeChoice==='none'?'Restore original component':'Apply replacement now'}</button>
+                    {config.componentUpgrades?.[page+'::'+selectedElement.slotId]&&<button onClick={()=>{const next={...config.componentUpgrades};delete next[page+'::'+selectedElement.slotId!];commit({...config,componentUpgrades:next});}} className="theme-control mt-2 w-full justify-center text-xs"><RotateCcw size={13}/>Undo replacement</button>}
                   </> : <p className="mt-2 text-[10px] leading-5 text-[var(--app-muted)]">This element is outside a registered replacement boundary. Select the highlighted outline of a supported page section (not an inner text node) to activate replacement. Registered sections can switch their real renderer while retaining their content and actions; arbitrary JSX is not rewritten at runtime.</p>}
                 </div>
               </div>}
