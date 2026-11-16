@@ -8,7 +8,7 @@ import {
 import { DEFAULT_STUDIO, StudioBreakpoint, useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
 import { supabase } from '@/lib/supabaseClient';
 
-type Panel = 'global' | 'pages' | 'structure' | 'components' | 'assets';
+type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
