@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import DesignSystemProvider from "@/components/DesignSystemProvider";
 
 const geistSans = Geist({ 
   variable: "--font-geist-sans", 
@@ -20,7 +21,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       {/* Added font-sans class here to apply the Inter font globally via globals.css */}
       <body className="min-h-full flex flex-col font-sans">
-        {children}
+        <DesignSystemProvider>{children}</DesignSystemProvider>
       </body>
     </html>
   );
