@@ -23,6 +23,42 @@ const THEMES = [
     swatch: 'from-sky-300 via-blue-500 to-slate-900',
   },
   {
+    id: 'midnight',
+    label: 'Midnight Aurora',
+    subtitle: 'Quiet violet and electric cyan',
+    swatch: 'from-violet-500 via-indigo-600 to-slate-950',
+  },
+  {
+    id: 'cyber',
+    label: 'Cyber Ocean',
+    subtitle: 'Deep blue with cool cyan',
+    swatch: 'from-cyan-400 via-blue-600 to-slate-950',
+  },
+  {
+    id: 'emerald',
+    label: 'Emerald Luxe',
+    subtitle: 'Forest green and soft mint',
+    swatch: 'from-emerald-300 via-emerald-700 to-slate-950',
+  },
+  {
+    id: 'crimson',
+    label: 'Crimson Elite',
+    subtitle: 'Muted wine and rose',
+    swatch: 'from-rose-300 via-rose-700 to-slate-950',
+  },
+  {
+    id: 'obsidian',
+    label: 'Obsidian Gold',
+    subtitle: 'Charcoal with champagne gold',
+    swatch: 'from-amber-200 via-amber-700 to-neutral-950',
+  },
+  {
+    id: 'lavender',
+    label: 'Soft Lavender',
+    subtitle: 'Gentle lilac daylight',
+    swatch: 'from-violet-200 via-fuchsia-200 to-slate-100',
+  },
+  {
     id: 'sandstone',
     label: 'Dholpur Dusk',
     subtitle: 'Warm sandstone earth',

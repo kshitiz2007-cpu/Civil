@@ -307,6 +307,78 @@ button {
 }
 
 
+
+/* Additional refined theme presets */
+[data-theme="midnight"] {
+  --app-bg: #090b1a; --app-bg-elevated: #111329;
+  --app-panel: rgba(23, 21, 43, .90); --app-panel-strong: #24203d;
+  --app-surface-muted: rgba(255,255,255,.045); --app-surface-hover: rgba(139,92,246,.075);
+  --app-text: #f5f3ff; --app-muted: #a49bbf;
+  --app-border: rgba(167,139,250,.16); --app-border-strong: rgba(167,139,250,.32);
+  --app-accent: #8b5cf6; --app-accent-strong: #7c3aed; --app-accent-soft: rgba(139,92,246,.12);
+  --app-secondary: #22d3ee; --app-glow-1: rgba(139,92,246,.10); --app-glow-2: rgba(34,211,238,.07);
+  --app-shadow: 0 12px 36px -16px rgba(0,0,0,.38), 0 0 0 1px rgba(255,255,255,.025) inset;
+}
+[data-theme="cyber"] {
+  --app-bg: #071321; --app-bg-elevated: #0c1c2e;
+  --app-panel: rgba(13,29,47,.90); --app-panel-strong: #11253b;
+  --app-surface-muted: rgba(255,255,255,.045); --app-surface-hover: rgba(34,211,238,.07);
+  --app-text: #effaff; --app-muted: #9ab8c9;
+  --app-border: rgba(125,211,252,.15); --app-border-strong: rgba(34,211,238,.30);
+  --app-accent: #22d3ee; --app-accent-strong: #06b6d4; --app-accent-soft: rgba(34,211,238,.11);
+  --app-secondary: #818cf8; --app-glow-1: rgba(34,211,238,.09); --app-glow-2: rgba(99,102,241,.07);
+  --app-shadow: 0 12px 36px -16px rgba(0,0,0,.36);
+}
+[data-theme="emerald"] {
+  --app-bg: #071510; --app-bg-elevated: #0c2018;
+  --app-panel: rgba(13,32,24,.90); --app-panel-strong: #123024;
+  --app-surface-muted: rgba(255,255,255,.04); --app-surface-hover: rgba(52,211,153,.07);
+  --app-text: #effcf5; --app-muted: #9bb9a9;
+  --app-border: rgba(110,231,183,.14); --app-border-strong: rgba(52,211,153,.30);
+  --app-accent: #34d399; --app-accent-strong: #10b981; --app-accent-soft: rgba(52,211,153,.11);
+  --app-secondary: #a3e635; --app-glow-1: rgba(52,211,153,.08); --app-glow-2: rgba(163,230,53,.05);
+  --app-shadow: 0 12px 36px -16px rgba(0,0,0,.34);
+}
+[data-theme="crimson"] {
+  --app-bg: #180d15; --app-bg-elevated: #24121e;
+  --app-panel: rgba(38,20,32,.90); --app-panel-strong: #321a2a;
+  --app-surface-muted: rgba(255,255,255,.045); --app-surface-hover: rgba(251,113,133,.07);
+  --app-text: #fff1f4; --app-muted: #c4a2ae;
+  --app-border: rgba(251,182,206,.14); --app-border-strong: rgba(251,113,133,.28);
+  --app-accent: #fb7185; --app-accent-strong: #e11d48; --app-accent-soft: rgba(251,113,133,.11);
+  --app-secondary: #f0abfc; --app-glow-1: rgba(225,29,72,.08); --app-glow-2: rgba(192,132,252,.05);
+  --app-shadow: 0 12px 36px -16px rgba(0,0,0,.38);
+}
+[data-theme="obsidian"] {
+  --app-bg: #11100e; --app-bg-elevated: #1b1915;
+  --app-panel: rgba(31,29,24,.92); --app-panel-strong: #29251e;
+  --app-surface-muted: rgba(255,255,255,.045); --app-surface-hover: rgba(217,176,110,.07);
+  --app-text: #faf6ee; --app-muted: #b6aa96;
+  --app-border: rgba(231,211,177,.14); --app-border-strong: rgba(217,176,110,.28);
+  --app-accent: #d9b06e; --app-accent-strong: #b88943; --app-accent-soft: rgba(217,176,110,.11);
+  --app-secondary: #a3b18a; --app-glow-1: rgba(217,176,110,.07); --app-glow-2: rgba(163,177,138,.04);
+  --app-shadow: 0 12px 36px -16px rgba(0,0,0,.32);
+}
+[data-theme="lavender"] {
+  --app-bg: #f5f1fb; --app-bg-elevated: #eee7f7;
+  --app-panel: rgba(255,253,255,.92); --app-panel-strong: #ffffff;
+  --app-surface-muted: rgba(68,45,94,.045); --app-surface-hover: rgba(139,92,246,.07);
+  --app-text: #282036; --app-muted: #756987;
+  --app-border: rgba(84,60,116,.13); --app-border-strong: rgba(139,92,246,.28);
+  --app-accent: #8054c7; --app-accent-strong: #7042b5; --app-accent-soft: rgba(128,84,199,.10);
+  --app-secondary: #0891b2; --app-glow-1: rgba(167,139,250,.08); --app-glow-2: rgba(34,211,238,.05);
+  --app-shadow: 0 10px 30px -18px rgba(45,30,65,.18);
+}
+
+/* Subtle interaction polish: less glow, calmer motion, quieter surfaces */
+.app-theme::before { opacity: .07; }
+.theme-surface, .glass-card { backdrop-filter: blur(14px); }
+.theme-control, .glass-input, .theme-choice, .studio-button {
+  transition-duration: .18s;
+  transition-timing-function: cubic-bezier(.2,.7,.2,1);
+}
+.theme-control:hover { transform: translateY(-1px); }
+
 /* Admin Design System Studio: reusable recipe foundations */
 .studio-button {
   display: inline-flex;
