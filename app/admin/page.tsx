@@ -22,12 +22,13 @@ import ThemeSelector from '@/components/ThemeSelector';
 import {
   LayoutDashboard, FileQuestion, Users, FileText,
   CreditCard, Sparkles, CalendarClock, TableProperties,
-  LogOut,MessageSquare,Activity
+  LogOut,MessageSquare,Activity,Palette
 } from 'lucide-react';
 
 // Sidebar Navigation Configuration
 const ADMIN_TABS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'designstudio', label: 'Design Studio', icon: Palette },
   { id: 'inbox', label: 'Inbox', icon: MessageSquare },
   { id: 'quizzes', label: 'Quizzes', icon: FileQuestion },
   { id: 'aigen', label: 'AI Generate', icon: Sparkles },
@@ -167,7 +168,38 @@ export default function AdminPage() {
       <main className="relative z-10 h-screen w-full flex-1 overflow-y-auto p-4 md:p-8">
         
         {/* Limit max width on large screens to keep content readable */}
-        <div className="max-w-7xl mx-auto w-full text-white">
+        <div className={`${activeTab === 'designstudio' ? 'w-full' : 'max-w-7xl mx-auto w-full'} text-white`}>
+
+          {/* DRISHTI VISUAL DESIGN STUDIO */}
+          {activeTab === 'designstudio' && (
+            <section className="w-full space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[.2em] text-emerald-300/80">Creative workspace</p>
+                  <h2 className="mt-1 text-2xl font-semibold tracking-tight">Drishti Design Studio</h2>
+                  <p className="mt-1 max-w-2xl text-sm text-white/55">Build responsive pages, manage design tokens and themes, and organize reusable components and assets.</p>
+                </div>
+                <a
+                  href="https://lovable.dev/projects/e679c2a3-a692-407d-b7e9-7bb5dc10cd8f"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex shrink-0 items-center justify-center rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-2.5 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-300/15"
+                >
+                  Open studio editor ↗
+                </a>
+              </div>
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/20">
+                <iframe
+                  src="https://id-preview--e679c2a3-a692-407d-b7e9-7bb5dc10cd8f.lovable.app"
+                  title="Drishti Visual Design Studio"
+                  loading="lazy"
+                  allow="clipboard-read; clipboard-write"
+                  className="h-[calc(100vh-11rem)] min-h-[620px] w-full border-0 bg-white"
+                />
+              </div>
+              <p className="text-xs leading-5 text-white/40">The embedded studio currently uses its own browser-local demo workspace. Changes made here are not yet connected to Bento’s production content or publishing pipeline.</p>
+            </section>
+          )}
 
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && <AdminOverview setActiveTab={setActiveTab} />}
