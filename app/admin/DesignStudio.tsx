@@ -236,7 +236,7 @@ export default function DesignStudio() {
               const styled=Object.keys(config.elementStyles||{}).filter(k=>k.startsWith(prefix+'[data-studio-slot=')).map(k=>k.slice(prefix.length).match(/data-studio-slot="([^"]+)"/)?.[1]).filter(Boolean) as string[];
               const slots=Array.from(new Set([...(knownSlots[page]||[]),...discovered,...styled]));
               const selector='[data-studio-slot="'+layoutSlot+'"]';
-              const styleKey=prefix+selector;
+              const styleKey=breakpoint==='desktop'?prefix+selector:prefix+'@'+breakpoint+'::'+selector;
               const styles=config.elementStyles?.[styleKey]||{};
               const ordered=[...slots].sort((a,b)=>(config.slotOrder[prefix+a]??slots.indexOf(a))-(config.slotOrder[prefix+b]??slots.indexOf(b)));
               const moveSlot=(id:string,delta:number)=>{
@@ -259,7 +259,7 @@ export default function DesignStudio() {
                   {!slots.length&&<p className="rounded-xl border border-dashed border-[var(--app-border)] p-5 text-center text-xs text-[var(--app-muted)]">No registered sections found for this page yet.</p>}
                 </div>
                 <div className="h-fit space-y-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
-                  <div><h3 className="text-sm font-bold">Section dimensions</h3><p className="mt-1 break-all text-[10px] text-[var(--app-muted)]">{layoutSlot||'Select a section to edit'}</p></div>
+                  <div><h3 className="text-sm font-bold">Section dimensions</h3><p className="mt-1 break-all text-[10px] text-[var(--app-muted)]">{layoutSlot||'Select a section to edit'}</p><div className="mt-3 flex gap-1 rounded-lg bg-[var(--app-panel-strong)] p-1">{(['desktop','tablet','mobile'] as StudioBreakpoint[]).map(bp=><button key={bp} onClick={()=>setBreakpoint(bp)} className={'flex-1 rounded-md px-2 py-1.5 text-[10px] font-semibold '+(breakpoint===bp?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)]')}>{bp}</button>)}</div><p className="mt-1 text-[10px] text-[var(--app-muted)]">Editing {breakpoint} styles</p></div>
                   {layoutSlot&&[['width','Width','100%'],['max-width','Maximum width','none'],['min-height','Minimum height','0px'],['height','Height','auto'],['padding','Padding','16px'],['margin','Margin','0 auto'],['display','Display','block / flex / grid'],['grid-template-columns','Grid columns','repeat(3, minmax(0, 1fr))'],['grid-template-rows','Grid rows','auto'],['gap','Gap','16px'],['justify-content','Justify content','center'],['align-items','Align items','center'],['border-radius','Corner radius','18px']].map(([key,label,placeholder])=><label key={key} className="block"><span className="mb-1 block text-[10px] font-semibold text-[var(--app-muted)]">{label}</span><input value={styles[key]||''} onChange={e=>setSlotStyle(key,e.target.value)} placeholder={placeholder} className="glass-input w-full text-xs"/></label>)}
                   {layoutSlot&&<button onClick={()=>{commit({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:{}}});}} className="theme-control w-full justify-center text-xs"><RotateCcw size={13}/>Reset section sizing</button>}
                   <p className="text-[10px] leading-5 text-[var(--app-muted)]">Tip: use CSS values such as <code>min(100%, 900px)</code>, <code>clamp(16px, 3vw, 40px)</code> or <code>auto</code>. Reordering works within the section's existing flex/grid parent.</p>
