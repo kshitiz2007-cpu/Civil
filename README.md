@@ -46,11 +46,13 @@ The admin console now includes **Design System Studio** (`/admin`, sidebar item)
 - Independent desktop, tablet and mobile token override sets (desktop default, tablet 768–1023px, mobile up to 767px).
 - Reusable CSS component recipes (`studio-button`, `studio-card`, `studio-input`) with editable declarations.
 - Asset library with Supabase Storage uploads when configured, plus browser-local fallback.
-- Drag-and-drop page section blueprint editor with reorder/add/remove controls.
+- Page section blueprint editor with reorder/add/remove controls, plus live ordering and sizing controls for registered page sections.
+- Per-section desktop, tablet and mobile sizing overrides (width, height, grid, spacing, alignment and radius).
+- Design Studio undo/redo history for recent configuration edits.
 - Local browser cache and shared Supabase configuration persistence.
 
 ### Supabase setup required for shared publishing
 Apply `supabase/migrations/202611160001_design_studio.sql` in the Supabase SQL Editor. It creates the shared design configuration row policy and public asset bucket policies. Without the migration, the studio still works in the current browser using local storage, but changes will not synchronize to other users/devices. The existing `profiles.role = 'admin'` convention and the two admin email allowlist entries are used by the migration policies.
 
 ### Important implementation boundary
-The current application pages are hand-authored React/JSX, not generated from a page-builder schema. The section drag-and-drop editor therefore saves an editable page-structure blueprint; it does **not** rearrange existing JSX sections on the live page yet. Likewise, component recipes emit reusable CSS classes, but existing bespoke components must be migrated to those classes (or registered as studio blocks) before every instance can be visually reconfigured from the studio. This integration establishes the live token engine, responsive overrides, admin workflow, persistence contract and asset library without risking a wholesale rewrite of the working app. A subsequent page-renderer migration is needed for true arbitrary structural composition and per-instance component props editing.
+The current application pages are hand-authored React/JSX, not generated from a page-builder schema. The section blueprint editor saves editable page-structure metadata. The Layout & Sizing panel separately reorders and styles registered `StudioSlot` sections on the live page; ordering follows each section's existing flex/grid parent, and arbitrary unregistered JSX still is not rewritten. Likewise, component recipes emit reusable CSS classes, but existing bespoke components must be migrated to those classes (or registered as studio blocks) before every instance can be visually reconfigured from the studio. This integration establishes the live token engine, responsive overrides, admin workflow, persistence contract and asset library without risking a wholesale rewrite of the working app. A subsequent page-renderer migration is needed for true arbitrary structural composition and per-instance component props editing.
