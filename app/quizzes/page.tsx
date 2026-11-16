@@ -417,7 +417,7 @@ export default function StudentQuizzesPage() {
                                   <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                                     <button
                                       type="button"
-                                      onClick={() => openWatermarkStudio(quiz, 'paper', pastAttempt?.details)}
+                                      onClick={() => openWatermarkStudio(quiz, 'paper')}
                                       className="px-3.5 py-2.5 rounded-xl text-xs font-extrabold border border-emerald-500/40 bg-emerald-500/15 text-emerald-300 hover:bg-emerald-400 hover:text-slate-950 transition flex items-center gap-1.5"
                                       title="Export Watermarked Question Paper PDF"
                                     >
@@ -425,7 +425,7 @@ export default function StudentQuizzesPage() {
                                     </button>
                                     <button
                                       type="button"
-                                      onClick={() => openWatermarkStudio(quiz, 'solution', pastAttempt?.details)}
+                                      onClick={() => openWatermarkStudio(quiz, 'solution')}
                                       className="px-3.5 py-2.5 rounded-xl text-xs font-extrabold border border-sky-500/40 bg-sky-500/15 text-sky-300 hover:bg-sky-400 hover:text-slate-950 transition flex items-center gap-1.5"
                                       title="Export Watermarked Bilingual Answer Key PDF"
                                     >
