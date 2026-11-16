@@ -1043,7 +1043,7 @@ export default function QuizPlayerPage() {
                   }
 
                   return (
-                    <div
+                    <StudioSlot id="quiz.answer-option" key={index}><div
                       key={index}
                       className={`group relative flex items-center justify-between gap-3 rounded-2xl border p-4 transition ${cardStyle}`}
                     >
@@ -1107,7 +1107,7 @@ export default function QuizPlayerPage() {
                           {isStruck ? 'Restore' : 'Eliminate'}
                         </span>
                       </button>
-                    </div>
+                    </div></StudioSlot>
                   );
                 })}
               </div>
@@ -1329,7 +1329,7 @@ export default function QuizPlayerPage() {
                 }
 
                 return (
-                  <button
+                  <StudioSlot id="quiz.palette-item" key={item.id}><button
                     key={item.id}
                     onClick={() => setCurrent(index)}
                     className={`relative grid aspect-square place-items-center rounded-xl text-xs transition ${
@@ -1342,7 +1342,7 @@ export default function QuizPlayerPage() {
                     {isBm && (
                       <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-sky-400" />
                     )}
-                  </button>
+                  </button></StudioSlot>
                 );
               })}
             </div>
