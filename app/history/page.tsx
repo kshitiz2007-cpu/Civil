@@ -198,7 +198,7 @@ export default function HistoryPage() {
               : attempt.score;
 
             return (
-              <div
+              <StudioSlot id="history.attempt-card" key={attempt.id}><div
                 key={attempt.id}
                 className="p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-[var(--app-surface-muted)] transition"
               >
@@ -287,7 +287,7 @@ export default function HistoryPage() {
                     Solution Key <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              </div>
+              </div></StudioSlot>
             );
           })}
         </div></StudioSlot>
