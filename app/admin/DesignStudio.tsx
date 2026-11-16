@@ -56,8 +56,6 @@ export default function DesignStudio() {
   const [inspectorTab,setInspectorTab] = useState<'style'|'effects'>('style');
   const [newSection,setNewSection] = useState('');
   const [upgradeChoice,setUpgradeChoice] = useState('SpotlightCard');
-  const [gradientStartHex,setGradientStartHex] = useState('#34d399');
-  const [gradientEndHex,setGradientEndHex] = useState('#38bdf8');
   const [gradientAngle,setGradientAngle] = useState('135deg');
   const [gradientStopCount,setGradientStopCount] = useState<3|4>(4);
   const [gradientColors,setGradientColors] = useState(['#34d399','#38bdf8','#a78bfa','#f472b6']);
