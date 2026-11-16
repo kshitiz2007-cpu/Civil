@@ -474,14 +474,14 @@ export default function DashboardPage() {
 
         {/* Optional Institutional Broadcast Notice */}
         {broadcastNotice && (
-          <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-[var(--app-border)] bg-[var(--app-accent-soft)] px-4 py-3 text-xs sm:text-sm">
+          <StudioSlot id="dashboard.broadcast-notice"><div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-[var(--app-border)] bg-[var(--app-accent-soft)] px-4 py-3 text-xs sm:text-sm">
             <div className="flex items-center gap-2.5">
               <Sparkles className="h-4 w-4 shrink-0 text-[var(--app-accent)]" />
               <span>
                 <strong>Academic Notice:</strong> {broadcastNotice}
               </span>
             </div>
-          </div>
+          </div></StudioSlot>
         )}
 
         {/* Hero Banner */}
@@ -518,7 +518,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4">
+              <StudioSlot id="dashboard.hero-metric"><div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--app-muted)]">
                     Strike Accuracy
@@ -546,14 +546,14 @@ export default function DashboardPage() {
                 <p className="mt-1 text-[11px] text-[var(--app-muted)]">
                   Marks lost to -0.66 penalty
                 </p>
-              </div>
+              </div></StudioSlot>
             </div>
           </div>
         </section></StudioSlot>
 
         {/* Key Metrics Strip */}
         <StudioSlot id="dashboard.stats"><section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
+          <StudioSlot id="dashboard.stat-card"><StatCard
             icon={BookOpen}
             label="Tests Evaluated"
             value={attempts.length}
@@ -580,11 +580,11 @@ export default function DashboardPage() {
             label="Study Compendiums"
             value={resourceCount}
             hint="Standard notes & PIB digests"
-          />
+          /></StudioSlot>
         </section></StudioSlot>
 
         {/* Main 2-Column Analytical Section */}
-        <div className="mt-7 grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
+        <StudioSlot id="dashboard.analytics-layout"><div className="mt-7 grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
           {/* Recommended Practice Modules */}
           <StudioSlot id="dashboard.practice"><section className="theme-surface rounded-3xl p-5 sm:p-6">
             <div className="flex items-end justify-between gap-4">
@@ -613,7 +613,7 @@ export default function DashboardPage() {
                   ? quiz.questions.length
                   : 0;
                 return (
-                  <article
+                  <StudioSlot id="dashboard.practice-card" key={quiz.id}><article
                     key={quiz.id}
                     className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4 transition hover:border-[var(--app-accent)]"
                   >
@@ -665,7 +665,7 @@ export default function DashboardPage() {
                         <ArrowRight className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                  </article>
+                  </article></StudioSlot>
                 );
               })}
             </div>
@@ -755,7 +755,7 @@ export default function DashboardPage() {
               </div>
             </section>
           </div>
-        </div>
+        </div></StudioSlot>
       </main>
 
       {/* Custom Smart Drill Builder Modal */}
