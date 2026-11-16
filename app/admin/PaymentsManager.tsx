@@ -169,7 +169,7 @@ export default function PaymentsManager() {
               </thead>
               <tbody className="divide-y divide-[var(--app-border)]">
                 {filteredPayments.map((payment) => (
-                  <StudioSlot id="admin.payments.row" key={payment.id}><tr
+                  <tr
                     key={payment.id}
                     className="hover:bg-[var(--app-surface-muted)] transition-colors"
                   >
@@ -222,7 +222,7 @@ export default function PaymentsManager() {
                         </span>
                       )}
                     </td>
-                  </tr></StudioSlot>
+                  </tr>
                 ))}
               </tbody>
             </table>
