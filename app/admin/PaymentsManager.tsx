@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -87,7 +89,7 @@ export default function PaymentsManager() {
 
   return (
     <div className="space-y-6 text-[var(--app-text)]">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <StudioSlot id="admin.payments.header"><div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
             Enrollment Fee & Test Series Access
@@ -119,7 +121,7 @@ export default function PaymentsManager() {
             </button>
           ))}
         </div>
-      </div>
+      </div></StudioSlot>
 
       <div className="theme-surface rounded-3xl overflow-hidden">
         <div className="p-5 border-b border-[var(--app-border)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -167,7 +169,7 @@ export default function PaymentsManager() {
               </thead>
               <tbody className="divide-y divide-[var(--app-border)]">
                 {filteredPayments.map((payment) => (
-                  <tr
+                  <StudioSlot id="admin.payments.row" key={payment.id}><tr
                     key={payment.id}
                     className="hover:bg-[var(--app-surface-muted)] transition-colors"
                   >
