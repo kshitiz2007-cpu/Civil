@@ -200,13 +200,13 @@ export default function DesignStudio() {
                 <div className="mt-4 rounded-xl border border-[var(--app-border)] p-3">
                   <p className="text-xs font-bold">One-click React Bits replacement</p>
                   {selectedElement.slotId ? <>
-                    <p className="mt-1 text-[10px] leading-5 text-[var(--app-muted)]">Registered slot: <code>{selectedElement.slotId}</code>. Applying swaps its renderer immediately while preserving its content and actions.</p>
+                    <p className="mt-1 text-[10px] leading-5 text-[var(--app-muted)]">Registered slot: <code>{selectedElement.slotId}</code>. Applying replaces the selected registered section's visual wrapper with the chosen React Bits renderer while preserving its inner content and actions.</p>
                     <select value={upgradeChoice} onChange={e=>setUpgradeChoice(e.target.value)} className="glass-input mt-2 w-full text-xs">
                       {['none','SpotlightCard','Aurora','BlurText','GlareHover','TiltedCard','Magnet'].map(name=><option key={name} value={name}>{name==='none'?'Original component':name}</option>)}
                     </select>
                     <button onClick={()=>{const key=page+'::'+selectedElement.slotId;const next={...config.componentUpgrades};if(upgradeChoice==='none')delete next[key];else next[key]={component:upgradeChoice,variant:'built-in-slot',updatedAt:new Date().toISOString()};save({...config,componentUpgrades:next});}} className="theme-control mt-3 w-full justify-center text-xs"><Sparkles size={13}/>{upgradeChoice==='none'?'Restore original component':'Apply replacement now'}</button>
                     {config.componentUpgrades?.[page+'::'+selectedElement.slotId]&&<button onClick={()=>{const next={...config.componentUpgrades};delete next[page+'::'+selectedElement.slotId!];save({...config,componentUpgrades:next});}} className="theme-control mt-2 w-full justify-center text-xs"><RotateCcw size={13}/>Undo replacement</button>}
-                  </> : <p className="mt-2 text-[10px] leading-5 text-[var(--app-muted)]">This element is not registered yet. The live home page has replaceable slots for its hero title, description, feature cards and sign-in card. Select one of those highlighted slot boundaries to replace it. Arbitrary JSX is intentionally not rewritten at runtime.</p>}
+                  </> : <p className="mt-2 text-[10px] leading-5 text-[var(--app-muted)]">This element is outside a registered replacement boundary. Select the highlighted outline of a supported page section (not an inner text node) to activate replacement. Registered sections can switch their real renderer while retaining their content and actions; arbitrary JSX is not rewritten at runtime.</p>}
                 </div>
               </div>}
             </div>
