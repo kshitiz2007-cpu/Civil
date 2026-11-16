@@ -203,6 +203,7 @@ export default function DesignStudio() {
         const next = structuredClone(design);
         next.structure = next.structure || {};
         next.structure[scope] = next.structure[scope] || {};
+        Object.keys(next.structure[scope]).forEach(parentId => { next.structure![scope][parentId] = next.structure![scope][parentId].filter(id => !event.data.childIds.includes(id)); });
         next.structure[scope][String(event.data.parentId)] = event.data.childIds.map(String);
         remember(next);
       }
@@ -313,7 +314,7 @@ export default function DesignStudio() {
     const id = 'component-' + Date.now().toString(36);
     const next = structuredClone(design);
     next.components = next.components || {};
-    next.components[id] = { name: name.trim(), styles: { ...(selectedStyles || {}) } };
+    next.components[id] = { name: name.trim(), styles: { ...(selected.styles || {}), ...(selectedStyles || {}) } };
     next.componentBindings = next.componentBindings || {};
     next.componentBindings[scope] = { ...(next.componentBindings[scope] || {}), [selected.selector]: id };
     remember(next);
