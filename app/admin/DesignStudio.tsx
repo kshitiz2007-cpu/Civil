@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import {
   Palette, Layers3, Component, ImagePlus, Monitor, Tablet, Smartphone,
-  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2,
+  RotateCcw, Plus, Trash2, GripVertical, Eye, Upload, SlidersHorizontal, Code2, Sparkles,
 } from 'lucide-react';
 import { DEFAULT_STUDIO, StudioBreakpoint, useDesignStudio } from '@/components/design-studio/DesignStudioProvider';
 import { supabase } from '@/lib/supabaseClient';
