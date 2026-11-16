@@ -9,8 +9,9 @@ import { DEFAULT_STUDIO, StudioBreakpoint, useDesignStudio } from '@/components/
 import { supabase } from '@/lib/supabaseClient';
 import CustomCssEditor from '@/components/design-studio/CustomCssEditor';
 import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
+import VisualBlockBuilder from '@/components/design-studio/VisualBlockBuilder';
 
-type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits';
+type Panel = 'global' | 'pages' | 'breakpoints' | 'structure' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
@@ -39,7 +40,7 @@ const COMPONENT_PRESETS = [
   { id:'studio-input', name:'Input', values:{'background':'var(--app-surface-muted)','color':'var(--app-text)','border':'1px solid var(--app-border)','border-radius':'12px','padding':'10px 12px'} },
 ];
 export default function DesignStudio() {
-  const { config, save } = useDesignStudio();
+  const { config, save, publish, discard, isSaving, isPublished } = useDesignStudio();
   const [panel,setPanel] = useState<Panel>('global');
   const [page,setPage] = useState('home');
   const [breakpoint,setBreakpoint] = useState<StudioBreakpoint>('desktop');
@@ -138,7 +139,9 @@ export default function DesignStudio() {
       </div>
       <div className="flex gap-2">
         <button onClick={()=>setPreview(v=>!v)} className="theme-control"><Eye size={15}/>{preview?'Hide':'Show'} preview</button>
+        <button onClick={discard} className="theme-control"><RotateCcw size={15}/>Discard draft</button>
         <button onClick={reset} className="theme-control"><RotateCcw size={15}/>Reset</button>
+        <button onClick={()=>void publish()} disabled={isSaving||isPublished} className="theme-control border-[var(--app-accent)] bg-[var(--app-accent)] text-slate-950 disabled:opacity-50"><Save size={15}/>{isSaving?'Saving…':isPublished?'Published':'Publish changes'}</button>
       </div>
     </header>
     <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
@@ -152,7 +155,7 @@ export default function DesignStudio() {
       <main className="min-w-0 space-y-4">
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':'Asset management'}</h2>
+            <div><h2 className="font-bold">{panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page editor':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
               <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
@@ -175,6 +178,7 @@ export default function DesignStudio() {
           </div>}
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
           {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio /></div>}
+          {panel==='builder'&&<div className="mt-5"><VisualBlockBuilder page={page} selectedSlot={selectedElement?.slotId} config={config} save={save}/></div>}
           {panel==='assets'&&<div className="mt-5 space-y-4">
             <div onClick={()=>fileRef.current?.click()} className="cursor-pointer rounded-2xl border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface-muted)] p-8 text-center"><Upload className="mx-auto mb-2 text-[var(--app-accent)]"/><p className="text-sm font-bold">Upload images, logos and visual assets</p><p className="mt-1 text-xs text-[var(--app-muted)]">Choose files from your device. Stored locally in this browser for this prototype.</p><input ref={fileRef} hidden type="file" multiple accept="image/*,image/svg+xml" onChange={e=>upload(e.target.files)}/></div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{config.assets.map(asset=><div key={asset.id} className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="grid aspect-square place-items-center bg-[var(--app-surface-muted)]"><img src={asset.data} alt={asset.name} className="max-h-full max-w-full object-contain"/></div><div className="flex items-center gap-2 p-2"><span className="min-w-0 flex-1 truncate text-[10px]">{asset.name}</span><button onClick={async()=>{if(asset.path) await supabase.storage.from('design-assets').remove([asset.path]);save({...config,assets:config.assets.filter(a=>a.id!==asset.id)});}} className="text-rose-400"><Trash2 size={13}/></button></div></div>)}</div>
