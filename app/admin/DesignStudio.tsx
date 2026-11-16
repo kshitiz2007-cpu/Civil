@@ -79,7 +79,7 @@ export default function DesignStudio() {
     }
     return parts.join(' > ');
   };
-  const previewUrl = page==='quiz' ? '/quiz/upsc-gs1-polity-01' : (PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/');
+  const previewUrl = page==='quiz' ? '/quiz/upsc-gs1-polity-01' : page==='dashboard' ? '/dashboard?studioPreview=1' : (PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/');
   const handlePreviewLoad = () => {
     const doc=previewFrame.current?.contentDocument; if(!doc) return;
     let style=doc.getElementById('studio-inspector-overlay') as HTMLStyleElement|null;
