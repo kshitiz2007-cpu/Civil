@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { DEFAULT_DESIGN, type BentoDesign, type DesignValues } from '@/components/DesignSystemProvider';
 import {
-  Activity, ChevronRight, Clock3, Copy, Eye, Globe, GripVertical, ImagePlus, Layers3, Monitor, MousePointer2, Palette, Redo2,
+  Activity, Check, ChevronRight, Clock3, Copy, Eye, Globe, GripVertical, ImagePlus, Layers3, Monitor, MousePointer2, Palette, Redo2,
   RotateCcw, Save, Smartphone, Tablet, Trash2, Undo2, Upload, WandSparkles, X,
 } from 'lucide-react';
 
