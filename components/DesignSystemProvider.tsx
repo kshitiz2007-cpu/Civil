@@ -152,7 +152,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
       });
       Object.entries(next.structure?.[page] || {}).forEach(([parentId, childIds]) => {
         const parent = document.querySelector('[data-bento-node-id="' + CSS.escape(parentId) + '"]');
-        if (parent) childIds.forEach(id => { const child = document.querySelector('[data-bento-node-id="' + CSS.escape(id) + '"]'); if (child && child.parentElement === parent) parent.appendChild(child); });
+        if (parent) childIds.forEach(id => { const child = document.querySelector('[data-bento-node-id="' + CSS.escape(id) + '"]'); if (child) parent.appendChild(child); });
       });
       Object.entries(scoped).forEach(([selector, properties]) => {
         try {
