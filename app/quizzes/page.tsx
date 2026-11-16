@@ -290,7 +290,7 @@ export default function StudentQuizzesPage() {
                   const Icon = subject.icon;
                   const count = getQuizCount(subject.id);
                   return (
-                    <button
+                    <StudioSlot id="quizzes.subject-card" key={subject.id}><button
                       key={subject.id}
                       onClick={() => setActiveSubject(subject.id)}
                       className="theme-surface text-left p-5 rounded-3xl transition-all hover:-translate-y-0.5 hover:border-[var(--app-accent)] group"
@@ -317,7 +317,7 @@ export default function StudentQuizzesPage() {
                           Open <ChevronRight className="w-3.5 h-3.5" />
                         </span>
                       </div>
-                    </button>
+                    </button></StudioSlot>
                   );
                 })}
               </div>
@@ -384,7 +384,7 @@ export default function StudentQuizzesPage() {
                                   ? quiz.negative_marking
                                   : 0.66;
                               return (
-                                <div
+                                <StudioSlot id="quizzes.paper-card" key={quiz.id}><div
                                   key={quiz.id}
                                   className="theme-surface rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[var(--app-accent)] transition"
                                 >
@@ -467,7 +467,7 @@ export default function StudentQuizzesPage() {
                                       </button>
                                     )}
                                   </div>
-                                </div>
+                                </div></StudioSlot>
                               );
                             })}
                           </div>
