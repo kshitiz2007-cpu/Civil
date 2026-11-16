@@ -218,9 +218,15 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
         : '';
     };
     const componentCss = Object.entries(config.components).map(([name, styles]) => `.${name}{${declarations(styles)}}`).join('');
-    const elementCss = Object.entries(config.elementStyles || {}).filter(([key]) => key.startsWith(`${pageKey}::`)).map(([key, styles]) => `${key.slice(pageKey.length + 2)}{${declarations(styles)}}`).join('');
+    const elementCss = Object.entries(config.elementStyles || {}).filter(([key]) => key.startsWith(pageKey + '::') && !key.startsWith(pageKey + '::@')).map(([key, styles]) => key.slice(pageKey.length + 2) + '{' + declarations(styles) + '}').join('');
+    const responsiveElementCss = (['tablet','mobile'] as StudioBreakpoint[]).map(bp => {
+      const query = bp === 'tablet' ? '(min-width:768px) and (max-width:1023px)' : '(max-width:767px)';
+      const prefix = pageKey + '::@' + bp + '::';
+      const rules = Object.entries(config.elementStyles || {}).filter(([key]) => key.startsWith(prefix)).map(([key, styles]) => key.slice(prefix.length) + '{' + declarations(styles) + '}').join('');
+      return rules ? '@media ' + query + '{' + rules + '}' : '';
+    }).join('');
     return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}${
-      componentCss + elementCss +
+      componentCss + elementCss + responsiveElementCss +
       responsive('tablet','(min-width:768px) and (max-width:1023px)') +
       responsive('mobile','(max-width:767px)') + (config.customCss || '')
     }`;
