@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -164,14 +166,14 @@ export default function ResourceManager() {
 
   return (
     <div className="space-y-6 text-[var(--app-text)]">
-      <header>
+      <StudioSlot id="admin.resources.header"><header>
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
           Value-Added Handouts & Reference Gists
         </p>
         <h2 className="mt-1 text-2xl sm:text-3xl font-bold">
           Digital Compendium Vault
         </h2>
-      </header>
+      </header></StudioSlot>
 
       <div className="theme-surface rounded-3xl p-5 sm:p-7">
         <h3 className="text-base font-bold mb-4 flex items-center gap-2">
@@ -179,7 +181,7 @@ export default function ResourceManager() {
           Study Material
         </h3>
 
-        <form
+        <StudioSlot id="admin.resources.publish-form"><form
           onSubmit={handleAddResource}
           className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
         >
@@ -284,7 +286,7 @@ export default function ResourceManager() {
               Publish Material
             </button>
           </div>
-        </form>
+        </form></StudioSlot>
       </div>
 
       <div className="theme-surface rounded-3xl overflow-hidden">
