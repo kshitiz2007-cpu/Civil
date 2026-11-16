@@ -45,6 +45,10 @@ export default function DesignStudio() {
   const [dragIndex,setDragIndex] = useState<number|null>(null);
   const [preview,setPreview] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
+  const previewFrame = useRef<HTMLIFrameElement>(null);
+  const [selectedElement,setSelectedElement] = useState<{selector:string;label:string}|null>(null);
+  const [elementStyles,setElementStyles] = useState<Record<string,string>>({});
+  const [inspectorTab,setInspectorTab] = useState<'style'|'effects'>('style');
   const [newSection,setNewSection] = useState('');
   const [componentChoice,setComponentChoice] = useState('studio-button');
   const pageName = PAGE_OPTIONS.find(p=>p[0]===page)?.[1] || page;
@@ -60,6 +64,30 @@ export default function DesignStudio() {
     else save({...config,pages:{...config.pages,[page]:{...(config.pages[page]||{}),[key]:value}}});
   };
   const updateComponent = (key:string,value:string) => save({...config,components:{...config.components,[componentChoice]:{...(config.components[componentChoice]||{}),[key]:value}}});
+  const selectorFor = (el:Element):string => {
+    if ((el as HTMLElement).id) return `#${CSS.escape((el as HTMLElement).id)}`;
+    const parts:string[]=[]; let node:Element|null=el;
+    while(node && node.tagName.toLowerCase()!=='html') {
+      let part=node.tagName.toLowerCase();
+      const classes=Array.from(node.classList).filter(x=>!x.startsWith('hover:') && !x.startsWith('focus:')).slice(0,2);
+      if(classes.length) part+='.'+classes.map(x=>CSS.escape(x)).join('.');
+      else if(node.parentElement) { const siblings=Array.from(node.parentElement.children).filter(x=>x.tagName===node!.tagName); if(siblings.length>1) part+=`:nth-of-type(${siblings.indexOf(node)+1})`; }
+      parts.unshift(part); if(node.parentElement?.id){parts.unshift('#'+CSS.escape(node.parentElement.id));break;} node=node.parentElement;
+    }
+    return parts.join(' > ');
+  };
+  const previewUrl = PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/';
+  const handlePreviewLoad = () => {
+    const doc=previewFrame.current?.contentDocument; if(!doc) return;
+    let style=doc.getElementById('studio-inspector-overlay') as HTMLStyleElement|null;
+    if(!style){style=doc.createElement('style');style.id='studio-inspector-overlay';doc.head.appendChild(style);}
+    style.textContent='[data-studio-hover]{outline:2px dashed #38bdf8!important;outline-offset:3px!important;cursor:crosshair!important}[data-studio-picked]{outline:2px solid #a78bfa!important;outline-offset:3px!important}';
+    doc.addEventListener('mouseover',(event)=>{const el=(event.target as Element)?.closest?.('body *');if(!el)return;doc.querySelectorAll('[data-studio-hover]').forEach(x=>x.removeAttribute('data-studio-hover'));if(!el.hasAttribute('data-studio-picked'))el.setAttribute('data-studio-hover','');},true);
+    doc.addEventListener('click',(event)=>{const el=(event.target as Element)?.closest?.('body *');if(!el)return;event.preventDefault();event.stopPropagation();doc.querySelectorAll('[data-studio-picked]').forEach(x=>x.removeAttribute('data-studio-picked'));el.setAttribute('data-studio-picked','');const selector=selectorFor(el);setSelectedElement({selector,label:el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+(el.classList.length?'.'+Array.from(el.classList).slice(0,2).join('.'): '')});setElementStyles(config.elementStyles?.[selector]||{});},true);
+    const saved=config.elementStyles||{};Object.entries(saved).forEach(([selector,styles])=>{try{const el=doc.querySelector(selector) as HTMLElement|null;if(el)Object.assign(el.style,styles);}catch{}});
+  };
+  const updateElementStyle=(key:string,value:string)=>{if(!selectedElement)return;const next={...elementStyles,[key]:value};setElementStyles(next);save({...config,elementStyles:{...(config.elementStyles||{}),[selectedElement.selector]:next}});const doc=previewFrame.current?.contentDocument;try{const el=doc?.querySelector(selectedElement.selector) as HTMLElement|null;if(el)el.style.setProperty(key,value);}catch{}};
+  const clearElementSelection=()=>{const doc=previewFrame.current?.contentDocument;doc?.querySelectorAll('[data-studio-picked]').forEach(x=>x.removeAttribute('data-studio-picked'));setSelectedElement(null);setElementStyles({});};
   const moveSection=(from:number,to:number)=>{
     if(to<0||to>=sections.length)return;
     const next=[...sections]; const [item]=next.splice(from,1); next.splice(to,0,item);
@@ -128,7 +156,7 @@ export default function DesignStudio() {
           {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="mt-5 grid gap-3 md:grid-cols-2">
             {visibleTokens.map(token=>{const value=tokenValues[token.key]??(scope==='page'&&panel!=='breakpoints'?'':config.global[token.key]??'');return <label key={token.key} className="block rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
               <span className="mb-2 flex items-center justify-between text-xs font-semibold">{token.label}<code className="text-[10px] text-[var(--app-muted)]">{token.key}</code></span>
-              <div className="flex gap-2">{token.type==='color'&&<input aria-label={`${token.label} color`} type="color" value={/^#[0-9a-f]{6}$/i.test(value)?value:'#34d399'} onChange={e=>update(token.key,e.target.value)} className="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent"/>}<input value={value} type={token.type==='number'?'number':'text'} onChange={e=>update(token.key,e.target.value)} placeholder={scope==='page'?'Inherit global value':'Set value'} className="glass-input min-w-0 flex-1 text-xs"/>{scope==='page'&&value&&<button title="Clear override" onClick={()=>{const next={...config,pages:{...config.pages,[page]:{...(config.pages[page]||{})}}};delete next.pages[page][token.key];save(next);}} className="theme-control"><RotateCcw size={13}/></button>}</div>
+              <div className="flex gap-2">{token.type==='color'&&<div className="flex min-w-0 flex-1 items-center gap-2"><div className="flex gap-1">{['#34d399','#38bdf8','#a78bfa','#fb7185','#f59e0b','#f8fafc','#111827','#ffffff'].map(c=><button key={c} type="button" title={c} onClick={()=>update(token.key,c)} className="size-6 shrink-0 rounded-full border border-white/20" style={{background:c}}/>)}</div><input aria-label={`${token.label} hex`} value={value} onChange={e=>update(token.key,e.target.value)} placeholder="#34d399 / CSS gradient" className="glass-input min-w-0 flex-1 text-xs"/></div>}<input value={value} type={token.type==='number'?'number':'text'} onChange={e=>update(token.key,e.target.value)} placeholder={scope==='page'?'Inherit global value':'Set value'} className={`glass-input min-w-0 ${token.type==='color'?'w-28':'flex-1'} text-xs`}/>{scope==='page'&&value&&<button title="Clear override" onClick={()=>{const next={...config,pages:{...config.pages,[page]:{...(config.pages[page]||{})}}};delete next.pages[page][token.key];save(next);}} className="theme-control"><RotateCcw size={13}/></button>}</div>
             </label>;})}
           </div>}
           {panel==='structure'&&<div className="mt-5 space-y-3">
@@ -148,11 +176,16 @@ export default function DesignStudio() {
           </div>}
         </section>
         {preview&&<section className="theme-surface overflow-hidden rounded-2xl">
-          <div className="flex items-center justify-between border-b border-[var(--app-border)] px-4 py-3"><div className="flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><b className="text-xs">Live token preview</b><span className="text-[10px] text-[var(--app-muted)]">{pageName}</span></div><div className="flex gap-1 text-[var(--app-muted)]"><Monitor size={14}/><Tablet size={14}/><Smartphone size={14}/></div></div>
-          <div className="p-4 sm:p-6" style={{background:config.pages[page]?.['--app-bg']||config.global['--app-bg'],color:config.pages[page]?.['--app-text']||config.global['--app-text']}}>
-            <div className="mx-auto space-y-4" style={{maxWidth:config.global['--studio-content-width']||'1280px'}}>
-              <div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-widest" style={{color:config.global['--app-accent']}}>Gyankunj Civil Services</p><h3 className="text-xl font-extrabold">{pageName} preview</h3></div><span className="rounded-full px-3 py-1 text-[10px] font-bold" style={{background:config.global['--app-accent-soft'],color:config.global['--app-accent']}}>Preview</span></div>
-              <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-xl border p-4" style={{background:config.global['--app-panel'],borderColor:config.global['--app-border'],borderRadius:config.global['--studio-radius']}}><p className="text-xs opacity-70">Surface / Card</p><p className="mt-2 text-lg font-bold">Design tokens</p><p className="text-xs opacity-70">Typography and surface treatment</p></div><div className="rounded-xl border p-4" style={{background:config.global['--app-panel'],borderColor:config.global['--app-border'],borderRadius:config.global['--studio-radius']}}><p className="text-xs opacity-70">Secondary surface</p><p className="mt-2 text-lg font-bold">Reusable blocks</p><p className="text-xs opacity-70">Consistent component language</p></div><div className="rounded-xl border p-4" style={{background:config.global['--app-panel'],borderColor:config.global['--app-border'],borderRadius:config.global['--studio-radius']}}><p className="text-xs opacity-70">Action state</p><button className="mt-3 rounded-lg px-4 py-2 text-xs font-bold" style={{background:config.global['--app-accent'],color:'#06130f'}}>Primary action</button></div></div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] px-4 py-3"><div className="flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><b className="text-xs">Live application preview</b><span className="text-[10px] text-[var(--app-muted)]">{pageName} · {previewUrl}</span></div><div className="flex gap-1">{(['desktop','tablet','mobile'] as StudioBreakpoint[]).map(bp=><button key={bp} onClick={()=>setBreakpoint(bp)} className={`rounded-lg p-2 ${breakpoint===bp?'bg-[var(--app-accent-soft)] text-[var(--app-accent)]':'text-[var(--app-muted)]'}`}>{bp==='desktop'?<Monitor size={15}/>:bp==='tablet'?<Tablet size={15}/>:<Smartphone size={15}/>}</button>)}</div></div>
+          <div className="flex justify-center bg-[#101018] p-2 sm:p-4"><div className="overflow-hidden rounded-xl border border-white/15 bg-white shadow-2xl transition-all" style={{width:breakpoint==='mobile'?390:breakpoint==='tablet'?768:'100%',maxWidth:'100%'}}><iframe ref={previewFrame} key={page} title={`Actual ${pageName} page preview`} src={previewUrl} onLoad={handlePreviewLoad} className="block h-[680px] w-full bg-white" style={{border:0}}/></div></div>
+          <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="border-t border-[var(--app-border)] p-4"><div className="flex items-center justify-between gap-2"><div><p className="text-xs font-bold">Element inspector</p><p className="mt-1 text-[10px] text-[var(--app-muted)]">Click any element inside the live page to select it and edit its styles.</p></div>{selectedElement&&<button onClick={clearElementSelection} className="theme-control text-xs">Deselect</button>}</div>
+              {selectedElement?<div className="mt-3 rounded-xl border border-violet-400/30 bg-violet-400/10 p-3"><p className="text-[10px] uppercase tracking-wider text-violet-300">Selected element</p><code className="mt-1 block break-all text-xs">{selectedElement.label}</code><code className="mt-1 block break-all text-[10px] text-[var(--app-muted)]">{selectedElement.selector}</code></div>:<div className="mt-3 rounded-xl border border-dashed border-[var(--app-border)] p-5 text-center text-xs text-[var(--app-muted)]">No element selected · tap a heading, card, button, section or any other page element</div>}
+            </div>
+            <div className="border-t border-[var(--app-border)] p-4 lg:border-l"><div className="flex gap-1 rounded-lg bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setInspectorTab('style')} className={`flex-1 rounded-md px-2 py-1.5 text-xs ${inspectorTab==='style'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Style</button><button onClick={()=>setInspectorTab('effects')} className={`flex-1 rounded-md px-2 py-1.5 text-xs ${inspectorTab==='effects'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Effects</button></div>
+              {!selectedElement?<p className="mt-4 text-xs text-[var(--app-muted)]">Select an element in the preview to unlock its controls.</p>:<div className="mt-3 space-y-3">{(inspectorTab==='style'?[['background','Background / gradient','linear-gradient(135deg, #0f172a, #164e63)'],['color','Text colour','#f8fafc'],['border-radius','Corner radius','18px'],['padding','Inner spacing','16px'],['margin','Outer spacing','0px'],['font-size','Font size','16px'],['font-weight','Font weight','600'],['border','Border','1px solid rgba(255,255,255,.16)'],['width','Width','100%']]:[['box-shadow','Shadow / glow','0 0 32px rgba(52,211,153,.25)'],['opacity','Opacity','1'],['backdrop-filter','Backdrop blur','blur(12px)'],['letter-spacing','Letter spacing','0px'],['line-height','Line height','1.5']]).map(([key,label,placeholder])=><label key={key} className="block"><span className="mb-1 block text-[10px] font-semibold text-[var(--app-muted)]">{label}</span><input value={elementStyles[key]||''} onChange={e=>updateElementStyle(key,e.target.value)} placeholder={placeholder} className="glass-input w-full text-xs"/></label>)}
+                <div className="rounded-lg bg-[var(--app-surface-muted)] p-2 text-[10px] text-[var(--app-muted)]">Supports CSS colour values, HEX, RGBA, linear/radial gradients and layered glow shadows. Changes are saved to this browser’s studio configuration.</div>
+              </div>}
             </div>
           </div>
         </section>}
