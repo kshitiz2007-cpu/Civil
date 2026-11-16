@@ -305,3 +305,30 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Admin Design System Studio: reusable recipe foundations */
+.studio-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .16s ease, opacity .16s ease;
+}
+.studio-button:hover { transform: translateY(-1px); }
+.studio-card { color: var(--app-text); }
+.studio-input { width: 100%; outline: none; }
+
+/* Studio-managed application-wide design controls */
+.theme-surface,
+.theme-surface-solid,
+.glass-card,
+.theme-control,
+.glass-input {
+  border-radius: var(--studio-radius, inherit);
+}
+.app-theme .max-w-7xl {
+  max-width: var(--studio-content-width, 80rem);
+}
