@@ -847,7 +847,7 @@ export default function QuizPlayerPage() {
         <StudioSlot id="quiz.question-workspace"><section className="flex flex-col justify-between">
           <div>
             {/* Question Telemetry & Action Bar */}
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2.5">
+            <StudioSlot id="quiz.question-telemetry"><div className="mb-4 flex flex-wrap items-center justify-between gap-2.5">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] px-3 py-1.5 text-xs font-bold text-[var(--app-accent)]">
                   Q {current + 1} / {questions.length}
@@ -930,10 +930,10 @@ export default function QuizPlayerPage() {
                   </span>
                 </button>
               </div>
-            </div>
+            </div></StudioSlot>
 
             {/* Question Statement & Options Card */}
-            <article className="theme-surface rounded-3xl p-5 sm:p-8">
+            <StudioSlot id="quiz.question-and-options"><article className="theme-surface rounded-3xl p-5 sm:p-8">
               {/* Interactive Statement Parser */}
               {language === 'split' && hasHindi ? (
                 <div className="grid gap-5 md:grid-cols-2 border-b border-[var(--app-border)] pb-6">
@@ -1224,11 +1224,11 @@ export default function QuizPlayerPage() {
                   />
                 </div>
               )}
-            </article>
+            </article></StudioSlot>
           </div>
 
           {/* Bottom Navigation Bar */}
-          <div className="mt-5 grid grid-cols-3 gap-3">
+          <StudioSlot id="quiz.bottom-navigation"><div className="mt-5 grid grid-cols-3 gap-3">
             <button
               onClick={goPrevious}
               disabled={!current}
@@ -1259,7 +1259,7 @@ export default function QuizPlayerPage() {
                 Save & Next <ChevronRight className="ml-1 inline h-4 w-4" />
               </button>
             )}
-          </div>
+          </div></StudioSlot>
         </section></StudioSlot>
 
         {/* Right UPSC 6-State Smart Question Palette */}
