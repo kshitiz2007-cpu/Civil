@@ -57,5 +57,6 @@ export default function ReactBitsSlotReplacement({ component, children }: Props)
 
 
   if (component.startsWith('Shadcn')) return <motion.div {...motionProps} className="relative z-10 rounded-xl border border-[var(--app-border)] p-3" whileHover={reduceMotion?undefined:{y:-1}}>{children}</motion.div>;
-\n  return <>{children}</>;
+
+  return <>{children}</>;
 }
