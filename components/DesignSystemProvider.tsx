@@ -38,7 +38,7 @@ const ALLOWED_ELEMENT_PROPERTIES = new Set([
   'marginLeft', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight',
   'textAlign', 'width', 'maxWidth', 'minWidth', 'height', 'minHeight',
   'maxHeight', 'gap', 'opacity', 'boxShadow', 'display', 'justifyContent',
-  'alignItems',
+  'alignItems', 'borderStyle', 'flexDirection', 'flexWrap', 'overflow',
 ]);
 
 function safeStyleValue(property: string, raw: string) {
@@ -49,6 +49,10 @@ function safeStyleValue(property: string, raw: string) {
     return /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\)|hsla?\([\d\s.,%deg]+\)|transparent|currentColor)$/i.test(value) ? value : '';
   }
   if (property === 'display') return /^(block|inline|inline-block|flex|inline-flex|grid|none)$/i.test(value) ? value : '';
+  if (property === 'borderStyle') return /^(none|solid|dashed|dotted|double)$/i.test(value) ? value : '';
+  if (property === 'flexDirection') return /^(row|column|row-reverse|column-reverse)$/i.test(value) ? value : '';
+  if (property === 'flexWrap') return /^(nowrap|wrap|wrap-reverse)$/i.test(value) ? value : '';
+  if (property === 'overflow') return /^(visible|hidden|auto|scroll)$/i.test(value) ? value : '';
   if (property === 'textAlign') return /^(left|center|right|justify|start|end)$/i.test(value) ? value : '';
   if (property === 'justifyContent') return /^(start|end|center|space-between|space-around|space-evenly|flex-start|flex-end)$/i.test(value) ? value : '';
   if (property === 'alignItems') return /^(start|end|center|stretch|baseline|flex-start|flex-end)$/i.test(value) ? value : '';
