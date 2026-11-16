@@ -138,6 +138,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
         ...(next.elements?.[page] || {}),
         ...(next.responsive?.[page + ':' + breakpoint]?.elements || {}),
       };
+      Object.entries(next.componentBindings?.[page] || {}).forEach(([selector, id]) => { try { document.querySelector(selector)?.setAttribute('data-bento-component', id); } catch {} });
       Object.entries(next.components || {}).forEach(([id, component]) => {
         document.querySelectorAll('[data-bento-component="' + CSS.escape(id) + '"]').forEach(node => {
           Object.entries(component.styles || {}).forEach(([property, raw]) => {
