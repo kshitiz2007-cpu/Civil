@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { openWatermarkStudio } from '@/lib/pdfExporter';
@@ -210,7 +212,7 @@ export default function QuizManager() {
 
   return (
     <div className="space-y-6 pb-20 text-[var(--app-text)]">
-      <header>
+      <StudioSlot id="admin.quizzes.header"><header>
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
           Paper Repository & Marking Governance
         </p>
@@ -222,7 +224,7 @@ export default function QuizManager() {
           Configure GS subject folders, duration limits, negative marking
           penalties, qualifying cutoffs, and live publication status.
         </p>
-      </header>
+      </header></StudioSlot>
 
       <div className="theme-surface rounded-3xl overflow-hidden">
         <div className="flex flex-col gap-3 border-b border-[var(--app-border)] p-4 sm:p-5 sm:flex-row">
@@ -275,7 +277,7 @@ export default function QuizManager() {
                     cutoff: '50',
                   };
                   return (
-                    <tr
+                    <StudioSlot id="admin.quizzes.row" key={q.id}><tr
                       key={q.id}
                       className="hover:bg-[var(--app-surface-muted)] transition-colors"
                     >
@@ -427,7 +429,7 @@ export default function QuizManager() {
                           </button>
                         </div>
                       </td>
-                    </tr>
+                    </tr></StudioSlot>
                   );
                 })}
               </tbody>
