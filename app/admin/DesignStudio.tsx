@@ -27,7 +27,6 @@ const pages = [
   { id: 'resources', label: 'Study resources', path: '/resources', description: 'Resource library and categories' },
   { id: 'history', label: 'Results & history', path: '/history', description: 'Scores, attempts and progress' },
   { id: 'leaderboard', label: 'Leaderboard', path: '/leaderboard', description: 'Rankings and performance' },
-  { id: 'admin', label: 'Admin workspace', path: '/admin', description: 'Administration and management' },
 ];
 
 const globalFields: Field[] = [
