@@ -88,10 +88,9 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isAdminView, setIsAdminView] = useState(false);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const writeQueue = useRef<Promise<boolean>>(Promise.resolve(true));
   const latest = useRef<StudioEnvelope>(initialEnvelope);
   const dirty = useRef(false);
+  const hasLocalDraft = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -122,79 +121,86 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     let alive = true;
-    const apply = (raw: any) => {
+    const applyLocal = (raw: any) => {
       const envelope = decodeEnvelope(raw);
       latest.current = envelope;
+      hasLocalDraft.current = true;
       setDraft(envelope.draft);
       setPublished(envelope.published);
     };
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) apply(JSON.parse(raw));
+      if (raw) applyLocal(JSON.parse(raw));
     } catch { /* retain safe defaults */ }
+
     supabase.from('design_studio_config').select('config').eq('id', 'global').maybeSingle()
       .then(({ data, error }) => {
-        if (!alive || error || !data?.config || dirty.current) return;
-        apply(data.config);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(decodeEnvelope(data.config))); } catch {}
+        if (!alive || error || !data?.config) return;
+        const remote = decodeEnvelope(data.config);
+        const remotePublished = remote.published;
+        const nextDraft = hasLocalDraft.current || dirty.current ? latest.current.draft : remotePublished;
+        const envelope = { __studioVersion: 2 as const, draft: nextDraft, published: remotePublished };
+        latest.current = envelope;
+        setPublished(remotePublished);
+        if (!dirty.current) setDraft(nextDraft);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); } catch {}
       });
+
     const sync = (event: StorageEvent) => {
       if (event.key !== STORAGE_KEY || !event.newValue) return;
-      try { apply(JSON.parse(event.newValue)); } catch {}
+      try {
+        const envelope = decodeEnvelope(JSON.parse(event.newValue));
+        latest.current = envelope;
+        hasLocalDraft.current = true;
+        setDraft(envelope.draft);
+        setPublished(envelope.published);
+      } catch {}
     };
     window.addEventListener('storage', sync);
     return () => { alive = false; window.removeEventListener('storage', sync); };
   }, []);
 
-  const persist = (envelope: StudioEnvelope) => {
-    const task = writeQueue.current.then(async () => {
-      setIsSaving(true);
-      setSaveError(null);
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
-        const { error } = await supabase.from('design_studio_config')
-          .upsert({ id: 'global', config: envelope }, { onConflict: 'id' });
-        if (error) throw error;
-        return true;
-      } catch (error) {
-        console.error('Visual designer cloud save failed:', error);
-        setSaveError(error instanceof Error ? error.message : 'Cloud save failed. Check Supabase permissions and connection.');
-        return false;
-      } finally { setIsSaving(false); }
-    });
-    writeQueue.current = task;
-    return task;
-  };
-
   const save = (next: StudioConfig) => {
     dirty.current = true;
+    hasLocalDraft.current = true;
     const envelope = { ...latest.current, draft: next };
     latest.current = envelope;
     setDraft(next);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); } catch {}
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => { void persist(envelope); }, 700);
+    setSaveError(null);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); }
+    catch { setSaveError('Browser storage is unavailable; draft may not survive a reload.'); }
   };
 
   const publish = async () => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    const envelope = { ...latest.current, published: latest.current.draft };
-    const ok = await persist(envelope);
-    if (ok) {
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const nextPublished = latest.current.draft;
+      // The shared database row contains published config only; private drafts stay in Admin local storage.
+      const { error } = await supabase.from('design_studio_config')
+        .upsert({ id: 'global', config: nextPublished }, { onConflict: 'id' });
+      if (error) throw error;
+      const envelope = { ...latest.current, published: nextPublished };
       latest.current = envelope;
       dirty.current = false;
-      setPublished(envelope.published);
-    }
-    return ok;
+      setPublished(nextPublished);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); } catch {}
+      return true;
+    } catch (error) {
+      console.error('Visual designer publish failed:', error);
+      setSaveError(error instanceof Error ? error.message : 'Publish failed. Check Supabase permissions and connection.');
+      return false;
+    } finally { setIsSaving(false); }
   };
 
   const discard = () => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
     const envelope = { ...latest.current, draft: latest.current.published };
     latest.current = envelope;
     dirty.current = false;
+    hasLocalDraft.current = true;
     setDraft(envelope.draft);
-    void persist(envelope);
+    setSaveError(null);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope)); } catch {}
   };
 
   const pageKey = pathname === '/' ? 'home' : pathname.split('/').filter(Boolean)[0] || 'home';
