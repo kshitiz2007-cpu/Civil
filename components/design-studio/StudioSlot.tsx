@@ -2,6 +2,7 @@
 
 import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useDesignStudio } from './DesignStudioProvider';
 
 export type StudioSlotProps = {
@@ -12,7 +13,8 @@ export type StudioSlotProps = {
 
 export default function StudioSlot({ id, children, className = '' }: StudioSlotProps) {
   const { config } = useDesignStudio();
-  const page = typeof window === 'undefined' ? 'home' : (window.location.pathname === '/' ? 'home' : window.location.pathname.split('/').filter(Boolean)[0] || 'home');
+  const pathname = usePathname();
+  const page = pathname === '/' ? 'home' : pathname.split('/').filter(Boolean)[0] || 'home';
   const upgrade = config.componentUpgrades?.[page + '::' + id]?.component || 'none';
   const [point, setPoint] = useState({ x: 50, y: 50 });
   const move = (event: PointerEvent<HTMLDivElement>) => {
