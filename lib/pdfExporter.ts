@@ -9,7 +9,7 @@
 // ============================================================================
 
 import { supabase } from '@/lib/supabaseClient';
-import { INITIAL_QUIZZES } from '@/lib/mockData';
+import { FALLBACK_QUIZZES } from '@/lib/mockData';
 
 export interface WatermarkPdfConfig {
   instituteName: string;
@@ -126,13 +126,13 @@ export function normalizeQuizQuestion(raw: any, index: number, fallbackCategory 
 
 /**
  * Ensures a quiz object has its full array of normalized questions.
- * Fetches from Supabase or INITIAL_QUIZZES if only quiz metadata was passed.
+ * Fetches from Supabase or FALLBACK_QUIZZES if only quiz metadata was passed.
  */
 export async function resolveFullQuizData(quizInput: any): Promise<any> {
-  let baseQuiz = quizInput || INITIAL_QUIZZES[0];
+  let baseQuiz = quizInput || FALLBACK_QUIZZES[0];
 
   if (typeof baseQuiz === 'string') {
-    const foundLocal = INITIAL_QUIZZES.find((q) => q.id === baseQuiz);
+    const foundLocal = FALLBACK_QUIZZES.find((q) => q.id === baseQuiz);
     if (foundLocal) {
       baseQuiz = foundLocal;
     } else {
@@ -150,7 +150,7 @@ export async function resolveFullQuizData(quizInput: any): Promise<any> {
   }
 
   if ((!Array.isArray(rawQuestions) || rawQuestions.length === 0) && baseQuiz?.id) {
-    const localMatch = INITIAL_QUIZZES.find((q) => q.id === baseQuiz.id);
+    const localMatch = FALLBACK_QUIZZES.find((q) => q.id === baseQuiz.id);
     if (localMatch && Array.isArray(localMatch.questions) && localMatch.questions.length > 0) {
       rawQuestions = localMatch.questions;
       baseQuiz = { ...localMatch, ...baseQuiz, questions: rawQuestions };
@@ -182,7 +182,7 @@ export async function resolveFullQuizData(quizInput: any): Promise<any> {
   }
 
   if (!Array.isArray(rawQuestions) || rawQuestions.length === 0) {
-    rawQuestions = INITIAL_QUIZZES[0].questions;
+    rawQuestions = FALLBACK_QUIZZES[0].questions;
   }
 
   const normalizedQuestions = rawQuestions.map((q: any, idx: number) =>
@@ -211,7 +211,7 @@ export function buildWatermarkedBookletHtml(
   standaloneDocument = false
 ): string {
   const cfg: WatermarkPdfConfig = { ...DEFAULT_WATERMARK_CONFIG, ...config };
-  const safeQuiz = quiz || INITIAL_QUIZZES[0];
+  const safeQuiz = quiz || FALLBACK_QUIZZES[0];
   const rawQuestions = Array.isArray(safeQuiz.questions) ? safeQuiz.questions : [];
   const questions = rawQuestions.map((q: any, i: number) =>
     normalizeQuizQuestion(q, i, safeQuiz.category || 'UPSC GS')
