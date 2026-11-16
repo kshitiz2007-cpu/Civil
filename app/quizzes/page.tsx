@@ -243,7 +243,7 @@ export default function StudentQuizzesPage() {
 
       {/* Main Content */}
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <StudioSlot id="quizzes.header"><header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <button
               onClick={() =>
@@ -269,11 +269,11 @@ export default function StudentQuizzesPage() {
             </div>
           </div>
           <ThemeSelector />
-        </header>
+        </header></StudioSlot>
 
         {/* View 1: Subject Pillars */}
         {!activeSubject && (
-          <div className="space-y-8">
+          <StudioSlot id="quizzes.subject-browser"><div className="space-y-8">
             <section>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-muted)] flex items-center gap-2">
@@ -322,12 +322,12 @@ export default function StudentQuizzesPage() {
                 })}
               </div>
             </section>
-          </div>
+          </div></StudioSlot>
         )}
 
         {/* View 2: Subject Papers */}
         {activeSubject && (
-          <div className="space-y-6">
+          <StudioSlot id="quizzes.paper-browser"><div className="space-y-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--app-muted)]" />
               <input
