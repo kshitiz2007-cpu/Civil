@@ -90,6 +90,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writeQueue = useRef<Promise<boolean>>(Promise.resolve(true));
   const latest = useRef<StudioEnvelope>(initialEnvelope);
+  const dirty = useRef(false);
 
   useEffect(() => {
     setIsAdminView(pathname.startsWith('/admin') || new URLSearchParams(window.location.search).has('studioPreview'));
@@ -109,7 +110,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     } catch { /* retain safe defaults */ }
     supabase.from('design_studio_config').select('config').eq('id', 'global').maybeSingle()
       .then(({ data, error }) => {
-        if (!alive || error || !data?.config) return;
+        if (!alive || error || !data?.config || dirty.current) return;
         apply(data.config);
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(decodeEnvelope(data.config))); } catch {}
       });
@@ -142,6 +143,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   };
 
   const save = (next: StudioConfig) => {
+    dirty.current = true;
     const envelope = { ...latest.current, draft: next };
     latest.current = envelope;
     setDraft(next);
@@ -156,6 +158,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     const ok = await persist(envelope);
     if (ok) {
       latest.current = envelope;
+      dirty.current = false;
       setPublished(envelope.published);
     }
     return ok;
@@ -165,6 +168,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     if (saveTimer.current) clearTimeout(saveTimer.current);
     const envelope = { ...latest.current, draft: latest.current.published };
     latest.current = envelope;
+    dirty.current = false;
     setDraft(envelope.draft);
     void persist(envelope);
   };
