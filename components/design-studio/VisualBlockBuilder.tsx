@@ -32,10 +32,12 @@ const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]>
     {id:'resources.subject-browser',label:'Subject browser',group:'Resources page'},
   ],
   home: [
-    {id:'home.hero.title',label:'Hero title',group:'Home page'},
-    {id:'home.hero.description',label:'Hero description',group:'Home page'},
-    {id:'home.feature-cards',label:'Feature cards',group:'Home page'},
-    {id:'home.signin-card',label:'Sign-in card',group:'Home page'},
+    {id:'home.hero-title',label:'Hero title',group:'Home page'},
+    {id:'home.hero-description',label:'Hero description',group:'Home page'},
+    {id:'home.feature-ev',label:'Expected value feature',group:'Home page'},
+    {id:'home.feature-deduction',label:'Statement deduction feature',group:'Home page'},
+    {id:'home.feature-themes',label:'Theme feature',group:'Home page'},
+    {id:'home.login-card',label:'Sign-in card',group:'Home page'},
   ],
 };
 const makeId = () => `block-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
