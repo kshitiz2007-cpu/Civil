@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { StudioConfig, VisualBlock } from './DesignStudioProvider';
 import { Code2, Copy, ExternalLink, Eye, Save, Sparkles } from 'lucide-react';
 
 type Bit = { id:string; name:string; category:string; description:string; source:string; css:string; dependency:string };
@@ -12,7 +13,17 @@ const STARTERS:Bit[] = [
 ];
 const STORE='design-studio-react-bits-v1';
 
-export default function ReactBitsStudio() {
+const PAGE_SLOTS: Record<string, { id: string; label: string }[]> = {
+ home: [{id:'home.hero-title',label:'Hero title'},{id:'home.hero-description',label:'Hero description'},{id:'home.feature-ev',label:'Expected value feature'},{id:'home.feature-deduction',label:'Statement deduction feature'},{id:'home.feature-themes',label:'Theme feature'},{id:'home.login-card',label:'Sign-in card'}],
+ dashboard: [{id:'dashboard.header',label:'Dashboard header'},{id:'dashboard.hero',label:'Hero overview'},{id:'dashboard.stats',label:'Statistics strip'},{id:'dashboard.practice',label:'Recommended practice'},{id:'dashboard.analytics',label:'Performance analytics'}],
+ quiz: [{id:'quiz.toolbar',label:'Quiz toolbar'},{id:'quiz.question-workspace',label:'Question workspace'},{id:'quiz.question-palette',label:'Question palette'}],
+ quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas'}],
+ resources: [{id:'resources.header',label:'Resources header'},{id:'resources.subject-browser',label:'Subject browser'}],
+ history: [{id:'history.page',label:'Attempt history canvas'}],
+ leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas'}],
+};
+
+export default function ReactBitsStudio({ page, config, save }: { page: string; config: StudioConfig; save: (next: StudioConfig) => void }) {
  const [selected,setSelected]=useState(STARTERS[0].id);
  const [source,setSource]=useState(STARTERS[0].source);
  const [css,setCss]=useState(STARTERS[0].css);
@@ -26,6 +37,9 @@ export default function ReactBitsStudio() {
  const [librarySearch,setLibrarySearch]=useState('');
  const [language,setLanguage]=useState<'TS'|'JS'>('TS');
  const [styling,setStyling]=useState<'CSS'|'TW'>('CSS');
+ const slots = PAGE_SLOTS[page] || [];
+ const [targetSlot,setTargetSlot]=useState(slots[0]?.id || '');
+ useEffect(()=>{setTargetSlot(PAGE_SLOTS[page]?.[0]?.id || '');},[page]);
  const library=[['BlurText','Text Animations'],['SplitText','Text Animations'],['ShinyText','Text Animations'],['GradientText','Text Animations'],['FuzzyText','Text Animations'],['Aurora','Backgrounds'],['Balatro','Backgrounds'],['Beams','Backgrounds'],['Particles','Backgrounds'],['Hyperspeed','Backgrounds'],['SpotlightCard','Components'],['TiltedCard','Components'],['GlareHover','Components'],['CardSwap','Components'],['CircularGallery','Components'],['Magnet','Micro Interactions'],['ClickSpark','Micro Interactions'],['TargetCursor','Micro Interactions'],['SplashCursor','Micro Interactions'],['Stepper','Components']];
  const installCommand=(component:string)=>'npx shadcn@latest add @react-bits/'+component+'-'+language+'-'+styling;
  useEffect(()=>{try{const raw=localStorage.getItem(STORE);if(raw)setSaved(JSON.parse(raw));}catch{}},[]);
@@ -33,7 +47,21 @@ export default function ReactBitsStudio() {
  const choose=(bit:Bit)=>{setSelected(bit.id);setName(bit.name);setSource(bit.source);setCss(bit.css);setMessage('');};
  const persist=(items:Bit[])=>{setSaved(items);try{localStorage.setItem(STORE,JSON.stringify(items));}catch{setMessage('Browser storage is full; copy your code as a backup.');}};
  const copy=async(value:string,label:string)=>{try{await navigator.clipboard.writeText(value);setMessage(label+' copied.');}catch{setMessage('Clipboard access is unavailable in this browser.');}};
- const saveCurrent=()=>{const item:Bit={...active,id:selected.startsWith('custom-')?selected:'custom-'+selected,name:name.trim()||'My component',source,css};persist([...saved.filter(x=>x.id!==item.id),item]);setSelected(item.id);setMessage('Saved in this browser.');};
+ const saveCurrent=()=>{const item:Bit={...active,id:selected.startsWith('custom-')?selected:'custom-'+selected,name:name.trim()||'My component',source,css};persist([...saved.filter(x=>x.id!==item.id),item]);setSelected(item.id);setMessage('Source saved in this browser.');};
+ const runtimeId = selected.replace(/^custom-/, '');
+ const supported = ['blur-text','aurora','spotlight-card','magnet-button'].includes(runtimeId);
+ const addToLivePage = () => {
+   if (!supported || !targetSlot) { setMessage('Choose a supported starter and a registered page section.'); return; }
+   const block: VisualBlock = {
+     id: 'react-bit-' + Date.now().toString(36), type: 'reactBit',
+     component: runtimeId as VisualBlock['component'],
+     title: name.trim() || active.name, text: previewText, buttonLabel: previewText,
+     href: '/quizzes', styles: { accent, borderRadius: radius + 'px' }, effect: 'none',
+   };
+   const key = page + '::' + targetSlot;
+   save({ ...config, slotBlocks: { ...(config.slotBlocks || {}), [key]: [...(config.slotBlocks?.[key] || []), block] } });
+   setMessage(active.name + ' added to ' + (slots.find(slot=>slot.id===targetSlot)?.label || targetSlot) + '. Preview it on the live page, then Publish changes.');
+ };
  const previewStyle={borderRadius:radius,background:'radial-gradient(circle at 25% 20%,'+accent+'55,transparent 55%),#14212b',border:'1px solid '+accent+'66'} as React.CSSProperties;
  return <div className="space-y-5">
   <div className="flex flex-wrap items-start justify-between gap-3"><div><div className="flex items-center gap-2"><Sparkles size={18} className="text-[var(--app-accent)]"/><h3 className="font-bold">React Bits Component Studio</h3></div><p className="mt-1 max-w-3xl text-xs leading-5 text-[var(--app-muted)]">Browse starter effects, paste or edit JSX/TSX and CSS, preview style changes, then save or copy your code.</p></div><a href="https://reactbits.dev/" target="_blank" rel="noreferrer" className="theme-control inline-flex items-center gap-2 text-xs">Official React Bits <ExternalLink size={13}/></a></div>
@@ -49,7 +77,18 @@ export default function ReactBitsStudio() {
    <div className="min-w-0 space-y-4">
     <section className="rounded-xl border border-[var(--app-border)] p-3 sm:p-4"><div className="flex flex-wrap items-center justify-between gap-2"><div><p className="text-sm font-bold">{active.name}</p><p className="mt-1 text-xs text-[var(--app-muted)]">{active.description} · {active.dependency}</p></div></div><div className="mt-3 flex flex-wrap gap-2"><button onClick={()=>copy(source,'JSX/TSX')} className="theme-control text-xs"><Copy size={13}/>Copy JSX/TSX</button><button onClick={()=>copy(css,'CSS')} className="theme-control text-xs"><Copy size={13}/>Copy CSS</button><button onClick={()=>copy(source+'\n\n/* CSS */\n'+css,'Combined code')} className="theme-control text-xs"><Code2 size={13}/>Copy all</button><button onClick={saveCurrent} className="theme-control text-xs"><Save size={13}/>Save component</button></div></section>
     <section className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="flex items-center justify-between border-b border-[var(--app-border)] p-3"><div className="flex gap-1 rounded-lg bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setTab('source')} className={'rounded-md px-3 py-1.5 text-xs '+(tab==='source'?'bg-[var(--app-panel-strong)] font-bold':'')}>JSX / TSX</button><button onClick={()=>setTab('styles')} className={'rounded-md px-3 py-1.5 text-xs '+(tab==='styles'?'bg-[var(--app-panel-strong)] font-bold':'')}>CSS</button></div><span className="text-[10px] text-[var(--app-muted)]">Editable source</span></div><div className="p-3"><label className="mb-2 block text-[10px] font-semibold text-[var(--app-muted)]">Component name</label><input value={name} onChange={e=>setName(e.target.value)} className="glass-input mb-3 w-full text-xs"/><textarea spellCheck={false} value={tab==='source'?source:css} onChange={e=>tab==='source'?setSource(e.target.value):setCss(e.target.value)} className="min-h-[280px] w-full resize-y rounded-xl border border-[var(--app-border)] bg-[#0b0b13] p-4 font-mono text-xs leading-6 text-violet-100 outline-none" aria-label={tab==='source'?'Editable component source':'Editable component CSS'}/></div></section>
-    <section className="rounded-xl border border-[var(--app-border)] p-3 sm:p-4"><div className="mb-3 flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><h4 className="text-sm font-bold">Live style playground</h4></div><div className="grid gap-3 sm:grid-cols-3"><label className="text-xs">Accent colour<input type="color" value={accent} onChange={e=>setAccent(e.target.value)} className="mt-1 block h-9 w-full rounded-lg bg-transparent"/></label><label className="text-xs">Corner radius · {radius}px<input type="range" min="0" max="40" value={radius} onChange={e=>setRadius(Number(e.target.value))} className="mt-3 block w-full"/></label><label className="text-xs">Preview heading<input value={previewText} onChange={e=>setPreviewText(e.target.value)} className="glass-input mt-1 w-full text-xs"/></label></div><div className="mt-4 grid min-h-40 place-items-center overflow-hidden rounded-xl border border-[var(--app-border)] bg-[#09131b] p-6"><div className="w-full max-w-sm p-6 text-center text-white" style={previewStyle}><Sparkles className="mx-auto mb-3" style={{color:accent}}/><h3 className="font-bold">{previewText}</h3><p className="mt-2 text-xs text-slate-300">{active.name} · editable preview surface</p></div></div><p className="mt-2 text-[10px] leading-5 text-[var(--app-muted)]">This is a safe visual style preview. Pasted JSX/TSX is treated as source text and is never executed inside the admin app.</p></section>
+    <section className="rounded-xl border border-[var(--app-border)] p-3 sm:p-4"><div className="mb-3 flex items-center gap-2"><Eye size={15} className="text-[var(--app-accent)]"/><h4 className="text-sm font-bold">Live style playground</h4></div><div className="grid gap-3 sm:grid-cols-3"><label className="text-xs">Accent colour<input type="color" value={accent} onChange={e=>setAccent(e.target.value)} className="mt-1 block h-9 w-full rounded-lg bg-transparent"/></label><label className="text-xs">Corner radius · {radius}px<input type="range" min="0" max="40" value={radius} onChange={e=>setRadius(Number(e.target.value))} className="mt-3 block w-full"/></label><label className="text-xs">Preview heading<input value={previewText} onChange={e=>setPreviewText(e.target.value)} className="glass-input mt-1 w-full text-xs"/></label></div><div className="mt-4 grid min-h-40 place-items-center overflow-hidden rounded-xl border border-[var(--app-border)] bg-[#09131b] p-6"><div className="w-full max-w-sm p-6 text-center text-white" style={previewStyle}><Sparkles className="mx-auto mb-3" style={{color:accent}}/><h3 className="font-bold">{previewText}</h3><p className="mt-2 text-xs text-slate-300">{active.name} · editable preview surface</p></div></div><p className="mt-2 text-[10px] leading-5 text-[var(--app-muted)]">This playground controls the registered runtime version of supported starters. Pasted JSX/TSX remains source text and is never executed in the admin app.</p>
+     <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]">
+      <label className="text-xs">Add component to actual page section
+       <select value={targetSlot} onChange={e=>setTargetSlot(e.target.value)} disabled={!slots.length} className="glass-input mt-1 w-full text-xs">
+        {slots.map(slot=><option key={slot.id} value={slot.id}>{slot.label}</option>)}
+       </select>
+      </label>
+      <button onClick={addToLivePage} disabled={!supported||!targetSlot} className="theme-control self-end justify-center text-xs disabled:cursor-not-allowed disabled:opacity-40"><Save size={13}/>Add to live page</button>
+     </div>
+     {!supported&&<p className="mt-2 text-[10px] text-amber-400">This saved/custom source is not in the safe live renderer yet. It can still be edited, copied and exported.</p>}
+     {!slots.length&&<p className="mt-2 text-[10px] text-amber-400">No registered component slots are available for this page yet.</p>}
+    </section>
     <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 text-xs leading-5 text-[var(--app-muted)]"><b className="text-[var(--app-text)]">Integration note:</b> copy source and CSS into separate files, review imports and install only dependencies listed on the component’s official page. This editor is a local source workspace, not a one-click installer. <a className="ml-1 underline" href="https://reactbits.dev/get-started/installation" target="_blank" rel="noreferrer">Official installation guide</a></div>
     {message&&<p role="status" className="text-xs text-[var(--app-accent)]">{message}</p>}
    </div>
