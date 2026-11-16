@@ -18,7 +18,7 @@ export function designCss(design: BentoDesign, page: string) {
   return `
     :root { --studio-bg:${v.background}; --studio-surface:${v.surface}; --studio-text:${v.text}; --studio-muted:${v.muted}; --studio-accent:${v.accent}; --studio-border:${v.border}; --studio-radius:${v.radius}px; --studio-spacing:${v.spacing}px; }
     body { background:var(--studio-bg)!important; color:var(--studio-text)!important; font-family:${JSON.stringify(v.font)},sans-serif!important; }
-    .app-theme { background-color:var(--studio-bg)!important; color:var(--studio-text)!important; }
+    .app-theme { background:var(--studio-bg)!important; color:var(--studio-text)!important; }
     .theme-surface,.theme-surface-solid,.glass-card,.dashboard-panel,.dashboard-recent,.dashboard-metric-card,.rb-spotlight-card,.quizzes-subject-card,.resources-subject-card { background:var(--studio-surface)!important; border-color:var(--studio-border)!important; color:var(--studio-text)!important; border-radius:var(--studio-radius)!important; }
     .dashboard-hero,.login-glow-card { background:linear-gradient(135deg,color-mix(in srgb,var(--studio-surface),var(--studio-accent) 9%),var(--studio-surface))!important; border-color:var(--studio-border)!important; border-radius:calc(var(--studio-radius) * 1.35)!important; }
     .dashboard-primary-button,.theme-control { background:var(--studio-accent)!important; border-color:var(--studio-accent)!important; color:#071321!important; border-radius:var(--studio-radius)!important; }
