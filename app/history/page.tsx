@@ -179,7 +179,7 @@ export default function HistoryPage() {
           <ThemeSelector />
         </header></StudioSlot>
 
-        <div className="theme-surface rounded-3xl overflow-hidden divide-y divide-[var(--app-border)]">
+        <StudioSlot id="history.attempt-list"><div className="theme-surface rounded-3xl overflow-hidden divide-y divide-[var(--app-border)]">
           {attempts.map((attempt) => {
             const isPassing = attempt.score >= 50;
             const netMarks = Math.max(
