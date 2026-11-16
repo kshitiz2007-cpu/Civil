@@ -7,11 +7,12 @@ import { supabase } from '@/lib/supabaseClient';
 export type StudioBreakpoint = 'desktop' | 'tablet' | 'mobile';
 export type VisualBlock = {
   id: string;
-  type: 'heading' | 'text' | 'button' | 'card' | 'icon' | 'stat' | 'divider';
+  type: 'heading' | 'text' | 'button' | 'card' | 'icon' | 'stat' | 'image' | 'divider';
   title: string;
   text?: string;
   buttonLabel?: string;
   href?: string;
+  src?: string;
   icon?: string;
   effect?: 'none' | 'fade' | 'rise' | 'float' | 'pulse';
   variant?: 'solid' | 'outline' | 'soft';
