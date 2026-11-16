@@ -15,6 +15,7 @@ export type StudioConfig = {
   structure: Record<string, string[]>;
   assets: { id: string; name: string; type: string; data: string; path?: string }[];
   customCss: string;
+  componentUpgrades: Record<string, { component: string; variant: string; updatedAt: string }>;
 };
 const STORAGE_KEY = 'gyankunj-design-studio-v1';
 export const DEFAULT_STUDIO: StudioConfig = {
@@ -28,7 +29,7 @@ export const DEFAULT_STUDIO: StudioConfig = {
     '--studio-content-width': '1280px', '--studio-spacing': '16px',
   },
   pages: {}, breakpoints: { desktop: {}, tablet: {}, mobile: {} },
-  pageBreakpoints: {}, components: {}, elementStyles: {}, structure: {}, assets: [], customCss: '',
+  pageBreakpoints: {}, components: {}, elementStyles: {}, structure: {}, assets: [], customCss: '', componentUpgrades: {},
 };
 const StudioContext = createContext<{ config: StudioConfig; save: (v: StudioConfig) => void } | null>(null);
 export function useDesignStudio() {
