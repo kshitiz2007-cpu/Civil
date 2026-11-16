@@ -277,7 +277,7 @@ export default function QuizManager() {
                     cutoff: '50',
                   };
                   return (
-                    <StudioSlot id="admin.quizzes.row" key={q.id}><tr
+                    <tr
                       key={q.id}
                       className="hover:bg-[var(--app-surface-muted)] transition-colors"
                     >
@@ -429,7 +429,7 @@ export default function QuizManager() {
                           </button>
                         </div>
                       </td>
-                    </tr></StudioSlot>
+                    </tr>
                   );
                 })}
               </tbody>
