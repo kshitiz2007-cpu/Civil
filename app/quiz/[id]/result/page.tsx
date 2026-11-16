@@ -453,7 +453,7 @@ export default function QuizResultPage() {
         </section></StudioSlot>
 
         {/* Answer Review & Explanations Section */}
-        <section>
+        <StudioSlot id="quiz.result.solution-review"><section>
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-xl font-bold">
@@ -541,7 +541,7 @@ export default function QuizResultPage() {
                 : 'border-rose-500/35';
 
               return (
-                <article
+                <StudioSlot id="quiz.result.answer-card" key={item.question_id || index}><article
                   key={item.question_id || index}
                   className={`theme-surface rounded-3xl border p-5 sm:p-6 ${borderStyle}`}
                 >
@@ -662,7 +662,7 @@ export default function QuizResultPage() {
                       )}
                     </div>
                   </div>
-                </article>
+                </article></StudioSlot>
               );
             })}
           </div>
