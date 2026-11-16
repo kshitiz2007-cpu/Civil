@@ -96,7 +96,9 @@ export default function CanvasStudio(){
  const [nodes,setNodes]=useState<DesignNode[]>([]);
  const [pages,setPages]=useState<Record<string,DesignNode[]>>({home:[]});
  const [activePage,setActivePage]=useState('home');
- const [newPageName,setNewPageName]=useState('');\n const [extraCss,setExtraCss]=useState('');\n const [pageCss,setPageCss]=useState<Record<string,string>>({home:''});
+ const [newPageName,setNewPageName]=useState('');
+ const [extraCss,setExtraCss]=useState('');
+ const [pageCss,setPageCss]=useState<Record<string,string>>({home:''});
  const [syncError,setSyncError]=useState('');
  const [loaded,setLoaded]=useState(false);
  const [selected,setSelected]=useState<string|null>(null);
