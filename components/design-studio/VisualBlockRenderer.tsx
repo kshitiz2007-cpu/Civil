@@ -23,7 +23,7 @@ const EFFECTS = {
 export default function VisualBlockRenderer({ block }: { block: VisualBlock }) {
   const icon = ICONS[(block.icon || 'star') as keyof typeof ICONS] || StarIcon;
   const reduceMotion = useReducedMotion();
-  const effect = (reduceMotion ? {} : EFFECTS[block.effect || 'none']) as Record<string, unknown>;
+  const effect = (reduceMotion ? {} : EFFECTS[block.effect || 'none']) as any;
   const style = block.styles as React.CSSProperties | undefined;
   if (block.type === 'divider') return <motion.hr {...effect} className="my-4 border-[var(--app-border)]" />;
   if (block.type === 'heading') return <motion.h2 {...effect} style={style} className="my-3 text-2xl font-extrabold tracking-tight">{block.title}</motion.h2>;
