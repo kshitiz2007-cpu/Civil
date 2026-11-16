@@ -40,6 +40,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { FALLBACK_QUIZZES } from '@/lib/mockData';
 import { openWatermarkStudio } from '@/lib/pdfExporter';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 type ConfidenceLevel = 'sure' | 'fifty' | 'guess';
 type LanguageMode = 'en' | 'hi' | 'split';
@@ -843,7 +844,7 @@ export default function QuizPlayerPage() {
         }`}
       >
         {/* Left Question Canvas */}
-        <section className="flex flex-col justify-between">
+        <StudioSlot id="quiz.question-workspace"><section className="flex flex-col justify-between">
           <div>
             {/* Question Telemetry & Action Bar */}
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2.5">
@@ -1259,7 +1260,7 @@ export default function QuizPlayerPage() {
               </button>
             )}
           </div>
-        </section>
+        </section></StudioSlot>
 
         {/* Right UPSC 6-State Smart Question Palette */}
         {!zenMode && (

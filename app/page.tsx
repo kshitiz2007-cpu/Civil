@@ -18,6 +18,7 @@ import {
   Target,
 } from 'lucide-react';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -165,22 +166,22 @@ export default function LoginPage() {
             <span>UPSC CSE Prelims & CSAT Computer-Based Evaluation System</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.12]">
+          <StudioSlot id="home.hero-title" className="rounded-2xl"><h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.12]">
             Precision OMR telemetry & calm preparation for the{' '}
             <span className="text-[var(--app-accent)]">
               Civil Services Examination.
             </span>
-          </h1>
+          </h1></StudioSlot>
 
-          <p className="text-sm sm:text-base text-[var(--app-muted)] leading-relaxed max-w-xl">
+          <StudioSlot id="home.hero-description"><p className="text-sm sm:text-base text-[var(--app-muted)] leading-relaxed max-w-xl">
             Engineered for serious UPSC aspirants—featuring interactive
             statement-level True/False deduction, 50-50 option strike-through
             with mathematical Expected Value (EV) guidance, bilingual English &
             Hindi split-view, and 360° negative-marking calibration.
-          </p>
+          </p></StudioSlot>
 
           <div className="grid sm:grid-cols-3 gap-3.5 pt-2">
-            <div className="theme-surface rounded-2xl p-4">
+            <StudioSlot id="home.feature-ev" className="rounded-2xl"><div className="theme-surface rounded-2xl p-4">
               <div className="flex items-center gap-2 text-sm font-bold">
                 <Scale className="w-4 h-4 text-[var(--app-accent)]" />
                 <span>+2.0 / -0.66 EV Engine</span>
@@ -189,8 +190,8 @@ export default function LoginPage() {
                 Strike out ruled-out options and track real-time mathematical
                 Expected Value on 50-50 choices.
               </p>
-            </div>
-            <div className="theme-surface rounded-2xl p-4">
+            </div></StudioSlot>
+            <StudioSlot id="home.feature-deduction" className="rounded-2xl"><div className="theme-surface rounded-2xl p-4">
               <div className="flex items-center gap-2 text-sm font-bold">
                 <Target className="w-4 h-4 text-[var(--app-secondary)]" />
                 <span>Statement Deduction</span>
@@ -199,8 +200,8 @@ export default function LoginPage() {
                 Mark individual numbered statements as True (✓) or False (✗)
                 directly inside multi-statement questions.
               </p>
-            </div>
-            <div className="theme-surface rounded-2xl p-4">
+            </div></StudioSlot>
+            <StudioSlot id="home.feature-themes" className="rounded-2xl"><div className="theme-surface rounded-2xl p-4">
               <div className="flex items-center gap-2 text-sm font-bold">
                 <BookOpen className="w-4 h-4 text-amber-400" />
                 <span>Zero-Glare Themes</span>
@@ -209,12 +210,12 @@ export default function LoginPage() {
                 Switch between Ashram Sage, Vedic Parchment, LBSNAA Mist, and
                 Dholpur Dusk for 10-hour study blocks.
               </p>
-            </div>
+            </div></StudioSlot>
           </div>
         </section>
 
         {/* Right Sign-In & Instant Simulator Card */}
-        <section className="theme-surface rounded-3xl p-7 sm:p-9 w-full max-w-md mx-auto">
+        <StudioSlot id="home.login-card" className="w-full max-w-md mx-auto rounded-3xl"><section className="theme-surface rounded-3xl p-7 sm:p-9 w-full">
           <div className="w-13 h-13 rounded-2xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] flex items-center justify-center mb-5 text-[var(--app-accent)]">
             <Landmark className="w-6 h-6" />
           </div>
@@ -298,7 +299,7 @@ export default function LoginPage() {
               <span>Full Keyboard Navigation (1–4, Shift+1–4, N/P, M, Z)</span>
             </div>
           </div>
-        </section>
+        </section></StudioSlot>
       </main>
 
       {/* Footer */}
