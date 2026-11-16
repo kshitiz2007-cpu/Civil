@@ -334,7 +334,7 @@ export default function DashboardPage() {
   return (
     <div className="app-theme text-[var(--app-text)]">
       {/* Desktop Sidebar */}
-      <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
+      <StudioSlot id="dashboard.sidebar" className="fixed inset-y-0 left-0 z-20 hidden w-64 md:block"><aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] text-[var(--app-accent)]">
             <Landmark className="h-5 w-5" />
@@ -832,7 +832,7 @@ export default function DashboardPage() {
       )}
 
       {/* Mobile Bottom Navigation */}
-      <nav className="theme-surface-solid fixed inset-x-3 bottom-3 z-30 flex justify-around rounded-2xl p-2 shadow-2xl md:hidden">
+      <StudioSlot id="dashboard.mobile-navigation" className="fixed inset-x-3 bottom-3 z-30 md:hidden"><nav className="theme-surface-solid fixed inset-x-3 bottom-3 z-30 flex justify-around rounded-2xl p-2 shadow-2xl md:hidden">
         <MobileItem
           icon={Activity}
           label="Sanctuary"
@@ -859,7 +859,7 @@ export default function DashboardPage() {
           label="Merit"
           onClick={() => router.push('/leaderboard')}
         />
-      </nav>
+      </nav></StudioSlot>
 
       <StudentChatWidget user={user} />
     </div>
