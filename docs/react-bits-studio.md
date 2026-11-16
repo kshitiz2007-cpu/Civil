@@ -14,7 +14,12 @@ Official guide: https://reactbits.dev/get-started/installation
 
 ## Registered slots and one-click replacement
 
-The home page now exposes registered slots for its hero title, description, three feature cards and sign-in card. Each slot is a stable React boundary with an ID, not a fragile CSS selector.
+Registered slots now cover multiple page elements:
+
+- Home: hero title, description, three feature cards and sign-in card
+- Dashboard: header, hero banner, metrics strip, practice section and analytics section
+- Quiz player: sticky toolbar, question workspace and question palette
+- Resources: page header and subject browser Each slot is a stable React boundary with an ID, not a fragile CSS selector.
 
 1. Open Design System Studio and enable the live page preview.
 2. Click inside a registered slot. The inspector selects the nearest slot boundary.
