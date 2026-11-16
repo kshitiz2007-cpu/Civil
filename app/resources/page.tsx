@@ -140,7 +140,7 @@ export default function StudentResourcesPage() {
 
   return (
     <div className="app-theme min-h-screen text-[var(--app-text)]">
-      <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
+      <StudioSlot id="resources.sidebar" className="fixed inset-y-0 left-0 z-20 hidden w-64 md:block"><aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] text-[var(--app-accent)]">
             <Landmark className="h-5 w-5" />
@@ -203,7 +203,7 @@ export default function StudentResourcesPage() {
             <LogOut className="h-4 w-4" />
           </button>
         </div>
-      </aside>
+      </aside></StudioSlot>
 
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
         <StudioSlot id="resources.header"><header className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -249,7 +249,7 @@ export default function StudentResourcesPage() {
                 const Icon = subject.icon;
                 const count = getResourceCount(subject.id);
                 return (
-                  <button
+                  <StudioSlot id="resources.subject-card" key={subject.id}><button
                     key={subject.id}
                     onClick={() => setActiveSubject(subject.id)}
                     className="theme-surface text-left p-5 rounded-3xl transition-all hover:-translate-y-0.5 hover:border-[var(--app-accent)] group"
@@ -273,7 +273,7 @@ export default function StudentResourcesPage() {
                         Browse <ChevronRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
-                  </button>
+                  </button></StudioSlot>
                 );
               })}
             </div>
@@ -281,7 +281,7 @@ export default function StudentResourcesPage() {
         )}
 
         {activeSubject && (
-          <div className="space-y-6">
+          <StudioSlot id="resources.material-browser"><div className="space-y-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--app-muted)]" />
               <input
@@ -329,7 +329,7 @@ export default function StudentResourcesPage() {
                         {isOpen && (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             {sectionResources.map((resource) => (
-                              <div
+                              <StudioSlot id="resources.material-card" key={resource.id}><div
                                 key={resource.id}
                                 className="theme-surface rounded-2xl p-5 flex items-center justify-between gap-4 hover:border-[var(--app-accent)] transition"
                               >
@@ -366,7 +366,7 @@ export default function StudentResourcesPage() {
                                     <ExternalLink className="w-4 h-4" />
                                   )}
                                 </a>
-                              </div>
+                              </div></StudioSlot>
                             ))}
                           </div>
                         )}
@@ -376,7 +376,7 @@ export default function StudentResourcesPage() {
                 )
               )}
             </div>
-          </div>
+          </div></StudioSlot>
         )}
       </main>
     </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { MessageSquare, Send, Image as ImageIcon, Loader2, Search, User, Clock } from 'lucide-react';
@@ -255,7 +257,7 @@ export default function AdminInbox() {
             </div>
 
             {/* Input Area */}
-            <form onSubmit={sendMessage} className="p-4 bg-white/5 border-t border-white/10 flex gap-2 items-center backdrop-blur-md">
+            <StudioSlot id="admin.inbox.composer"><form onSubmit={sendMessage} className="p-4 bg-white/5 border-t border-white/10 flex gap-2 items-center backdrop-blur-md">
               <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="hidden" />
               <button 
                 type="button" onClick={() => fileInputRef.current?.click()} disabled={isUploading}
@@ -277,7 +279,7 @@ export default function AdminInbox() {
               >
                 <Send className="w-5 h-5" />
               </button>
-            </form>
+            </form></StudioSlot>
           </>
         )}
       </div>

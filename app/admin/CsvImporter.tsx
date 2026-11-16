@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useState, useRef } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -145,7 +147,7 @@ export default function CsvImporter() {
 
   return (
     <div className="space-y-6 text-[var(--app-text)]">
-      <header>
+      <StudioSlot id="admin.csv.header"><header>
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
           High-Volume Question Bank Ingestion
         </p>
@@ -153,9 +155,9 @@ export default function CsvImporter() {
           <FileSpreadsheet className="w-7 h-7 text-[var(--app-accent)]" /> Bulk
           Bilingual CSV Importer
         </h2>
-      </header>
+      </header></StudioSlot>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <StudioSlot id="admin.csv.workspace"><div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-5">
           <div className="theme-surface rounded-3xl p-5 space-y-3">
             <h3 className="font-bold text-sm">1. Standard 13-Column Schema</h3>
@@ -354,7 +356,7 @@ export default function CsvImporter() {
             </div>
           </div>
         </div>
-      </div>
+      </div></StudioSlot>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import QuizManager from './QuizManager';
 import AdminAnalytics from './AdminAnalytics';
 import DesignStudio from './DesignStudio';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 import {
   LayoutDashboard,
@@ -180,7 +181,7 @@ export default function AdminPage() {
   return (
     <div className="app-theme relative flex min-h-screen w-full flex-col font-sans md:flex-row text-[var(--app-text)]">
       {/* Sidebar Navigation */}
-      <aside className="theme-surface-solid relative z-20 flex w-full shrink-0 flex-col border-b border-[var(--app-border)] md:h-screen md:w-72 md:border-b-0 md:border-r">
+      <StudioSlot id="admin.sidebar" className="w-full shrink-0 md:w-72"><aside className="theme-surface-solid relative z-20 flex w-full shrink-0 flex-col border-b border-[var(--app-border)] md:h-screen md:w-72 md:border-b-0 md:border-r">
         <div className="flex items-center justify-between p-4 md:block md:p-6 md:pb-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -239,28 +240,28 @@ export default function AdminPage() {
             <LogOut className="w-4 h-4" /> Sign Out of Console
           </button>
         </div>
-      </aside>
+      </aside></StudioSlot>
 
       {/* Main Content Area */}
-      <main className="relative z-10 h-screen w-full flex-1 overflow-y-auto p-4 md:p-8">
+      <StudioSlot id="admin.main-content" className="min-w-0 flex-1"><main className="relative z-10 h-screen w-full flex-1 overflow-y-auto p-4 md:p-8">
         <div className="max-w-7xl mx-auto w-full">
-          {activeTab === 'designstudio' && <DesignStudio />}
+          {activeTab === 'designstudio' && <StudioSlot id="admin.design-studio"><DesignStudio /></StudioSlot>}
           {activeTab === 'overview' && (
-            <AdminOverview setActiveTab={setActiveTab} />
+            <StudioSlot id="admin.overview"><AdminOverview setActiveTab={setActiveTab} /></StudioSlot>
           )}
-          {activeTab === 'inbox' && <AdminInbox />}
-          {activeTab === 'quizzes' && <QuizManager />}
-          {activeTab === 'aigen' && <AiQuizBuilder />}
-          {activeTab === 'resources' && <ResourceManager />}
-          {activeTab === 'students' && <StudentsManager />}
-          {activeTab === 'analytics' && <AdminAnalytics />}
-          {activeTab === 'payments' && <PaymentsManager />}
-          {activeTab === 'csvimport' && <CsvImporter />}
+          {activeTab === 'inbox' && <StudioSlot id="admin.inbox"><AdminInbox /></StudioSlot>}
+          {activeTab === 'quizzes' && <StudioSlot id="admin.quizzes"><QuizManager /></StudioSlot>}
+          {activeTab === 'aigen' && <StudioSlot id="admin.aigen"><AiQuizBuilder /></StudioSlot>}
+          {activeTab === 'resources' && <StudioSlot id="admin.resources"><ResourceManager /></StudioSlot>}
+          {activeTab === 'students' && <StudioSlot id="admin.students"><StudentsManager /></StudioSlot>}
+          {activeTab === 'analytics' && <StudioSlot id="admin.analytics"><AdminAnalytics /></StudioSlot>}
+          {activeTab === 'payments' && <StudioSlot id="admin.payments"><PaymentsManager /></StudioSlot>}
+          {activeTab === 'csvimport' && <StudioSlot id="admin.csvimport"><CsvImporter /></StudioSlot>}
 
           {/* SCHEDULED ALL-INDIA LIVE MOCKS MODULE */}
           {activeTab === 'scheduled' && (
             <div className="space-y-6">
-              <header>
+              <StudioSlot id="admin.scheduled.header"><header>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
                   Synchronized National Testing
                 </p>
@@ -270,10 +271,10 @@ export default function AdminPage() {
                 <p className="mt-1 text-sm text-[var(--app-muted)]">
                   Schedule time-gated All-India Prelims Simulators with synchronized rank list generation and strict proctoring controls.
                 </p>
-              </header>
+              </header></StudioSlot>
 
               {/* Schedule New Window Form */}
-              <form
+              <StudioSlot id="admin.scheduled.form"><form
                 onSubmit={handleAddScheduledMock}
                 className="theme-surface rounded-3xl p-5 sm:p-6 space-y-4"
               >
@@ -353,10 +354,10 @@ export default function AdminPage() {
                     Publish Live Mock Window
                   </button>
                 </div>
-              </form>
+              </form></StudioSlot>
 
               {/* Scheduled Mocks List */}
-              <div className="grid gap-4">
+              <StudioSlot id="admin.scheduled.list"><div className="grid gap-4">
                 {scheduledMocks.map((mock) => (
                   <div
                     key={mock.id}
@@ -436,11 +437,11 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
-              </div>
+              </div></StudioSlot>
             </div>
           )}
         </div>
-      </main>
+      </main></StudioSlot>
     </div>
   );
 }

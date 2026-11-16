@@ -162,7 +162,7 @@ export default function LeaderboardPage() {
   return (
     <StudioSlot id="leaderboard.page" className="app-theme min-h-screen px-4 py-6 sm:px-6 md:py-10 text-[var(--app-text)]">
       <div className="max-w-4xl mx-auto pb-20">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <StudioSlot id="leaderboard.header"><div className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-3.5">
             <button
               onClick={() => router.push('/dashboard')}
@@ -181,15 +181,15 @@ export default function LeaderboardPage() {
             </div>
           </div>
           <ThemeSelector />
-        </div>
+        </div></StudioSlot>
 
-        <div className="space-y-3">
+        <StudioSlot id="leaderboard.rankings"><div className="space-y-3">
           {leaderboard.map((entry, index) => {
             const isCurrentUser =
               entry.user_id === currentUser?.id ||
               entry.user_id === 'demo_user';
             return (
-              <div
+              <StudioSlot id="leaderboard.rank-card" key={entry.user_id}><div
                 key={entry.user_id}
                 className={`theme-surface p-4 sm:p-5 rounded-2xl flex items-center gap-4 transition ${
                   isCurrentUser
@@ -244,10 +244,10 @@ export default function LeaderboardPage() {
                     {entry.total_points} Cumulative
                   </div>
                 </div>
-              </div>
+              </div></StudioSlot>
             );
           })}
-        </div>
+        </div></StudioSlot>
       </div>
     </StudioSlot>
   );

@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -148,7 +150,7 @@ Use the same option order in both languages. correct must be an index from 0 to 
 
   return (
     <div className="space-y-6 text-[var(--app-text)]">
-      <header>
+      <StudioSlot id="admin.aigen.header"><header>
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
           Automated Bilingual Paper Synthesis
         </p>
@@ -160,9 +162,9 @@ Use the same option order in both languages. correct must be an index from 0 to 
           Synthesize multi-statement UPSC Prelims questions in English and Hindi
           with comprehensive faculty explanations.
         </p>
-      </header>
+      </header></StudioSlot>
 
-      <section className="theme-surface rounded-3xl p-5 sm:p-7 space-y-4">
+      <StudioSlot id="admin.aigen.configuration"><section className="theme-surface rounded-3xl p-5 sm:p-7 space-y-4">
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--app-muted)] mb-1.5">
@@ -244,10 +246,10 @@ Use the same option order in both languages. correct must be an index from 0 to 
             ? 'Synthesizing Bilingual UPSC Paper…'
             : 'Synthesize Bilingual UPSC Paper'}
         </button>
-      </section>
+      </section></StudioSlot>
 
       {generatedQuiz && (
-        <section className="space-y-4">
+      <StudioSlot id="admin.aigen.output"><section className="space-y-4">
           <div className="theme-surface flex flex-col justify-between gap-3 rounded-2xl p-5 sm:flex-row sm:items-center">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-accent)]">
@@ -320,7 +322,7 @@ Use the same option order in both languages. correct must be an index from 0 to 
               )}
             </article>
           ))}
-        </section>
+        </section></StudioSlot>
       )}
     </div>
   );

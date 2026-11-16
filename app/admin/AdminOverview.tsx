@@ -1,5 +1,7 @@
 'use client';
 
+import StudioSlot from '@/components/design-studio/StudioSlot';
+
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -190,7 +192,7 @@ export default function AdminOverview({
 
   return (
     <div className="space-y-7">
-      <header className="flex flex-wrap items-end justify-between gap-4">
+      <StudioSlot id="admin.overview.header"><header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-accent)]">
             Academic Governance & Live Telemetry
@@ -210,7 +212,7 @@ export default function AdminOverview({
         >
           <Activity className="w-4 h-4" /> Open Deep Cohort Diagnostics
         </button>
-      </header>
+      </header></StudioSlot>
 
       {/* 6 Institutional KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3.5">
@@ -294,7 +296,7 @@ export default function AdminOverview({
       {/* Institutional Control Panel + Subject Accuracy Matrix */}
       <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         {/* Global Examination Engine & Broadcast Controls */}
-        <section className="theme-surface rounded-3xl p-5 sm:p-6 space-y-5">
+        <StudioSlot id="admin.overview.telemetry"><section className="theme-surface rounded-3xl p-5 sm:p-6 space-y-5">
           <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-4">
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl bg-[var(--app-accent-soft)] text-[var(--app-accent)]">
@@ -416,7 +418,7 @@ export default function AdminOverview({
               </p>
             )}
           </div>
-        </section>
+        </section></StudioSlot>
 
         {/* Subject-Wise Institutional Performance Radar */}
         <section className="theme-surface rounded-3xl p-5 sm:p-6">

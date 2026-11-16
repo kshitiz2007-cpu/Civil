@@ -16,33 +16,30 @@ const CATALOG: Omit<VisualBlock, 'id'>[] = [
   { type:'divider', title:'Divider', effect:'none' },
 ];
 const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]> = {
-  dashboard: [
-    {id:'dashboard.header',label:'Dashboard header',group:'Main dashboard'},
-    {id:'dashboard.hero',label:'Hero overview',group:'Main dashboard'},
-    {id:'dashboard.stats',label:'Statistics strip',group:'Main dashboard'},
-    {id:'dashboard.practice',label:'Recommended practice',group:'Practice area'},
-    {id:'dashboard.analytics',label:'Performance analytics',group:'Analytics area'},
-  ],
-  quiz: [
-    {id:'quiz.toolbar',label:'Quiz toolbar',group:'Quiz page'},
-    {id:'quiz.question-workspace',label:'Question workspace',group:'Quiz page'},
-    {id:'quiz.question-palette',label:'Question palette',group:'Quiz page'},
-  ],
-  quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas',group:'Quiz catalogue'}],
-  resources: [
-    {id:'resources.header',label:'Resources header',group:'Resources page'},
-    {id:'resources.subject-browser',label:'Subject browser',group:'Resources page'},
-  ],
-  history: [{id:'history.page',label:'Attempt history canvas',group:'History page'}],
-  leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas',group:'Leaderboard page'}],
-  home: [
-    {id:'home.hero-title',label:'Hero title',group:'Home page'},
-    {id:'home.hero-description',label:'Hero description',group:'Home page'},
-    {id:'home.feature-ev',label:'Expected value feature',group:'Home page'},
-    {id:'home.feature-deduction',label:'Statement deduction feature',group:'Home page'},
-    {id:'home.feature-themes',label:'Theme feature',group:'Home page'},
-    {id:'home.login-card',label:'Sign-in card',group:'Home page'},
-  ],
+ home: [
+  ...['home.topbar|Login top bar','home.institutional-overview|Institutional overview','home.institutional-badge|Institution badge','home.hero-title|Hero title','home.hero-description|Hero description','home.feature-grid|Feature grid','home.feature-ev|Expected value feature','home.feature-deduction|Statement deduction feature','home.feature-themes|Theme feature','home.login-card|Sign-in card','home.login-brand|Sign-in brand','home.login-heading|Sign-in heading','home.login-actions|Portal actions','home.login-assurances|Sign-in assurances','home.footer|Page footer'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Login page'};}),
+ ],
+ dashboard: [
+  ...['dashboard.sidebar|Desktop navigation','dashboard.header|Dashboard header','dashboard.broadcast-notice|Academic notice','dashboard.hero|Hero overview','dashboard.hero-metric|Hero metric','dashboard.stats|Statistics strip','dashboard.stat-tests|Tests statistic','dashboard.stat-mean|Mean score statistic','dashboard.stat-papers|Active papers statistic','dashboard.stat-resources|Resources statistic','dashboard.practice|Recommended practice','dashboard.practice-card|Practice paper card','dashboard.analytics|Performance analytics','dashboard.analytics-layout|Analytics layout','dashboard.mobile-navigation|Mobile navigation'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Dashboard'};}),
+ ],
+ quiz: [
+  ...['quiz.toolbar|Quiz toolbar','quiz.question-workspace|Question workspace','quiz.question-telemetry|Question telemetry','quiz.question-and-options|Question card','quiz.answer-option|Individual answer option','quiz.bottom-navigation|Question navigation','quiz.question-palette|Question palette','quiz.palette-item|Palette item','quiz.result.toolbar|Result toolbar','quiz.result.scorecard|Result scorecard','quiz.result.solution-review|Solution review','quiz.result.answer-card|Result answer card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Quiz player / result'};}),
+ ],
+ quizzes: [
+  ...['quizzes.page|Quiz catalogue canvas','quizzes.header|Catalogue header','quizzes.subject-browser|Subject browser','quizzes.subject-card|Subject tile','quizzes.paper-browser|Paper browser','quizzes.paper-card|Individual paper card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Quiz catalogue'};}),
+ ],
+ resources: [
+  ...['resources.sidebar|Library navigation','resources.header|Resources header','resources.subject-browser|Subject browser','resources.subject-card|Subject tile','resources.material-browser|Material browser','resources.material-card|Resource card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Resources'};}),
+ ],
+ history: [
+  ...['history.page|Attempt history canvas','history.sidebar|History navigation','history.header|History header','history.attempt-list|Attempt list','history.attempt-card|Individual attempt'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'History'};}),
+ ],
+ leaderboard: [
+  ...['leaderboard.page|Leaderboard canvas','leaderboard.header|Leaderboard header','leaderboard.rankings|Rankings list','leaderboard.rank-card|Individual rank card'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Leaderboard'};}),
+ ],
+ admin: [
+  ...['admin.sidebar|Admin navigation','admin.main-content|Admin workspace','admin.design-studio|Visual Designer','admin.overview|Command center','admin.inbox|Mentor inbox','admin.quizzes|Quiz manager','admin.aigen|AI paper setter','admin.resources|Resource manager','admin.students|Student directory','admin.analytics|Analytics','admin.payments|Payments','admin.csvimport|CSV importer','admin.scheduled.header|Live mock heading','admin.scheduled.form|Live mock form','admin.scheduled.list|Scheduled mocks','admin.overview.header|Overview header','admin.overview.telemetry|Overview telemetry','admin.inbox.composer|Inbox composer','admin.quizzes.header|Quiz manager header','admin.aigen.header|AI builder header','admin.aigen.configuration|AI builder configuration','admin.aigen.output|Generated paper output','admin.resources.header|Resource manager header','admin.resources.publish-form|Resource publish form','admin.students.header|Student directory header','admin.analytics.dashboard|Analytics dashboard','admin.payments.header|Payments header','admin.csv.header|CSV importer header','admin.csv.workspace|CSV import workspace'].map(v=>{const [id,label]=v.split('|');return {id,label,group:'Admin console'};}),
+ ],
 };
 const makeId = () => `block-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
 

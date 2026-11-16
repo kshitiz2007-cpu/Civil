@@ -14,13 +14,56 @@ const STARTERS:Bit[] = [
 const STORE='design-studio-react-bits-v1';
 
 const PAGE_SLOTS: Record<string, { id: string; label: string }[]> = {
- home: [{id:'home.hero-title',label:'Hero title'},{id:'home.hero-description',label:'Hero description'},{id:'home.feature-ev',label:'Expected value feature'},{id:'home.feature-deduction',label:'Statement deduction feature'},{id:'home.feature-themes',label:'Theme feature'},{id:'home.login-card',label:'Sign-in card'}],
- dashboard: [{id:'dashboard.header',label:'Dashboard header'},{id:'dashboard.hero',label:'Hero overview'},{id:'dashboard.stats',label:'Statistics strip'},{id:'dashboard.practice',label:'Recommended practice'},{id:'dashboard.analytics',label:'Performance analytics'}],
- quiz: [{id:'quiz.toolbar',label:'Quiz toolbar'},{id:'quiz.question-workspace',label:'Question workspace'},{id:'quiz.question-palette',label:'Question palette'}],
- quizzes: [{id:'quizzes.page',label:'Quiz catalogue canvas'}],
- resources: [{id:'resources.header',label:'Resources header'},{id:'resources.subject-browser',label:'Subject browser'}],
- history: [{id:'history.page',label:'Attempt history canvas'}],
- leaderboard: [{id:'leaderboard.page',label:'Leaderboard canvas'}],
+ home: [
+  {id:'home.topbar',label:'Login top bar'},{id:'home.institutional-overview',label:'Institutional overview'},{id:'home.institutional-badge',label:'Institution badge'},
+  {id:'home.hero-title',label:'Hero title'},{id:'home.hero-description',label:'Hero description'},{id:'home.feature-grid',label:'Feature grid'},
+  {id:'home.feature-ev',label:'Expected value feature'},{id:'home.feature-deduction',label:'Statement deduction feature'},{id:'home.feature-themes',label:'Theme feature'},
+  {id:'home.login-card',label:'Sign-in card'},{id:'home.login-brand',label:'Sign-in brand mark'},{id:'home.login-heading',label:'Sign-in heading'},
+  {id:'home.login-actions',label:'Portal actions'},{id:'home.login-assurances',label:'Sign-in assurances'},{id:'home.footer',label:'Page footer'}
+ ],
+ dashboard: [
+  {id:'dashboard.sidebar',label:'Desktop navigation'},{id:'dashboard.header',label:'Dashboard header'},{id:'dashboard.broadcast-notice',label:'Academic notice'},
+  {id:'dashboard.hero',label:'Hero overview'},{id:'dashboard.hero-metric',label:'Hero metric card'},{id:'dashboard.stats',label:'Statistics strip'},
+  {id:'dashboard.stat-tests',label:'Tests statistic'},{id:'dashboard.stat-mean',label:'Mean score statistic'},{id:'dashboard.stat-papers',label:'Active papers statistic'},
+  {id:'dashboard.stat-resources',label:'Resources statistic'},{id:'dashboard.practice',label:'Recommended practice'},{id:'dashboard.practice-card',label:'Practice paper card'},
+  {id:'dashboard.analytics',label:'Performance analytics'},{id:'dashboard.analytics-layout',label:'Analytics layout'},{id:'dashboard.mobile-navigation',label:'Mobile navigation'}
+ ],
+ quizzes: [
+  {id:'quizzes.page',label:'Quiz catalogue canvas'},{id:'quizzes.header',label:'Catalogue header'},{id:'quizzes.subject-browser',label:'Subject browser'},
+  {id:'quizzes.subject-card',label:'Subject tile'},{id:'quizzes.paper-browser',label:'Paper browser'},{id:'quizzes.paper-card',label:'Individual paper card'}
+ ],
+ quiz: [
+  {id:'quiz.toolbar',label:'Quiz toolbar'},{id:'quiz.question-workspace',label:'Question workspace'},{id:'quiz.question-telemetry',label:'Question telemetry'},
+  {id:'quiz.question-and-options',label:'Question card'},{id:'quiz.answer-option',label:'Individual answer option'},{id:'quiz.bottom-navigation',label:'Question navigation'},
+  {id:'quiz.question-palette',label:'Question palette'},{id:'quiz.palette-item',label:'Question palette item'},
+  {id:'quiz.result.toolbar',label:'Result toolbar'},{id:'quiz.result.scorecard',label:'Result scorecard'},
+  {id:'quiz.result.solution-review',label:'Solution review'},{id:'quiz.result.answer-card',label:'Result answer card'}
+ ],
+ resources: [
+  {id:'resources.sidebar',label:'Library navigation'},{id:'resources.header',label:'Resources header'},{id:'resources.subject-browser',label:'Subject browser'},
+  {id:'resources.subject-card',label:'Subject tile'},{id:'resources.material-browser',label:'Material browser'},{id:'resources.material-card',label:'Resource card'}
+ ],
+ history: [
+  {id:'history.page',label:'Attempt history canvas'},{id:'history.sidebar',label:'History navigation'},{id:'history.header',label:'History header'},
+  {id:'history.attempt-list',label:'Attempt list'},{id:'history.attempt-card',label:'Individual attempt card'}
+ ],
+ leaderboard: [
+  {id:'leaderboard.page',label:'Leaderboard canvas'},{id:'leaderboard.header',label:'Leaderboard header'},
+  {id:'leaderboard.rankings',label:'Rankings list'},{id:'leaderboard.rank-card',label:'Individual rank card'}
+ ],
+ admin: [
+  {id:'admin.sidebar',label:'Admin navigation'},{id:'admin.main-content',label:'Admin workspace'},{id:'admin.design-studio',label:'Visual Designer'},
+  {id:'admin.overview',label:'Command center'},{id:'admin.inbox',label:'Mentor inbox'},{id:'admin.quizzes',label:'Quiz manager'},
+  {id:'admin.aigen',label:'AI paper setter'},{id:'admin.resources',label:'Resource manager'},{id:'admin.students',label:'Student directory'},
+  {id:'admin.analytics',label:'Analytics'},{id:'admin.payments',label:'Payments'},{id:'admin.csvimport',label:'CSV importer'},
+  {id:'admin.scheduled.header',label:'Live mock heading'},{id:'admin.scheduled.form',label:'Live mock form'},{id:'admin.scheduled.list',label:'Scheduled mocks'},
+  {id:'admin.overview.header',label:'Overview header'},{id:'admin.overview.telemetry',label:'Overview telemetry'},
+  {id:'admin.inbox.composer',label:'Inbox message composer'},{id:'admin.quizzes.header',label:'Quiz manager header'},
+  {id:'admin.aigen.header',label:'AI builder header'},{id:'admin.aigen.configuration',label:'AI builder configuration'},{id:'admin.aigen.output',label:'AI generated paper output'},
+  {id:'admin.resources.header',label:'Resource manager header'},{id:'admin.resources.publish-form',label:'Resource publish form'},
+  {id:'admin.students.header',label:'Student directory header'},{id:'admin.analytics.dashboard',label:'Analytics dashboard'},
+  {id:'admin.payments.header',label:'Payments header'},{id:'admin.csv.header',label:'CSV importer header'},{id:'admin.csv.workspace',label:'CSV import workspace'}
+ ],
 };
 
 export default function ReactBitsStudio({ page, config, save }: { page: string; config: StudioConfig; save: (next: StudioConfig) => void }) {

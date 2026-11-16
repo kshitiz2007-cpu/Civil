@@ -25,6 +25,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { FALLBACK_ATTEMPTS, FALLBACK_QUIZZES } from '@/lib/mockData';
 import { openWatermarkStudio } from '@/lib/pdfExporter';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 type ReviewLanguage = 'en' | 'hi' | 'both';
 type FilterMode = 'all' | 'wrong' | 'skipped' | 'correct';
@@ -237,7 +238,7 @@ export default function QuizResultPage() {
     <main className="app-theme min-h-screen px-4 py-6 sm:px-6 md:py-10 text-[var(--app-text)]">
       <div className="mx-auto max-w-5xl pb-12">
         {/* Top Bar */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <StudioSlot id="quiz.result.toolbar"><div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={() => router.push('/dashboard')}
             className="inline-flex items-center gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-panel)] px-4 py-2.5 text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)]"
@@ -280,10 +281,10 @@ export default function QuizResultPage() {
             )}
             <ThemeSelector />
           </div>
-        </div>
+        </div></StudioSlot>
 
         {/* UPSC Prelims Analytical Scorecard */}
-        <section className="theme-surface relative mb-8 overflow-hidden rounded-3xl p-6 sm:p-9">
+        <StudioSlot id="quiz.result.scorecard"><section className="theme-surface relative mb-8 overflow-hidden rounded-3xl p-6 sm:p-9">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[var(--app-border)] pb-6">
             <div>
               <span
@@ -449,10 +450,10 @@ export default function QuizResultPage() {
               })}
             </div>
           </div>
-        </section>
+        </section></StudioSlot>
 
         {/* Answer Review & Explanations Section */}
-        <section>
+        <StudioSlot id="quiz.result.solution-review"><section>
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-xl font-bold">
@@ -540,7 +541,7 @@ export default function QuizResultPage() {
                 : 'border-rose-500/35';
 
               return (
-                <article
+                <StudioSlot id="quiz.result.answer-card" key={item.question_id || index}><article
                   key={item.question_id || index}
                   className={`theme-surface rounded-3xl border p-5 sm:p-6 ${borderStyle}`}
                 >
@@ -661,11 +662,11 @@ export default function QuizResultPage() {
                       )}
                     </div>
                   </div>
-                </article>
+                </article></StudioSlot>
               );
             })}
           </div>
-        </section>
+        </section></StudioSlot>
 
         {/* Bottom Actions */}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
