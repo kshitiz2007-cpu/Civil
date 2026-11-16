@@ -8,7 +8,7 @@ export type StudioBreakpoint = 'desktop' | 'tablet' | 'mobile';
 export type VisualBlock = {
   id: string;
   type: 'heading' | 'text' | 'button' | 'card' | 'icon' | 'stat' | 'image' | 'divider' | 'reactBit';
-  component?: 'blur-text' | 'aurora' | 'spotlight-card' | 'magnet-button' | 'shiny-text' | 'gradient-text' | 'fuzzy-text' | 'split-text' | 'tilted-card' | 'glare-hover' | 'particles' | 'beams' | 'click-spark' | 'card-swap' | 'target-cursor' | 'text-pressure' | 'electric-border' | 'dither';
+  component?: 'blur-text' | 'aurora' | 'spotlight-card' | 'magnet-button' | 'shiny-text' | 'gradient-text' | 'fuzzy-text' | 'split-text' | 'tilted-card' | 'glare-hover' | 'particles' | 'beams' | 'click-spark' | 'card-swap' | 'target-cursor' | 'text-pressure' | 'electric-border' | 'dither' | 'star-border' | 'fade-content' | 'animated-content' | 'scroll-reveal' | 'count-up' | 'decrypted-text' | 'infinite-scroll' | 'dock' | 'profile-card' | 'glass-icons' | 'true-focus' | 'scroll-float' | 'pixel-transition' | 'waves' | 'silk' | 'lightning' | 'galaxy' | 'orb' | 'masonry' | 'stack' | 'carousel' | 'stepper' | 'folder' | 'pill-nav' | 'flowing-menu';
   title: string;
   text?: string;
   buttonLabel?: string;
