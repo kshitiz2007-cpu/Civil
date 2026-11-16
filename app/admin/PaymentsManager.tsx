@@ -222,7 +222,7 @@ export default function PaymentsManager() {
                         </span>
                       )}
                     </td>
-                  </tr>
+                  </tr></StudioSlot>
                 ))}
               </tbody>
             </table>
