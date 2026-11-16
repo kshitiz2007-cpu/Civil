@@ -114,6 +114,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     }
     let activeDesign: BentoDesign = DEFAULT_DESIGN;
     let editorMode = false;
+    let editorPreviewReceived = false;
     let selectedElement: Element | null = null;
     const previousOverrides = new Map<HTMLElement, Map<string, { value: string; priority: string }>>();
 
@@ -292,7 +293,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     };
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
-      if (event.data?.type === 'BENTO_DESIGN_PREVIEW') apply(event.data.design as BentoDesign);
+      if (event.data?.type === 'BENTO_DESIGN_PREVIEW') { editorPreviewReceived = true; apply(event.data.design as BentoDesign); }
       if (event.data?.type === 'BENTO_ELEMENT_ASSET' && selectedElement) {
         const url = String(event.data.url || '');
         if (/^https:\/\//i.test(url) && !/[\"'<>]/.test(url)) { if (selectedElement instanceof HTMLImageElement) selectedElement.src = url; else (selectedElement as HTMLElement).style.backgroundImage = 'url("' + url + '")'; }
@@ -321,13 +322,15 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     const load = async () => {
       try {
         const { data } = await supabase.from('bento_design_settings').select('published').eq('id', 'global').maybeSingle();
-        if (data?.published) apply(data.published as BentoDesign);
+        if (data?.published && !editorPreviewReceived) apply(data.published as BentoDesign);
       } catch (error) {
         console.warn('Bento design settings are not configured yet.', error);
       }
     };
     window.addEventListener('message', onMessage);
     document.addEventListener('dragstart', onDragStart, true);
+    // Tell the parent editor that hydration has installed the preview message listener.
+    window.parent.postMessage({ type: 'BENTO_PREVIEW_READY' }, window.location.origin);
     document.addEventListener('dragover', onDragOver, true);
     document.addEventListener('drop', onDrop, true);
     const onResize = () => apply(activeDesign);
