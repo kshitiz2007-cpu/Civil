@@ -122,6 +122,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const persist = (envelope: StudioEnvelope) => {
     const task = writeQueue.current.then(async () => {
       setIsSaving(true);
+      setSaveError(null);
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
         const { error } = await supabase.from('design_studio_config')
@@ -130,6 +131,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
         return true;
       } catch (error) {
         console.error('Visual designer cloud save failed:', error);
+        setSaveError(error instanceof Error ? error.message : 'Cloud save failed. Check Supabase permissions and connection.');
         return false;
       } finally { setIsSaving(false); }
     });
