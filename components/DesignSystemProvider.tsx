@@ -131,9 +131,9 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
         let part = current.tagName.toLowerCase();
         const stableClasses = Array.from(current.classList).filter(c => !/^(hover:|focus:|active:|group|peer)/.test(c)).slice(0, 3);
         if (stableClasses.length) part += stableClasses.map(c => `.${CSS.escape(c)}`).join('');
-        const parent = current.parentElement;
+        const parent: HTMLElement | null = current.parentElement;
         if (parent) {
-          const siblings = Array.from(parent.children).filter(s => s.tagName === current!.tagName);
+          const siblings: Element[] = Array.from(parent.children).filter((s: Element) => s.tagName === current!.tagName);
           if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(current) + 1})`;
         }
         parts.unshift(part);
@@ -146,7 +146,7 @@ export default function DesignSystemProvider({ children }: { children: React.Rea
     const onClick = (event: MouseEvent) => {
       if (!editorMode) return;
       const target = event.target as HTMLElement | null;
-      const element = target?.closest('button,a,input,textarea,select,section,article,header,nav,aside,main,h1,h2,h3,h4,p,span,div');
+      const element = target?.closest('button,a,input,textarea,select,section,article,header,nav,aside,main,h1,h2,h3,h4,p,span,div') as HTMLElement | null;
       if (!element || element === document.body || element === document.documentElement) return;
       if (element.closest('[data-bento-studio-ignore="true"]')) return;
       event.preventDefault();
