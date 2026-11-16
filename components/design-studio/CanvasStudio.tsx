@@ -31,7 +31,7 @@ const STARTER:DesignNode[]=[
 const TAG_KIND:Record<string,NodeKind>={section:'section',nav:'navbar',h1:'heading',h2:'heading',h3:'heading',p:'text',button:'button',article:'card',img:'image',input:'input',textarea:'input',div:'section'};
 function parseCssRules(css:string){
  const rules:Record<string,Record<string,string>>={};
- const pattern=/\.([a-zA-Z0-9_-]+)\\s*\\{([^}]*)\\}/g;let match:RegExpExecArray|null;
+ const pattern=/\.([a-zA-Z0-9_-]+)\s*\{([^}]*)\}/g;let match:RegExpExecArray|null;
  while((match=pattern.exec(css))){const styles:Record<string,string>={};match[2].split(';').forEach(pair=>{const i=pair.indexOf(':');if(i<0)return;const key=pair.slice(0,i).trim().replace(/-([a-z])/g,(_,c)=>c.toUpperCase());const value=pair.slice(i+1).trim();if(key&&value)styles[key]=value;});rules[match[1]]=styles;}
  return rules;
 }
@@ -40,13 +40,13 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];error:string
  const diagnostic=(source as ts.SourceFile & {parseDiagnostics?:ts.Diagnostic[]}).parseDiagnostics?.[0];
  if(diagnostic)return {nodes:[],error:ts.flattenDiagnosticMessageText(diagnostic.messageText,' ')};
  const rules=parseCssRules(css);let root:ts.JsxElement|ts.JsxSelfClosingElement|undefined;
- const visit=(node:ts.Node)=>{if(ts.isJsxElement(node)||ts.isJsxSelfClosingElement(node)){if(!root&&node.openingElement?.tagName?.getText(source)==='div'&&node.getText(source).includes('canvas-root'))root=node;}ts.forEachChild(node,visit);};
+ const visit=(node:ts.Node)=>{if(ts.isJsxElement(node)||ts.isJsxSelfClosingElement(node)){const opening=ts.isJsxElement(node)?node.openingElement:node;if(!root&&opening.tagName.getText(source)==='div'&&node.getText(source).includes('canvas-root'))root=node;}ts.forEachChild(node,visit);};
  visit(source);
  if(!root||!ts.isJsxElement(root))return {nodes:[],error:'Visual sync supports a component that returns a JSX element tree. Keep one root JSX element and standard HTML tags.'};
  const read=(el:ts.JsxElement|ts.JsxSelfClosingElement):DesignNode|null=>{
   const opening=ts.isJsxElement(el)?el.openingElement:el;
   const tag=opening.tagName.getText(source).toLowerCase();
-  const kind=TAG_KIND[tag];if(!kind)return null;
+  const classForKind=opening.attributes.properties.find(p=>ts.isJsxAttribute(p)&&p.name.getText(source)==='className') as ts.JsxAttribute|undefined;\n  const classValue=classForKind?.initializer&&ts.isStringLiteral(classForKind.initializer)?classForKind.initializer.text:'';\n  const inferredKind=tag==='div'&&rules[classValue]?.display==='grid'?'grid':TAG_KIND[tag];\n  const kind=inferredKind;if(!kind)return null;
   const classAttr=opening.attributes.properties.find(p=>ts.isJsxAttribute(p)&&p.name.getText(source)==='className') as ts.JsxAttribute|undefined;
   const className=classAttr?.initializer&&ts.isStringLiteral(classAttr.initializer)?classAttr.initializer.text:'';
   const idMatch=className.match(/node-([a-zA-Z0-9_-]+)/);
@@ -56,7 +56,7 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];error:string
   if(ts.isJsxElement(el)){
    for(const child of el.children){
     if(ts.isJsxText(child)){const value=child.getText(source).replace(/\\s+/g,' ').trim();if(value)textParts.push(value);}
-    else if(ts.isJsxElement(child)||ts.isJsxSelfClosingElement(child)){const parsed=read(child);if(parsed)children.push(parsed);}
+    else if(ts.isJsxElement(child)||ts.isJsxSelfClosingElement(child)){const childTag=(ts.isJsxElement(child)?child.openingElement:child).tagName.getText(source).toLowerCase();if(['strong','b','span','em'].includes(childTag)){if(ts.isJsxElement(child))textParts.push(child.children.map(c=>ts.isJsxText(c)?c.getText(source).trim():'').join(''));}else{const parsed=read(child);if(parsed)children.push(parsed);}}
     else if(ts.isJsxExpression(child)&&child.expression)return null;
    }
   }
