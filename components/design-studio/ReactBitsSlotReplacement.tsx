@@ -55,5 +55,7 @@ export default function ReactBitsSlotReplacement({ component, children }: Props)
   if (component === 'CardSwap' || component === 'Masonry' || component === 'Stack' || component === 'Carousel' || component === 'InfiniteScroll' || component === 'ProfileCard' || component === 'Folder' || component === 'Dock' || component === 'GlassIcons' || component === 'PillNav' || component === 'FlowingMenu' || component === 'Stepper' || component === 'PixelTransition') return <motion.div {...motionProps} className="relative z-10 rounded-2xl border border-[var(--app-border)] p-3" whileHover={reduceMotion?undefined:{y:-2,scale:1.005}}>{children}</motion.div>;
   if (component === 'MagnetButton' || component === 'ClickSpark' || component === 'TargetCursor') return <motion.div {...motionProps} className="relative z-10" whileHover={reduceMotion?undefined:{scale:1.02}}>{children}</motion.div>;
 
-  return <>{children}</>;
+
+  if (component.startsWith('Shadcn')) return <motion.div {...motionProps} className="relative z-10 rounded-xl border border-[var(--app-border)] p-3" whileHover={reduceMotion?undefined:{y:-1}}>{children}</motion.div>;
+\n  return <>{children}</>;
 }
