@@ -69,8 +69,9 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];customCss:st
   return {id,kind,name:kind[0].toUpperCase()+kind.slice(1),text:children.length?content:(textParts.join(' ')||content),styles,children:children.length?children:undefined};
  };
  const parsed=root.children.filter((n):n is ts.JsxElement|ts.JsxSelfClosingElement=>ts.isJsxElement(n)||ts.isJsxSelfClosingElement(n)).map(read).filter((n):n is DesignNode=>Boolean(n));
- if(unsupportedExpression||unsupportedComponent)return {nodes:[],error:'This TSX contains expressions or custom React components that cannot be mapped safely to visual layers yet. The code preview remains available; use supported HTML elements and static content for two-way visual sync.'};
- return {nodes:parsed,error:''};
+ if(unsupportedExpression||unsupportedComponent)return {nodes:[],customCss:css,error:'This TSX contains expressions or custom React components that cannot be mapped safely to visual layers yet. The code preview remains available; use supported HTML elements and static content for two-way visual sync.'};
+ const customCss=css.replace(/\.node-[a-zA-Z0-9_-]+\s*\{[^}]*\}/g,'').trim();
+ return {nodes:parsed,customCss,error:''};
 }
 
 const esc=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
