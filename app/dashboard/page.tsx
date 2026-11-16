@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import StudentChatWidget from '@/components/StudentChatWidget';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 type Attempt = {
   id: string;
@@ -483,7 +484,7 @@ export default function DashboardPage() {
         )}
 
         {/* Hero Banner */}
-        <section className="theme-surface relative overflow-hidden rounded-3xl p-6 sm:p-8">
+        <StudioSlot id="dashboard.hero"><StudioSlot id="dashboard.stats"><StudioSlot id="dashboard.performance"><StudioSlot id="dashboard.activity"><section className="theme-surface relative overflow-hidden rounded-3xl p-6 sm:p-8">
           <div className="relative grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--app-accent)]">
@@ -547,7 +548,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        </section>
+        </section></StudioSlot></StudioSlot></StudioSlot></StudioSlot>
 
         {/* Key Metrics Strip */}
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
