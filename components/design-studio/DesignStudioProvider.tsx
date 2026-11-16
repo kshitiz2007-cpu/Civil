@@ -83,7 +83,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [draft, setDraft] = useState<StudioConfig>(DEFAULT_STUDIO);
   const [published, setPublished] = useState<StudioConfig>(DEFAULT_STUDIO);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);\n  const [saveError, setSaveError] = useState<string | null>(null);
   const [isAdminView, setIsAdminView] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writeQueue = useRef<Promise<boolean>>(Promise.resolve(true));
