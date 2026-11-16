@@ -20,6 +20,7 @@ import {
   Landmark,
 } from 'lucide-react';
 import ThemeSelector from '@/components/ThemeSelector';
+import StudioSlot from '@/components/design-studio/StudioSlot';
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -91,7 +92,7 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="app-theme min-h-screen text-[var(--app-text)]">
+    <StudioSlot id="history.page" className="app-theme min-h-screen text-[var(--app-text)]">
       <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] text-[var(--app-accent)]">
@@ -291,6 +292,6 @@ export default function HistoryPage() {
           })}
         </div>
       </main>
-    </div>
+    </StudioSlot>
   );
 }
