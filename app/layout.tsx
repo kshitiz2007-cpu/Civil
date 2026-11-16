@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Instrument_Serif, JetBrains_Mono, Noto_Serif_Devanagari } from "next/font/google";
 import "./globals.css";
+import { DesignStudioProvider } from "@/components/design-studio/DesignStudioProvider";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
 const instrumentSerif = Instrument_Serif({ weight: "400", subsets: ["latin"], variable: "--font-display" });
@@ -25,7 +26,7 @@ export default function RootLayout({
       className={`${manrope.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} ${notoDevanagari.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        {children}
+        <DesignStudioProvider>{children}</DesignStudioProvider>
       </body>
     </html>
   );
