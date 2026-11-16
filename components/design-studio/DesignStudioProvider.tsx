@@ -70,6 +70,7 @@ const StudioContext = createContext<{
   publish: () => Promise<boolean>;
   discard: () => void;
   isSaving: boolean;
+  saveError: string | null;
   isPublished: boolean;
 } | null>(null);
 
@@ -195,7 +196,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   }, [pageKey, config.global]);
 
   return <StudioContext.Provider value={{
-    config, draft, published, save, publish, discard, isSaving,
+    config, draft, published, save, publish, discard, isSaving, saveError,
     isPublished: JSON.stringify(draft) === JSON.stringify(published),
   }}>
     <style id="gyankunj-live-design-tokens">{css}</style>{children}
