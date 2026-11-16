@@ -58,7 +58,8 @@ export default function CanvasStudio(){
  const generatedJsx=useMemo(()=> 'const App = () => (\n<div className="canvas-root">\n'+nodes.map(n=>nodeToJsx(n,1)).join('\n')+'\n</div>\n);', [nodes]);
  const generatedCss=useMemo(()=>nodes.map(n=>'.node-'+n.id+'{'+cssText(n.styles)+'}').join('\n'),[nodes]);
  useEffect(()=>{if(mode==='design'){setJsx(generatedJsx);setCss(generatedCss);}},[generatedJsx,generatedCss,mode]);
- const compiledResult=useMemo(()=>{try{const result=ts.transpileModule(jsx,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.None,jsx:ts.JsxEmit.React,jsxFactory:'h',jsxFragmentFactory:'h.Fragment',strict:false}});return {code:result.outputText,error:''};}catch(e){return {code:'',error:e instanceof Error?e.message:'Unable to compile TSX'};}},[jsx]);\n const compiled=compiledResult.code,codeError=compiledResult.error;
+ const compiledResult=useMemo(()=>{try{const result=ts.transpileModule(jsx,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.None,jsx:ts.JsxEmit.React,jsxFactory:'h',jsxFragmentFactory:'h.Fragment',strict:false}});return {code:result.outputText,error:''};}catch(e){return {code:'',error:e instanceof Error?e.message:'Unable to compile TSX'};}},[jsx]);
+ const compiled=compiledResult.code,codeError=compiledResult.error;
  useEffect(()=>{if(frame.current&&preview&&compiled)frame.current.srcdoc=buildDocument(compiled,css);},[compiled,css,preview]);
  const commit=(next:DesignNode[])=>{setHistory(h=>[...h.slice(-29),nodes]);setFuture([]);setNodes(next);};
  const updateNode=(id:string,patch:Partial<DesignNode>)=>{const walk=(list:DesignNode[]):DesignNode[]=>list.map(n=>n.id===id?{...n,...patch}: {...n,children:n.children?walk(n.children):undefined});commit(walk(nodes));};
