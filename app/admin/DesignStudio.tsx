@@ -179,7 +179,7 @@ export default function DesignStudio() {
             <p className="text-xs text-[var(--app-muted)]">Recipes generate CSS classes (for example <code>.studio-button</code>) that can be assigned to registered components. Existing bespoke JSX needs those classes applied to consume a recipe.</p>
           </div>}
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
-          {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio /></div>}
+          {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio page={page} config={config} save={save}/></div>}
           {panel==='builder'&&<div className="mt-5"><VisualBlockBuilder page={page} selectedSlot={selectedElement?.slotId} config={config} save={save}/></div>}
           {panel==='assets'&&<div className="mt-5 space-y-4">
             <div onClick={()=>fileRef.current?.click()} className="cursor-pointer rounded-2xl border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface-muted)] p-8 text-center"><Upload className="mx-auto mb-2 text-[var(--app-accent)]"/><p className="text-sm font-bold">Upload images, logos and visual assets</p><p className="mt-1 text-xs text-[var(--app-muted)]">Choose files from your device. Stored locally in this browser for this prototype.</p><input ref={fileRef} hidden type="file" multiple accept="image/*,image/svg+xml" onChange={e=>upload(e.target.files)}/></div>
