@@ -134,7 +134,7 @@ export default function LoginPage() {
   return (
     <div className="app-theme min-h-screen flex flex-col justify-between p-4 md:p-8 relative overflow-hidden">
       {/* Top Bar */}
-      <header className="relative z-10 max-w-6xl w-full mx-auto flex items-center justify-between py-2">
+      <StudioSlot id="home.topbar" className="relative z-10 w-full"><header className="relative z-10 max-w-6xl w-full mx-auto flex items-center justify-between py-2">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] flex items-center justify-center text-[var(--app-accent)]">
             <Landmark className="w-5 h-5" />
@@ -157,12 +157,12 @@ export default function LoginPage() {
           </button>
           <ThemeSelector />
         </div>
-      </header>
+      </header></StudioSlot>
 
       {/* Main Content */}
       <main className="relative z-10 max-w-6xl w-full mx-auto my-auto grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center py-8">
         {/* Left Institutional Overview */}
-        <section className="space-y-6 pr-0 lg:pr-6">
+        <StudioSlot id="home.institutional-overview" className="min-w-0"><section className="space-y-6 pr-0 lg:pr-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-panel)] px-3.5 py-1.5 text-xs font-semibold text-[var(--app-accent)]">
             <Compass className="w-3.5 h-3.5" />
             <span>UPSC CSE Prelims & CSAT Computer-Based Evaluation System</span>
@@ -214,7 +214,7 @@ export default function LoginPage() {
               </p>
             </div></StudioSlot>
           </div>
-        </section>
+        </section></StudioSlot>
 
         {/* Right Sign-In & Instant Simulator Card */}
         <StudioSlot id="home.login-card" className="w-full max-w-md mx-auto rounded-3xl"><section className="theme-surface rounded-3xl p-7 sm:p-9 w-full">
