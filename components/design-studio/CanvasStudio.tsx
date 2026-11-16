@@ -29,7 +29,7 @@ const STARTER:DesignNode[]=[
 const esc=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const cssText=(styles:Record<string,string>)=>Object.entries(styles).map(([k,v])=>k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())+':'+v).join(';');
 function nodeToJsx(node:DesignNode,depth=0):string{
- const pad='  '.repeat(depth),attrs='className="node-'+node.kind+'" style={{'+Object.entries(node.styles).map(([k,v])=>k+': '+JSON.stringify(v)).join(', ')+'}}';
+ const pad='  '.repeat(depth),attrs='className="node-'+node.id+'"';
  const children=(node.children||[]).map(child=>nodeToJsx(child,depth+1)).join('\n');
  if(node.kind==='image')return pad+'<img '+attrs+' alt='+JSON.stringify(node.text)+' src="https://placehold.co/1200x600/182235/ffffff?text=Your+Image" />';
  if(node.kind==='input')return pad+'<input '+attrs+' placeholder='+JSON.stringify(node.text)+' />';
