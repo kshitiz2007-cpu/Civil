@@ -39,7 +39,7 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];error:string
  const source=ts.createSourceFile('CanvasPage.tsx',code,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
  const diagnostic=(source as ts.SourceFile & {parseDiagnostics?:ts.Diagnostic[]}).parseDiagnostics?.[0];
  if(diagnostic)return {nodes:[],error:ts.flattenDiagnosticMessageText(diagnostic.messageText,' ')};
- const rules=parseCssRules(css);let root:ts.JsxElement|undefined;
+ const rules=parseCssRules(css);let root:ts.JsxElement|undefined;let unsupportedExpression=false;let unsupportedComponent=false;
  const visit=(node:ts.Node)=>{if(ts.isJsxElement(node)){if(!root&&node.openingElement.tagName.getText(source)==='div'&&node.getText(source).includes('canvas-root'))root=node;}ts.forEachChild(node,visit);};
  visit(source);
  if(!root)return {nodes:[],error:'Visual sync supports a component that returns one root JSX element with standard HTML elements.'};
@@ -61,7 +61,7 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];error:string
      const childTag=(ts.isJsxElement(child)?child.openingElement:child).tagName.getText(source).toLowerCase();
      if(['strong','b','span','em'].includes(childTag)){if(ts.isJsxElement(child))textParts.push(child.children.map(c=>ts.isJsxText(c)?c.getText(source).trim():'').join(''));}
      else {const parsed=read(child);if(parsed)children.push(parsed);}
-    }else if(ts.isJsxExpression(child)&&child.expression)return null;
+    }else if(ts.isJsxExpression(child)&&child.expression){unsupportedExpression=true;return null;}
    }
   }
   const attrText=(name:string)=>{const a=opening.attributes.properties.find(p=>ts.isJsxAttribute(p)&&p.name.getText(source)===name) as ts.JsxAttribute|undefined;return a?.initializer&&ts.isStringLiteral(a.initializer)?a.initializer.text:'';};
@@ -69,7 +69,7 @@ function parseTsxLayers(code:string,css:string):{nodes:DesignNode[];error:string
   return {id,kind,name:kind[0].toUpperCase()+kind.slice(1),text:children.length?content:(textParts.join(' ')||content),styles,children:children.length?children:undefined};
  };
  const parsed=root.children.filter((n):n is ts.JsxElement|ts.JsxSelfClosingElement=>ts.isJsxElement(n)||ts.isJsxSelfClosingElement(n)).map(read).filter((n):n is DesignNode=>Boolean(n));
- if(!parsed.length&&root.children.some(n=>ts.isJsxExpression(n)))return {nodes:[],error:'Custom expressions and React components cannot be converted into visual layers yet. The code preview remains available; use supported HTML elements for two-way visual sync.'};
+ if(unsupportedExpression||unsupportedComponent)return {nodes:[],error:'This TSX contains expressions or custom React components that cannot be mapped safely to visual layers yet. The code preview remains available; use supported HTML elements and static content for two-way visual sync.'};
  return {nodes:parsed,error:''};
 }
 
