@@ -140,7 +140,7 @@ export default function StudentResourcesPage() {
 
   return (
     <div className="app-theme min-h-screen text-[var(--app-text)]">
-      <aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
+      <StudioSlot id="resources.sidebar" className="fixed inset-y-0 left-0 z-20 hidden w-64 md:block"><aside className="theme-surface-solid fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--app-border)] px-5 py-6 md:flex">
         <div className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--app-accent-soft)] border border-[var(--app-border)] text-[var(--app-accent)]">
             <Landmark className="h-5 w-5" />
@@ -281,7 +281,7 @@ export default function StudentResourcesPage() {
         )}
 
         {activeSubject && (
-          <StudioSlot id="resources.material-browser"><div className="space-y-6">
+          <div className="space-y-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--app-muted)]" />
               <input
@@ -376,7 +376,7 @@ export default function StudentResourcesPage() {
                 )
               )}
             </div>
-          </div></StudioSlot>
+          </div>
         )}
       </main>
     </div>
