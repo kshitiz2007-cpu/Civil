@@ -8,7 +8,7 @@ export type StudioBreakpoint = 'desktop' | 'tablet' | 'mobile';
 export type VisualBlock = {
   id: string;
   type: 'heading' | 'text' | 'button' | 'card' | 'icon' | 'stat' | 'image' | 'divider' | 'reactBit';
-  component?: 'blur-text' | 'aurora' | 'spotlight-card' | 'magnet-button';
+  component?: 'blur-text' | 'aurora' | 'spotlight-card' | 'magnet-button' | 'shiny-text' | 'gradient-text' | 'fuzzy-text' | 'split-text' | 'tilted-card' | 'glare-hover' | 'particles' | 'beams' | 'click-spark' | 'card-swap' | 'target-cursor' | 'text-pressure' | 'electric-border' | 'dither';
   title: string;
   text?: string;
   buttonLabel?: string;
