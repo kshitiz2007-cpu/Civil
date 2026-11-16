@@ -206,7 +206,7 @@ export default function StudentResourcesPage() {
       </aside>
 
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <StudioSlot id="resources.header"><header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <button
               onClick={() =>
@@ -230,7 +230,7 @@ export default function StudentResourcesPage() {
             </div>
           </div>
           <ThemeSelector />
-        </header>
+        </header></StudioSlot>
 
         {!activeSubject && (
           <StudioSlot id="resources.subject-browser"><section>
