@@ -47,16 +47,6 @@ export const DEFAULT_STUDIO: StudioConfig = {
   customCss: '', componentUpgrades: {}, slotBlocks: {}, slotOrder: {},
 };
 type StudioEnvelope = { __studioVersion: 2; draft: StudioConfig; published: StudioConfig };
-const StudioContext = createContext<{
-  config: StudioConfig;
-  draft: StudioConfig;
-  published: StudioConfig;
-  save: (v: StudioConfig) => void;
-  publish: () => Promise<boolean>;
-  discard: () => void;
-  isSaving: boolean;
-  isPublished: boolean;
-} | null>(null);
 const mergeConfig = (value: Partial<StudioConfig> | null | undefined): StudioConfig => ({
   ...DEFAULT_STUDIO, ...(value || {}),
   breakpoints: { ...DEFAULT_STUDIO.breakpoints, ...(value?.breakpoints || {}) },
@@ -69,40 +59,55 @@ const decodeEnvelope = (value: any): StudioEnvelope => {
   const legacy = mergeConfig(value);
   return { __studioVersion: 2, draft: legacy, published: legacy };
 };
+const initialEnvelope: StudioEnvelope = {
+  __studioVersion: 2, draft: DEFAULT_STUDIO, published: DEFAULT_STUDIO,
+};
+const StudioContext = createContext<{
+  config: StudioConfig;
+  draft: StudioConfig;
+  published: StudioConfig;
+  save: (v: StudioConfig) => void;
+  publish: () => Promise<boolean>;
+  discard: () => void;
+  isSaving: boolean;
+  isPublished: boolean;
+} | null>(null);
+
 export function useDesignStudio() {
   const value = useContext(StudioContext);
   if (!value) throw new Error('useDesignStudio must be used inside DesignStudioProvider');
   return value;
 }
+
 export function DesignStudioProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [draft, setDraft] = useState<StudioConfig>(DEFAULT_STUDIO);
   const [published, setPublished] = useState<StudioConfig>(DEFAULT_STUDIO);
   const [isSaving, setIsSaving] = useState(false);
   const [isAdminView, setIsAdminView] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writeQueue = useRef<Promise<boolean>>(Promise.resolve(true));
-  const latest = useRef<StudioEnvelope>({ __studioVersion: 2, draft: DEFAULT_STUDIO, published: DEFAULT_STUDIO });
+  const latest = useRef<StudioEnvelope>(initialEnvelope);
 
   useEffect(() => {
-    const adminView = pathname.startsWith('/admin') || new URLSearchParams(window.location.search).has('studioPreview');
-    setIsAdminView(adminView);
+    setIsAdminView(pathname.startsWith('/admin') || new URLSearchParams(window.location.search).has('studioPreview'));
+  }, [pathname]);
+
+  useEffect(() => {
     let alive = true;
     const apply = (raw: any) => {
       const envelope = decodeEnvelope(raw);
       latest.current = envelope;
       setDraft(envelope.draft);
       setPublished(envelope.published);
-      setLoaded(true);
     };
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) apply(JSON.parse(raw));
-    } catch { /* keep safe defaults */ }
+    } catch { /* retain safe defaults */ }
     supabase.from('design_studio_config').select('config').eq('id', 'global').maybeSingle()
       .then(({ data, error }) => {
-        if (!alive || error || !data?.config) { if (alive) setLoaded(true); return; }
+        if (!alive || error || !data?.config) return;
         apply(data.config);
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(decodeEnvelope(data.config))); } catch {}
       });
@@ -112,21 +117,26 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     };
     window.addEventListener('storage', sync);
     return () => { alive = false; window.removeEventListener('storage', sync); };
-  }, [pathname]);
+  }, []);
 
-  const persist = async (envelope: StudioEnvelope) => {
-    setIsSaving(true);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
-      const { error } = await supabase.from('design_studio_config')
-        .upsert({ id: 'global', config: envelope }, { onConflict: 'id' });
-      if (error) throw error;
-      return true;
-    } catch (error) {
-      console.error('Visual designer cloud save failed:', error);
-      return false;
-    } finally { setIsSaving(false); }
+  const persist = (envelope: StudioEnvelope) => {
+    const task = writeQueue.current.then(async () => {
+      setIsSaving(true);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+        const { error } = await supabase.from('design_studio_config')
+          .upsert({ id: 'global', config: envelope }, { onConflict: 'id' });
+        if (error) throw error;
+        return true;
+      } catch (error) {
+        console.error('Visual designer cloud save failed:', error);
+        return false;
+      } finally { setIsSaving(false); }
+    });
+    writeQueue.current = task;
+    return task;
   };
+
   const save = (next: StudioConfig) => {
     const envelope = { ...latest.current, draft: next };
     latest.current = envelope;
@@ -135,17 +145,24 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => { void persist(envelope); }, 700);
   };
+
   const publish = async () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     const envelope = { ...latest.current, published: latest.current.draft };
     const ok = await persist(envelope);
-    if (ok) { latest.current = envelope; setPublished(envelope.published); }
+    if (ok) {
+      latest.current = envelope;
+      setPublished(envelope.published);
+    }
     return ok;
   };
+
   const discard = () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     const envelope = { ...latest.current, draft: latest.current.published };
-    latest.current = envelope; setDraft(envelope.draft); void persist(envelope);
+    latest.current = envelope;
+    setDraft(envelope.draft);
+    void persist(envelope);
   };
 
   const pageKey = pathname === '/' ? 'home' : pathname.split('/').filter(Boolean)[0] || 'home';
@@ -163,14 +180,18 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
     };
     const componentCss = Object.entries(config.components).map(([name, styles]) => `.${name}{${declarations(styles)}}`).join('');
     const elementCss = Object.entries(config.elementStyles || {}).filter(([key]) => key.startsWith(`${pageKey}::`)).map(([key, styles]) => `${key.slice(pageKey.length + 2)}{${declarations(styles)}}`).join('');
-    return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}` + componentCss + elementCss +
+    return `html[data-theme]{${global}}html[data-studio-page="${pageKey}"]{${page}}${
+      componentCss + elementCss +
       responsive('tablet','(min-width:768px) and (max-width:1023px)') +
-      responsive('mobile','(max-width:767px)') + (config.customCss || '');
+      responsive('mobile','(max-width:767px)') + (config.customCss || '')
+    }`;
   }, [config, pageKey]);
+
   useEffect(() => {
     document.documentElement.dataset.studioPage = pageKey;
     document.documentElement.style.fontSize = `calc(16px * ${config.global['--studio-font-scale'] || '1'})`;
   }, [pageKey, config.global]);
+
   return <StudioContext.Provider value={{
     config, draft, published, save, publish, discard, isSaving,
     isPublished: JSON.stringify(draft) === JSON.stringify(published),
