@@ -133,9 +133,9 @@ export default function ReactBitsStudio({ page, config, save, previewUrl }: { pa
   const raw=installCommandText.trim();
   if(!raw){setInstallError('Paste a React Bits / shadcn registry command first.');return;}
   if(/[;&|<>\x60]|\$\(|\beval\b|\bcurl\b|\bwget\b|\brm\s+-rf\b/i.test(raw)){setInstallError('Unsafe shell syntax detected. Only a single supported component registry command is accepted.');return;}
-  const registry=raw.match(/@react-bits\\/([A-Za-z0-9_-]+)/i);
-  const packageName=raw.match(/(?:npm\\s+install|pnpm\\s+add|yarn\\s+add)\\s+(@?[A-Za-z0-9._/-]+)/i);
-  const componentToken=registry?.[1]||(packageName?.[1]||'').split('/').pop()||raw.split(/[\\s/]/).filter(Boolean).pop()||'';
+  const registry=raw.match(/@react-bits\/([A-Za-z0-9_-]+)/i);
+  const packageName=raw.match(/(?:npm\s+install|pnpm\s+add|yarn\s+add)\s+(@?[A-Za-z0-9._/-]+)/i);
+  const componentToken=registry?.[1]||(packageName?.[1]||'').split('/').pop()||raw.split(/[\s/]/).filter(Boolean).pop()||'';
   const normalized=componentToken.replace(/-(?:ts|js)-(?:css|tw)$/i,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
   const resolved=componentAliases[normalized];
   if(!resolved||!["blur-text","aurora","spotlight-card","magnet-button","shiny-text","gradient-text","fuzzy-text","split-text","tilted-card","glare-hover","particles","beams","click-spark","card-swap","target-cursor","text-pressure","electric-border","dither","star-border","fade-content","animated-content","scroll-reveal","count-up","decrypted-text","infinite-scroll","dock","profile-card","glass-icons","true-focus","scroll-float","pixel-transition","waves","silk","lightning","galaxy","orb","masonry","stack","carousel","stepper","folder","pill-nav","flowing-menu"].includes(resolved)){setInstallError('Command parsed, but this component has no approved live renderer yet. Add a reviewed React adapter before it can be installed into the app. The command was not executed.');return;}
