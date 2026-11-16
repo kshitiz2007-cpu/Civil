@@ -12,6 +12,7 @@ const CATALOG: Omit<VisualBlock, 'id'>[] = [
   { type:'card', title:'Feature card', text:'Describe a feature, resource or key benefit.', icon:'star', effect:'rise' },
   { type:'icon', title:'Icon highlight', text:'', icon:'check', effect:'none' },
   { type:'stat', title:'Performance metric', text:'92%', icon:'chart', effect:'rise' },
+  { type:'image', title:'Feature image', src:'', effect:'fade' },
   { type:'divider', title:'Divider', effect:'none' },
 ];
 const SLOT_REGISTRY: Record<string, { id:string; label:string; group:string }[]> = {
@@ -108,6 +109,7 @@ export default function VisualBlockBuilder({
               <label className="text-[10px] text-[var(--app-muted)]">Title<input value={block.title} onChange={e=>updateBlock(block.id,{title:e.target.value})} className="glass-input mt-1 w-full text-xs"/></label>
               {block.type!=='divider'&&block.type!=='heading'&&<label className="text-[10px] text-[var(--app-muted)]">Text / value<input value={block.text||''} onChange={e=>updateBlock(block.id,{text:e.target.value})} className="glass-input mt-1 w-full text-xs"/></label>}
               {block.type==='button'&&<><label className="text-[10px] text-[var(--app-muted)]">Button label<input value={block.buttonLabel||''} onChange={e=>updateBlock(block.id,{buttonLabel:e.target.value})} className="glass-input mt-1 w-full text-xs"/></label><label className="text-[10px] text-[var(--app-muted)]">Link URL<input value={block.href||''} onChange={e=>updateBlock(block.id,{href:e.target.value})} className="glass-input mt-1 w-full text-xs"/></label></>}
+              {block.type==='image'&&<label className="text-[10px] text-[var(--app-muted)]">Image URL<input value={block.src||''} onChange={e=>updateBlock(block.id,{src:e.target.value})} placeholder="/images/banner.webp or https://…" className="glass-input mt-1 w-full text-xs"/></label>}
               {['card','icon'].includes(block.type)&&<label className="text-[10px] text-[var(--app-muted)]">Hugeicons icon<select value={block.icon||'star'} onChange={e=>updateBlock(block.id,{icon:e.target.value})} className="glass-input mt-1 w-full text-xs">{['star','home','arrow','check','book','chart'].map(icon=><option key={icon}>{icon}</option>)}</select></label>}
               <label className="text-[10px] text-[var(--app-muted)]">Motion effect<select value={block.effect||'none'} onChange={e=>updateBlock(block.id,{effect:e.target.value as VisualBlock['effect']})} className="glass-input mt-1 w-full text-xs">{['none','fade','rise','float','pulse'].map(effect=><option key={effect}>{effect}</option>)}</select></label>
               <label className="text-[10px] text-[var(--app-muted)]">Background CSS<input value={block.styles?.background||''} onChange={e=>updateBlock(block.id,{styles:{...(block.styles||{}),background:e.target.value}})} placeholder="transparent / #10211d / gradient" className="glass-input mt-1 w-full text-xs"/></label>
