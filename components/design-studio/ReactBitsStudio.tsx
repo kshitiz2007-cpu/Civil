@@ -56,7 +56,13 @@ const PAGE_SLOTS: Record<string, { id: string; label: string }[]> = {
   {id:'admin.overview',label:'Command center'},{id:'admin.inbox',label:'Mentor inbox'},{id:'admin.quizzes',label:'Quiz manager'},
   {id:'admin.aigen',label:'AI paper setter'},{id:'admin.resources',label:'Resource manager'},{id:'admin.students',label:'Student directory'},
   {id:'admin.analytics',label:'Analytics'},{id:'admin.payments',label:'Payments'},{id:'admin.csvimport',label:'CSV importer'},
-  {id:'admin.scheduled.header',label:'Live mock heading'},{id:'admin.scheduled.form',label:'Live mock form'},{id:'admin.scheduled.list',label:'Scheduled mocks'}
+  {id:'admin.scheduled.header',label:'Live mock heading'},{id:'admin.scheduled.form',label:'Live mock form'},{id:'admin.scheduled.list',label:'Scheduled mocks'},
+  {id:'admin.overview.header',label:'Overview header'},{id:'admin.overview.telemetry',label:'Overview telemetry'},
+  {id:'admin.inbox.composer',label:'Inbox message composer'},{id:'admin.quizzes.header',label:'Quiz manager header'},
+  {id:'admin.aigen.header',label:'AI builder header'},{id:'admin.aigen.configuration',label:'AI builder configuration'},{id:'admin.aigen.output',label:'AI generated paper output'},
+  {id:'admin.resources.header',label:'Resource manager header'},{id:'admin.resources.publish-form',label:'Resource publish form'},
+  {id:'admin.students.header',label:'Student directory header'},{id:'admin.analytics.dashboard',label:'Analytics dashboard'},
+  {id:'admin.payments.header',label:'Payments header'},{id:'admin.csv.header',label:'CSV importer header'},{id:'admin.csv.workspace',label:'CSV import workspace'}
  ],
 };
 
