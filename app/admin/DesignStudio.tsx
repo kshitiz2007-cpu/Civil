@@ -102,15 +102,18 @@ export default function DesignStudio() {
   const updateComponent = (key:string,value:string) => commit({...config,components:{...config.components,[componentChoice]:{...(config.components[componentChoice]||{}),[key]:value}}});
   const selectorFor = (el:Element):string => {
     if ((el as HTMLElement).id) return `#${CSS.escape((el as HTMLElement).id)}`;
+    const slot=el.closest('[data-studio-slot]') as HTMLElement|null;
+    const anchor=slot?.dataset.studioSlot ? `[data-studio-slot="${CSS.escape(slot.dataset.studioSlot)}"]` : 'body';
+    if(slot===el) return anchor;
     const parts:string[]=[]; let node:Element|null=el;
-    while(node && node.tagName.toLowerCase()!=='html') {
+    while(node && node!==slot && node.tagName.toLowerCase()!=='html' && node.tagName.toLowerCase()!=='body') {
       let part=node.tagName.toLowerCase();
-      const classes=Array.from(node.classList).filter(x=>!x.startsWith('hover:') && !x.startsWith('focus:')).slice(0,2);
+      const classes=Array.from(node.classList).filter(x=>!x.startsWith('hover:') && !x.startsWith('focus:') && !x.startsWith('data-') && !['data-studio-picked','data-studio-hover'].includes(x)).slice(0,2);
       if(classes.length) part+='.'+classes.map(x=>CSS.escape(x)).join('.');
       else if(node.parentElement) { const siblings=Array.from(node.parentElement.children).filter(x=>x.tagName===node!.tagName); if(siblings.length>1) part+=`:nth-of-type(${siblings.indexOf(node)+1})`; }
-      parts.unshift(part); if(node.parentElement?.id){parts.unshift('#'+CSS.escape(node.parentElement.id));break;} node=node.parentElement;
+      parts.unshift(part); node=node.parentElement;
     }
-    return parts.join(' > ');
+    return [anchor,...parts].join(' > ');
   };
   const previewPath = page==='quiz' ? '/quiz/upsc-gs1-polity-01' : (PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/');
   const previewUrl = `${previewPath}${previewPath.includes('?')?'&':'?'}studioPreview=1`;
@@ -122,7 +125,7 @@ export default function DesignStudio() {
     if(!style){style=doc.createElement('style');style.id='studio-inspector-overlay';doc.head.appendChild(style);}
     style.textContent='[data-studio-hover]{outline:2px dashed #38bdf8!important;outline-offset:3px!important;cursor:crosshair!important}[data-studio-picked]{outline:2px solid #a78bfa!important;outline-offset:3px!important}';
     doc.addEventListener('mouseover',(event)=>{const el=(event.target as Element)?.closest?.('body *');if(!el)return;doc.querySelectorAll('[data-studio-hover]').forEach(x=>x.removeAttribute('data-studio-hover'));if(!el.hasAttribute('data-studio-picked'))el.setAttribute('data-studio-hover','');},true);
-    doc.addEventListener('click',(event)=>{const clicked=(event.target as Element)?.closest?.('body *');if(!clicked)return;event.preventDefault();event.stopPropagation();const slot=clicked.closest('[data-studio-slot]') as HTMLElement|null;const el=clicked as HTMLElement;doc.querySelectorAll('[data-studio-picked]').forEach(x=>x.removeAttribute('data-studio-picked'));el.setAttribute('data-studio-picked','');const selector=selectorFor(el);const stableClasses=Array.from(el.classList).filter(x=>!x.startsWith('hover:')&&!x.startsWith('focus:')&&!x.startsWith('data-')&&!['data-studio-picked','data-studio-hover'].includes(x));const matchingSelector=(el.id?'#'+CSS.escape(el.id):stableClasses.length?el.tagName.toLowerCase()+'.'+stableClasses.map(x=>CSS.escape(x)).join('.'):selector);setSelectedElement({selector,matchingSelector,label:el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+(el.classList.length?'.'+Array.from(el.classList).slice(0,2).join('.'): ''),slotId:slot?.dataset.studioSlot});setElementStyleScope('matching');const responsivePrefix=breakpoint==='desktop'?page+'::':page+'::@'+breakpoint+'::';setElementStyles(config.elementStyles?.[responsivePrefix+matchingSelector]||config.elementStyles?.[responsivePrefix+selector]||{});},true);
+    doc.addEventListener('click',(event)=>{const clicked=(event.target as Element)?.closest?.('body *');if(!clicked)return;event.preventDefault();event.stopPropagation();const slot=clicked.closest('[data-studio-slot]') as HTMLElement|null;const el=clicked as HTMLElement;doc.querySelectorAll('[data-studio-picked]').forEach(x=>x.removeAttribute('data-studio-picked'));el.setAttribute('data-studio-picked','');const selector=selectorFor(el);const stableClasses=Array.from(el.classList).filter(x=>!x.startsWith('hover:')&&!x.startsWith('focus:')&&!x.startsWith('data-')&&!['data-studio-picked','data-studio-hover'].includes(x));const slotSelector=slot?.dataset.studioSlot?`[data-studio-slot="${CSS.escape(slot.dataset.studioSlot)}"]`:'';const matchingSelector=el.id?'#'+CSS.escape(el.id):slotSelector&&el!==slot&&stableClasses.length?`${slotSelector} ${el.tagName.toLowerCase()}.${stableClasses.map(x=>CSS.escape(x)).join('.')}`:selector;setSelectedElement({selector,matchingSelector,label:el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+(el.classList.length?'.'+Array.from(el.classList).slice(0,2).join('.'): ''),slotId:slot?.dataset.studioSlot});setElementStyleScope('matching');const responsivePrefix=breakpoint==='desktop'?page+'::':page+'::@'+breakpoint+'::';setElementStyles(config.elementStyles?.[responsivePrefix+matchingSelector]||config.elementStyles?.[responsivePrefix+selector]||{});},true);
     const saved=config.elementStyles||{};Object.entries(saved).filter(([key])=>key.startsWith(`${page}::`)).forEach(([key,styles])=>{const selector=key.slice(page.length+2);try{doc.querySelectorAll(selector).forEach(el=>Object.assign((el as HTMLElement).style,styles));}catch{}});
   };
   const updateElementStyle=(key:string,value:string)=>{if(!selectedElement)return;const next={...elementStyles,[key]:value};setElementStyles(next);const targetSelector=elementStyleScope==='matching'?selectedElement.matchingSelector:selectedElement.selector;const styleKey=breakpoint==='desktop'?`${page}::${targetSelector}`:`${page}::@${breakpoint}::${targetSelector}`;commit({...config,elementStyles:{...(config.elementStyles||{}),[styleKey]:next}});const doc=previewFrame.current?.contentDocument;try{doc?.querySelectorAll(targetSelector).forEach(el=>(el as HTMLElement).style.setProperty(key,value));}catch{}};
