@@ -30,6 +30,13 @@ export default function LoginPage() {
     let mounted = true;
 
     const checkUserRoleAndRedirect = async (session: any) => {
+      // Design Studio loads the real landing page inside an authenticated preview iframe.
+      // Never run the normal post-login redirects while that preview flag is present.
+      const studioPreview = new URLSearchParams(window.location.search).has('studioPreview');
+      if (studioPreview) {
+        if (mounted) setCheckingAuth(false);
+        return;
+      }
       if (!session?.user?.email) {
         if (mounted) setCheckingAuth(false);
         return;
