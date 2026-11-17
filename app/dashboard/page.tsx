@@ -446,9 +446,9 @@ export default function DashboardPage() {
       </aside></StudioSlot>
 
       {/* Main Content */}
-      <main className="relative z-10 mx-auto max-w-7xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
+      <main className="relative z-10 mx-auto max-w-7xl px-3 pb-24 pt-4 sm:px-5 md:ml-64 md:px-10 md:py-9">
         {/* Top Header */}
-        <StudioSlot id="dashboard.header"><header className="mb-7 flex flex-wrap items-center justify-between gap-4">
+        <StudioSlot id="dashboard.header"><header className="mb-4 flex flex-wrap items-center justify-between gap-3 sm:mb-7 sm:gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--app-accent)]">
               Civil Services Academic Sanctuary
@@ -485,22 +485,22 @@ export default function DashboardPage() {
         )}
 
         {/* Hero Banner */}
-        <StudioSlot id="dashboard.hero"><section className="theme-surface relative overflow-hidden rounded-3xl p-6 sm:p-8">
-          <div className="relative grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
+        <StudioSlot id="dashboard.hero"><section className="theme-surface relative overflow-hidden rounded-2xl p-4 sm:rounded-3xl sm:p-8">
+          <div className="relative grid gap-4 lg:grid-cols-[1.25fr_0.75fr] lg:items-center lg:gap-6">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--app-accent)]">
                 <Compass className="h-3.5 w-3.5" /> UPSC CSE Prelims CBT Engine v3.0
               </span>
-              <h2 className="mt-3.5 text-2xl font-bold tracking-tight sm:text-3xl">
+              <h2 className="mt-2.5 text-lg font-bold tracking-tight sm:mt-3.5 sm:text-3xl">
                 Master accuracy, statement deduction & 50-50 EV before speed.
               </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--app-muted)]">
+              <p className="mt-1.5 max-w-2xl text-xs leading-relaxed text-[var(--app-muted)] sm:mt-2 sm:text-sm">
                 In UPSC Prelims, avoiding 6 unnecessary negative guesses saves 4
                 full marks. Use our upgraded CBT engine with interactive
                 statement True/False tags, option strike-through, and live
                 Expected Value (EV) guidance.
               </p>
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-3 flex flex-wrap gap-2 sm:mt-5 sm:gap-3">
                 <button
                   onClick={() => router.push('/quiz/upsc-gs1-polity-01')}
                   className="inline-flex items-center gap-2 rounded-xl bg-[var(--app-accent)] px-4 py-2.5 text-sm font-bold text-slate-950 transition hover:opacity-90"
@@ -517,15 +517,15 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <StudioSlot id="dashboard.hero-metric"><div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <StudioSlot id="dashboard.hero-metric"><div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 sm:rounded-2xl sm:p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-[var(--app-muted)]">
                     Strike Accuracy
                   </span>
                   <Target className="h-4 w-4 text-[var(--app-accent)]" />
                 </div>
-                <p className="mt-3 text-2xl font-bold">
+                <p className="mt-2 text-xl font-bold sm:mt-3 sm:text-2xl">
                   {attempts.length ? `${accuracyStats.accuracy}%` : '—'}
                 </p>
                 <p className="mt-1 text-[11px] text-[var(--app-muted)]">
@@ -552,7 +552,7 @@ export default function DashboardPage() {
         </section></StudioSlot>
 
         {/* Key Metrics Strip */}
-        <StudioSlot id="dashboard.stats"><section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StudioSlot id="dashboard.stats"><section className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-4 lg:grid-cols-4">
           <StudioSlot id="dashboard.stat-tests"><StatCard
             icon={BookOpen}
             label="Tests Evaluated"
@@ -584,9 +584,9 @@ export default function DashboardPage() {
         </section></StudioSlot>
 
         {/* Main 2-Column Analytical Section */}
-        <StudioSlot id="dashboard.analytics-layout"><div className="mt-7 grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
+        <StudioSlot id="dashboard.analytics-layout"><div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-[1.3fr_0.9fr] xl:gap-6">
           {/* Recommended Practice Modules */}
-          <StudioSlot id="dashboard.practice"><section className="theme-surface rounded-3xl p-5 sm:p-6">
+          <StudioSlot id="dashboard.practice" className="col-span-2 xl:col-span-1"><section className="theme-surface rounded-2xl p-3 sm:rounded-3xl sm:p-6">
             <div className="flex items-end justify-between gap-4">
               <div>
                 <h2 className="text-lg font-bold">
@@ -605,7 +605,7 @@ export default function DashboardPage() {
               </button>
             </div>
 
-            <div className="mt-5 grid gap-3.5 sm:grid-cols-2">
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3.5">
               {quizzes.map((quiz) => {
                 const done = completedIds.has(quiz.id);
                 const mins = quiz.time_limit || quiz.duration || 20;
@@ -615,7 +615,7 @@ export default function DashboardPage() {
                 return (
                   <StudioSlot id="dashboard.practice-card" key={quiz.id}><article
                     key={quiz.id}
-                    className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4 transition hover:border-[var(--app-accent)]"
+                    className="min-w-0 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-2.5 transition hover:border-[var(--app-accent)] sm:rounded-2xl sm:p-4"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <span className="rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-2.5 py-1 text-[11px] font-semibold text-[var(--app-accent)]">
@@ -632,14 +632,14 @@ export default function DashboardPage() {
                       )}
                     </div>
 
-                    <h3 className="mt-3 line-clamp-1 font-bold">{quiz.title}</h3>
-                    <p className="mt-1 line-clamp-2 min-h-[2.25rem] text-xs leading-relaxed text-[var(--app-muted)]">
+                    <h3 className="mt-2 line-clamp-2 text-xs font-bold leading-snug sm:mt-3 sm:text-sm">{quiz.title}</h3>
+                    <p className="mt-1 line-clamp-2 min-h-[2rem] text-[10px] leading-snug text-[var(--app-muted)] sm:min-h-[2.25rem] sm:text-xs">
                       {quiz.description ||
                         'Bilingual statement-based questions with detailed faculty explanations.'}
                     </p>
 
-                    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--app-border)] pt-3 text-xs text-[var(--app-muted)]">
-                      <div className="flex flex-wrap items-center gap-1.5">
+                    <div className="mt-2 flex flex-col gap-2 border-t border-[var(--app-border)] pt-2 text-[10px] text-[var(--app-muted)] sm:mt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:pt-3 sm:text-xs">
+                      <div className="flex flex-wrap items-center gap-1">
                         <button
                           type="button"
                           onClick={() => openWatermarkStudio(quiz, 'paper')}
@@ -672,8 +672,8 @@ export default function DashboardPage() {
           </section></StudioSlot>
 
           {/* Right Column: Score Trend + GS Subject Proficiency */}
-          <div className="space-y-6">
-            <StudioSlot id="dashboard.analytics"><section className="theme-surface rounded-3xl p-5 sm:p-6">
+          <div className="col-span-2 grid grid-cols-2 gap-3 xl:col-span-1 xl:block xl:space-y-6">
+            <StudioSlot id="dashboard.analytics"><section className="theme-surface min-w-0 rounded-2xl p-3 sm:rounded-3xl sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-bold">
@@ -689,7 +689,7 @@ export default function DashboardPage() {
 
               {recentScores.length ? (
                 <div className="mt-5">
-                  <div className="flex h-32 items-end gap-2.5 border-b border-[var(--app-border)] pb-2">
+                  <div className="flex h-24 items-end gap-1.5 border-b border-[var(--app-border)] pb-2 sm:h-32 sm:gap-2.5">
                     {recentScores.map((a) => (
                       <div
                         key={a.id}
@@ -720,7 +720,7 @@ export default function DashboardPage() {
             </section></StudioSlot>
 
             {/* GS Pillar Balance */}
-            <section className="theme-surface rounded-3xl p-5 sm:p-6">
+            <section className="theme-surface min-w-0 rounded-2xl p-3 sm:rounded-3xl sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h2 className="text-base font-bold">GS Syllabus Coverage</h2>
@@ -730,7 +730,7 @@ export default function DashboardPage() {
                 </div>
                 <Award className="h-4 w-4 text-[var(--app-accent)]" />
               </div>
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {subjectMastery.map((item) => (
                   <div key={item.subject} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
@@ -928,15 +928,15 @@ function StatCard({
   hint: string;
 }) {
   return (
-    <div className="theme-surface rounded-2xl p-4">
+    <div className="theme-surface min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-[var(--app-muted)]">
           {label}
         </span>
         <Icon className="h-4 w-4 text-[var(--app-accent)]" />
       </div>
-      <p className="mt-2.5 truncate text-2xl font-bold">{value}</p>
-      <p className="mt-1 truncate text-[11px] text-[var(--app-muted)]">
+      <p className="mt-2 truncate text-xl font-bold sm:mt-2.5 sm:text-2xl">{value}</p>
+      <p className="mt-1 line-clamp-2 text-[10px] leading-snug text-[var(--app-muted)] sm:text-[11px]">
         {hint}
       </p>
     </div>
