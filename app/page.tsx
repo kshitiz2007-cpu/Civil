@@ -160,7 +160,8 @@ export default function LoginPage() {
       </header></StudioSlot>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-6xl w-full mx-auto my-auto grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center py-8">
+      <main className="relative z-10 max-w-6xl w-full mx-auto my-auto py-8">
+        <StudioSlot id="home.main-layout" className="grid w-full items-center gap-8 lg:grid-cols-[1.2fr_0.8fr]">
         {/* Left Institutional Overview */}
         <StudioSlot id="home.institutional-overview" className="min-w-0"><section className="space-y-6 pr-0 lg:pr-6">
           <StudioSlot id="home.institutional-badge"><div className="inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--app-panel)] px-3.5 py-1.5 text-xs font-semibold text-[var(--app-accent)]">
@@ -302,6 +303,7 @@ export default function LoginPage() {
             </div>
           </div></StudioSlot>
         </section></StudioSlot>
+        </StudioSlot>
       </main>
 
       {/* Footer */}
