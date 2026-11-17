@@ -92,6 +92,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
   const latest = useRef<StudioEnvelope>(initialEnvelope);
   const dirty = useRef(false);
   const hasLocalDraft = useRef(false);
+  const publishSequence = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -134,9 +135,10 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
       if (raw) applyLocal(JSON.parse(raw));
     } catch { /* retain safe defaults */ }
 
+    const loadSequence = publishSequence.current;
     supabase.from('design_studio_config').select('config').eq('id', 'global').maybeSingle()
       .then(({ data, error }) => {
-        if (!alive || error || !data?.config) return;
+        if (!alive || publishSequence.current !== loadSequence || error || !data?.config) return;
         const remote = decodeEnvelope(data.config);
         const remotePublished = remote.published;
         const nextDraft = hasLocalDraft.current || dirty.current ? latest.current.draft : remotePublished;
@@ -181,6 +183,7 @@ export function DesignStudioProvider({ children }: { children: React.ReactNode }
       const { error } = await supabase.from('design_studio_config')
         .upsert({ id: 'global', config: nextPublished }, { onConflict: 'id' });
       if (error) throw error;
+      publishSequence.current += 1;
       const envelope = { ...latest.current, published: nextPublished };
       latest.current = envelope;
       dirty.current = false;
