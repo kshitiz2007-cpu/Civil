@@ -205,16 +205,16 @@ export default function StudentResourcesPage() {
         </div>
       </aside></StudioSlot>
 
-      <main className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-6 md:ml-64 md:px-10 md:py-9">
-        <StudioSlot id="resources.header"><header className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
+      <main className="relative z-10 mx-auto max-w-6xl px-3 pb-24 pt-4 sm:px-5 md:ml-64 md:px-10 md:py-9">
+        <StudioSlot id="resources.header"><header className="mb-4 flex flex-wrap items-center justify-between gap-3 sm:mb-8 sm:gap-4">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
             <button
               onClick={() =>
                 activeSubject
                   ? setActiveSubject(null)
                   : router.push('/dashboard')
               }
-              className="rounded-xl border border-[var(--app-border)] bg-[var(--app-panel)] p-2.5 text-[var(--app-muted)] hover:text-[var(--app-text)]"
+              className="shrink-0 rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] p-2 text-[var(--app-muted)] hover:text-[var(--app-text)] sm:rounded-xl sm:p-2.5"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -222,7 +222,7 @@ export default function StudentResourcesPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--app-accent)]">
                 Value-Added Notes & PIB / PRS Summaries
               </p>
-              <h1 className="mt-0.5 text-2xl font-bold tracking-tight sm:text-3xl">
+              <h1 className="mt-0.5 text-lg font-bold tracking-tight sm:text-3xl">
                 {activeSubject
                   ? `${activeSubject} Compendiums`
                   : 'Digital Reference Vault'}
@@ -234,7 +234,7 @@ export default function StudentResourcesPage() {
 
         {!activeSubject && (
           <StudioSlot id="resources.subject-browser"><section>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between gap-2 sm:mb-4">
               <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-muted)] flex items-center gap-2">
                 <FolderOpen className="w-4 h-4 text-[var(--app-accent)]" />
                 Syllabus Subject Vaults
@@ -244,7 +244,7 @@ export default function StudentResourcesPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3">
               {SUBJECT_CONFIG.map((subject) => {
                 const Icon = subject.icon;
                 const count = getResourceCount(subject.id);
@@ -252,25 +252,25 @@ export default function StudentResourcesPage() {
                   <StudioSlot id="resources.subject-card" key={subject.id}><button
                     key={subject.id}
                     onClick={() => setActiveSubject(subject.id)}
-                    className="theme-surface text-left p-5 rounded-3xl transition-all hover:-translate-y-0.5 hover:border-[var(--app-accent)] group"
+                    className="theme-surface group min-w-0 rounded-2xl p-3 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--app-accent)] sm:rounded-3xl sm:p-5"
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="p-3 rounded-2xl bg-[var(--app-accent-soft)] text-[var(--app-accent)] border border-[var(--app-border)]">
-                        <Icon className="w-6 h-6" />
+                    <div className="mb-3 flex items-center justify-between gap-1.5 sm:mb-4">
+                      <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-accent-soft)] p-2 text-[var(--app-accent)] sm:rounded-2xl sm:p-3">
+                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
-                      <span className="rounded-full border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">
+                      <span className="max-w-[58%] truncate rounded-full border border-[var(--app-border)] bg-[var(--app-surface-muted)] px-1.5 py-1 text-[8px] font-bold uppercase tracking-wide text-[var(--app-muted)] sm:px-2.5 sm:text-[10px]">
                         {subject.group}
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold group-hover:text-[var(--app-accent)] transition-colors">
+                    <h3 className="text-sm font-bold leading-tight group-hover:text-[var(--app-accent)] transition-colors sm:text-lg">
                       {subject.id}
                     </h3>
-                    <div className="mt-4 pt-3 border-t border-[var(--app-border)] flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[var(--app-muted)]">
+                    <div className="mt-2 flex items-center justify-between gap-1 border-t border-[var(--app-border)] pt-2 text-[9px] sm:mt-4 sm:pt-3 sm:text-xs">
+                      <span className="min-w-0 truncate font-semibold text-[var(--app-muted)]">
                         {count} {count === 1 ? 'Document' : 'Documents'}
                       </span>
-                      <span className="text-[var(--app-accent)] font-bold inline-flex items-center gap-1">
-                        Browse <ChevronRight className="w-3.5 h-3.5" />
+                      <span className="shrink-0 text-[var(--app-accent)] font-bold inline-flex items-center gap-0.5">
+                        Browse <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                       </span>
                     </div>
                   </button></StudioSlot>
