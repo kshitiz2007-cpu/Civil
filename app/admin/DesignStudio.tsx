@@ -33,6 +33,9 @@ const TOKENS = [
   { key:'--studio-spacing', label:'Base spacing', type:'text' },
   { key:'--studio-content-width', label:'Content max width', type:'text' },
   { key:'--studio-font-scale', label:'Font scale', type:'number' },
+  { key:'--studio-line-height', label:'Body line height', type:'text' },
+  { key:'--studio-heading-weight', label:'Heading weight', type:'text' },
+  { key:'--studio-shadow', label:'Surface shadow', type:'text' },
 ];
 const STARTER_SECTIONS = ['Announcement banner','Page header','Primary content','Secondary content','Footer'];
 const COMPONENT_PRESETS = [
@@ -51,7 +54,7 @@ const DESIGN_SYSTEM_PRESETS = [
   { id:'civil-emerald', label:'Civil Emerald', values:{'--app-bg':'#08110f','--app-panel':'rgba(14,28,25,.92)','--app-panel-strong':'#10211d','--app-text':'#eef7f4','--app-muted':'#94afa6','--app-border':'rgba(167,218,200,.18)','--app-accent':'#34d399','--app-accent-strong':'#10b981','--app-accent-soft':'rgba(52,211,153,.13)','--app-secondary':'#38bdf8','--studio-radius':'18px','--studio-spacing':'16px','--studio-content-width':'1280px','--studio-font-scale':'1'} },
   { id:'ocean-blue', label:'Ocean Blue', values:{'--app-bg':'#071321','--app-panel':'rgba(12,31,51,.94)','--app-panel-strong':'#102b46','--app-text':'#eff8ff','--app-muted':'#9bb7ce','--app-border':'rgba(125,190,230,.2)','--app-accent':'#38bdf8','--app-accent-strong':'#0284c7','--app-accent-soft':'rgba(56,189,248,.14)','--app-secondary':'#a78bfa','--studio-radius':'16px','--studio-spacing':'16px','--studio-content-width':'1280px','--studio-font-scale':'1'} },
   { id:'royal-violet', label:'Royal Violet', values:{'--app-bg':'#100b1d','--app-panel':'rgba(31,22,48,.94)','--app-panel-strong':'#241a39','--app-text':'#faf5ff','--app-muted':'#b6a5cc','--app-border':'rgba(196,167,240,.2)','--app-accent':'#c084fc','--app-accent-strong':'#9333ea','--app-accent-soft':'rgba(192,132,252,.14)','--app-secondary':'#f0abfc','--studio-radius':'20px','--studio-spacing':'18px','--studio-content-width':'1280px','--studio-font-scale':'1'} },
-];;
+ ];
 export default function DesignStudio() {
   const { config, save, publish, discard, isSaving, saveError, isPublished } = useDesignStudio();
   const undoStack = useRef<import('@/components/design-studio/DesignStudioProvider').StudioConfig[]>([]);
@@ -226,8 +229,8 @@ export default function DesignStudio() {
     commit({...config,assets:[...config.assets,...additions]});
   };
   const nav: {id:Panel;label:string;icon:any}[]=[
-    {id:'canvas',label:'Blank canvas studio',icon:Sparkles},{id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
-    {id:'structure',label:'Page blueprint',icon:Layers3},{id:'layout',label:'Layout & sizing',icon:Monitor},{id:'components',label:'Components',icon:Component},
+    {id:'canvas',label:'Blank canvas studio',icon:Sparkles},{id:'global',label:'Global design system',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
+    {id:'structure',label:'Page blueprint',icon:Layers3},{id:'layout',label:'Layout & sizing',icon:Monitor},{id:'components',label:'Component Library',icon:Component},
     {id:'css',label:'Live CSS editor',icon:Code2},{id:'reactbits',label:'React Bits Studio',icon:Sparkles},
     {id:'assets',label:'Asset library',icon:ImagePlus},{id:'layers',label:'Layers navigator',icon:Layers3},{id:'audit',label:'Design quality audit',icon:Eye},
   ];
