@@ -36,10 +36,22 @@ const TOKENS = [
 ];
 const STARTER_SECTIONS = ['Announcement banner','Page header','Primary content','Secondary content','Footer'];
 const COMPONENT_PRESETS = [
-  { id:'studio-button', name:'Button', values:{'background':'var(--app-accent)','color':'#06130f','border-radius':'12px','padding':'10px 16px','font-weight':'700'} },
+  { id:'studio-button', name:'Button', values:{'background':'var(--app-accent)','color':'#06130f','border-radius':'12px','padding':'10px 16px','font-weight':'700','border':'1px solid transparent','cursor':'pointer'} },
   { id:'studio-card', name:'Card', values:{'background':'var(--app-panel)','border':'1px solid var(--app-border)','border-radius':'var(--studio-radius)','padding':'20px','box-shadow':'0 12px 32px rgba(0,0,0,.16)'} },
-  { id:'studio-input', name:'Input', values:{'background':'var(--app-surface-muted)','color':'var(--app-text)','border':'1px solid var(--app-border)','border-radius':'12px','padding':'10px 12px'} },
+  { id:'studio-input', name:'Input', values:{'background':'var(--app-panel-strong)','color':'var(--app-text)','border':'1px solid var(--app-border)','border-radius':'12px','padding':'10px 12px','width':'100%'} },
+  { id:'studio-badge', name:'Badge', values:{'display':'inline-flex','align-items':'center','background':'var(--app-accent-soft)','color':'var(--app-accent)','border-radius':'999px','padding':'4px 10px','font-size':'12px','font-weight':'700'} },
+  { id:'studio-panel', name:'Panel', values:{'background':'var(--app-panel)','border':'1px solid var(--app-border)','border-radius':'var(--studio-radius)','padding':'24px','box-shadow':'0 8px 24px rgba(0,0,0,.12)'} },
+  { id:'studio-heading', name:'Heading', values:{'color':'var(--app-text)','font-size':'clamp(1.5rem,3vw,2.5rem)','font-weight':'800','letter-spacing':'-0.035em','line-height':'1.1'} },
+  { id:'studio-muted-text', name:'Muted text', values:{'color':'var(--app-muted)','font-size':'0.875rem','line-height':'1.65'} },
+  { id:'studio-alert', name:'Alert', values:{'background':'var(--app-accent-soft)','color':'var(--app-text)','border':'1px solid var(--app-accent)','border-radius':'12px','padding':'12px 16px'} },
+  { id:'studio-stat', name:'Stat tile', values:{'background':'var(--app-panel-strong)','border':'1px solid var(--app-border)','border-radius':'16px','padding':'16px','display':'grid','gap':'6px'} },
+  { id:'studio-divider', name:'Divider', values:{'border':'0','border-top':'1px solid var(--app-border)','margin':'16px 0'} },
 ];
+const DESIGN_SYSTEM_PRESETS = [
+  { id:'civil-emerald', label:'Civil Emerald', values:{'--app-bg':'#08110f','--app-panel':'rgba(14,28,25,.92)','--app-panel-strong':'#10211d','--app-text':'#eef7f4','--app-muted':'#94afa6','--app-border':'rgba(167,218,200,.18)','--app-accent':'#34d399','--app-accent-strong':'#10b981','--app-accent-soft':'rgba(52,211,153,.13)','--app-secondary':'#38bdf8','--studio-radius':'18px','--studio-spacing':'16px','--studio-content-width':'1280px','--studio-font-scale':'1'} },
+  { id:'ocean-blue', label:'Ocean Blue', values:{'--app-bg':'#071321','--app-panel':'rgba(12,31,51,.94)','--app-panel-strong':'#102b46','--app-text':'#eff8ff','--app-muted':'#9bb7ce','--app-border':'rgba(125,190,230,.2)','--app-accent':'#38bdf8','--app-accent-strong':'#0284c7','--app-accent-soft':'rgba(56,189,248,.14)','--app-secondary':'#a78bfa','--studio-radius':'16px','--studio-spacing':'16px','--studio-content-width':'1280px','--studio-font-scale':'1'} },
+  { id:'royal-violet', label:'Royal Violet', values:{'--app-bg':'#100b1d','--app-panel':'rgba(31,22,48,.94)','--app-panel-strong':'#241a39','--app-text':'#faf5ff','--app-muted':'#b6a5cc','--app-border':'rgba(196,167,240,.2)','--app-accent':'#c084fc','--app-accent-strong':'#9333ea','--app-accent-soft':'rgba(192,132,252,.14)','--app-secondary':'#f0abfc','--studio-radius':'20px','--studio-spacing':'18px','--studio-content-width':'1280px','--studio-font-scale':'1'} },
+];;
 export default function DesignStudio() {
   const { config, save, publish, discard, isSaving, saveError, isPublished } = useDesignStudio();
   const undoStack = useRef<import('@/components/design-studio/DesignStudioProvider').StudioConfig[]>([]);
@@ -105,6 +117,16 @@ export default function DesignStudio() {
     else commit({...config,pages:{...config.pages,[page]:{...(config.pages[page]||{}),[key]:value}}});
   };
   const updateComponent = (key:string,value:string) => commit({...config,components:{...config.components,[componentChoice]:{...(config.components[componentChoice]||{}),[key]:value}}});
+  const applyDesignSystemPreset = (presetId:string) => {
+    const preset=DESIGN_SYSTEM_PRESETS.find(item=>item.id===presetId);
+    if(!preset)return;
+    commit({...config,global:{...config.global,...preset.values}});
+  };
+  const addAllComponentRecipes = () => {
+    const components={...config.components};
+    COMPONENT_PRESETS.forEach(item=>{components[item.id]=components[item.id]||item.values;});
+    commit({...config,components});
+  };
   const selectorFor = (el:Element):string => {
     if ((el as HTMLElement).id) return `#${CSS.escape((el as HTMLElement).id)}`;
     const slot=el.closest('[data-studio-slot]') as HTMLElement|null;
@@ -265,6 +287,11 @@ export default function DesignStudio() {
               <button type="button" onClick={()=>{if(!tokenTextStops.slice(0,tokenGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c)))return;update('--app-text-gradient','linear-gradient('+gradientAngle+','+tokenTextStops.slice(0,tokenGradientCount).join(',')+')');}} disabled={!tokenTextStops.slice(0,tokenGradientCount).every(c=>/^#[0-9a-fA-F]{6}$/.test(c))} className="theme-control w-full justify-center text-xs disabled:opacity-40">Save text gradient token</button>
             </section>
           </div>}
+          {panel==='global'&&<section className="mt-5 space-y-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4">
+            <div><h3 className="text-sm font-bold">Global design system</h3><p className="mt-1 text-xs text-[var(--app-muted)]">Semantic colour palette, typography scale, spacing, radius and content-width tokens. Presets update the shared global token set; publish to make it live for visitors.</p></div>
+            <div className="grid gap-2 sm:grid-cols-3">{DESIGN_SYSTEM_PRESETS.map(preset=><button key={preset.id} onClick={()=>applyDesignSystemPreset(preset.id)} className="rounded-xl border border-[var(--app-border)] p-3 text-left transition hover:border-[var(--app-accent)]"><span className="mb-2 flex gap-1">{[preset.values['--app-bg'],preset.values['--app-panel-strong'],preset.values['--app-accent'],preset.values['--app-secondary']].map((color,index)=><i key={index} className="h-5 flex-1 rounded" style={{background:color}}/>)}</span><b className="text-xs">{preset.label}</b><span className="mt-1 block text-[10px] text-[var(--app-muted)]">Apply palette + design tokens</span></button>)}</div>
+            <div className="grid gap-2 sm:grid-cols-4"><div className="rounded-lg border border-[var(--app-border)] p-3"><span className="text-[10px] text-[var(--app-muted)]">Typography</span><p className="mt-1 text-lg font-extrabold" style={{fontSize:'calc(18px * '+(config.global['--studio-font-scale']||'1')+')'}}>Aa Heading</p><p className="text-xs text-[var(--app-muted)]">Body / secondary</p></div><div className="rounded-lg border border-[var(--app-border)] p-3"><span className="text-[10px] text-[var(--app-muted)]">Spacing</span><div className="mt-2 flex items-end gap-1">{[4,8,12,16,24].map(n=><i key={n} className="rounded-sm bg-[var(--app-accent)]" style={{width:n,height:n}}/>)}</div></div><div className="rounded-lg border border-[var(--app-border)] p-3"><span className="text-[10px] text-[var(--app-muted)]">Radius</span><div className="mt-2 h-8 w-16 border-2 border-[var(--app-accent)]" style={{borderRadius:config.global['--studio-radius']||'18px'}}/></div><div className="rounded-lg border border-[var(--app-border)] p-3"><span className="text-[10px] text-[var(--app-muted)]">Content width</span><p className="mt-2 text-sm font-bold">{config.global['--studio-content-width']||'1280px'}</p></div></div>
+          </section>}
           {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="mt-5 grid gap-3 md:grid-cols-2">
             {visibleTokens.map(token=>{const value=tokenValues[token.key]??(scope==='page'&&panel!=='breakpoints'?'':config.global[token.key]??'');return <label key={token.key} className="block rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3">
               <span className="mb-2 flex items-center justify-between text-xs font-semibold">{token.label}<code className="text-[10px] text-[var(--app-muted)]">{token.key}</code></span>
@@ -322,9 +349,10 @@ export default function DesignStudio() {
             <div className="flex gap-2"><input value={newSection} onChange={e=>setNewSection(e.target.value)} placeholder="New section name…" className="glass-input flex-1 text-sm"/><button onClick={addSection} className="theme-control"><Plus size={15}/>Add section</button></div>
           </div>}
           {panel==='components'&&<div className="mt-5 space-y-4">
+            <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-4"><div className="flex flex-wrap items-center justify-between gap-2"><div><h3 className="text-sm font-bold">Reusable component library</h3><p className="mt-1 text-xs text-[var(--app-muted)]">Ready-made CSS recipes powered by global semantic tokens. Add one recipe or install the complete starter library.</p></div><button onClick={addAllComponentRecipes} className="theme-control text-xs"><Plus size={13}/>Add all recipes</button></div><div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{COMPONENT_PRESETS.map(item=><div key={item.id} className="rounded-lg border border-[var(--app-border)] p-3"><div className="mb-2 flex items-center justify-between"><b className="text-xs">{item.name}</b><button onClick={()=>{const next={...config.components,[item.id]:config.components[item.id]||item.values};commit({...config,components:next});}} className="text-[10px] font-bold text-[var(--app-accent)]">+ Add</button></div><div className="text-xs" style={Object.fromEntries(Object.entries(item.values).filter(([key])=>!['cursor','display','align-items','gap'].includes(key))) as React.CSSProperties}>{item.id==='studio-button'?'Primary action':item.id==='studio-input'?<input readOnly value="Input preview" className="w-full"/>:item.id==='studio-badge'?'Badge':item.id==='studio-heading'?'Heading preview':item.id==='studio-muted-text'?'Supporting text preview':item.id==='studio-alert'?'Alert message':item.id==='studio-stat'?'92% · Average score':item.id==='studio-divider'?<hr/>:item.name+' preview'}</div><code className="mt-2 block text-[9px] text-[var(--app-muted)]">.{item.id}</code></div>)}</div></div>
             <div className="flex flex-wrap gap-2"><select value={componentChoice} onChange={e=>setComponentChoice(e.target.value)} className="glass-input min-w-44 text-xs">{COMPONENT_PRESETS.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select><button onClick={addPreset} className="theme-control"><Plus size={14}/>Add recipe</button></div>
             <div className="grid gap-3 md:grid-cols-2">{Object.entries(config.components).map(([id,styles])=><div key={id} className="rounded-xl border border-[var(--app-border)] p-3"><div className="mb-2 flex items-center justify-between"><b className="text-sm">{id.replace('studio-','')}</b><button onClick={()=>{const next={...config.components};delete next[id];commit({...config,components:next});}} className="text-rose-400"><Trash2 size={14}/></button></div>{Object.entries(styles).map(([key,value])=><label key={key} className="mb-2 block"><span className="text-[10px] text-[var(--app-muted)]">{key}</span><input value={value} onChange={e=>commit({...config,components:{...config.components,[id]:{...styles,[key]:e.target.value}}})} className="glass-input mt-1 w-full text-xs"/></label>)}<div className="mt-3"><div className={id} style={styles as React.CSSProperties}>{id==='studio-button'?'Button preview':id==='studio-input'?<input className={id} placeholder="Input preview"/>:'Card component preview'}</div></div></div>)}</div>
-            <p className="text-xs text-[var(--app-muted)]">Recipes generate CSS classes (for example <code>.studio-button</code>) that can be assigned to registered components. Existing bespoke JSX needs those classes applied to consume a recipe.</p>
+            <p className="text-xs text-[var(--app-muted)]">Recipes are emitted as reusable CSS classes (for example <code>.studio-button</code>) and inherit the global design tokens. Assign the class to an element in page JSX or a custom block to use it; existing JSX is not silently rewritten.</p>
           </div>}
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
           {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio page={page} config={config} save={save} previewUrl={previewUrl}/></div>}
