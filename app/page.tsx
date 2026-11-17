@@ -42,7 +42,6 @@ export default function LoginPage() {
         return;
       }
 
-      const studioPreview = new URLSearchParams(window.location.search).has('studioPreview');
       if (
         !studioPreview &&
         (session.user.email === 'kshitiz2007@gmail.com' ||
