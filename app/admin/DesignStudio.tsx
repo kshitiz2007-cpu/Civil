@@ -228,7 +228,7 @@ export default function DesignStudio() {
             </div>
             {(()=>{
               const knownSlots:Record<string,string[]> = {
-                home:['home.topbar','home.institutional-overview','home.institutional-badge','home.hero-title','home.hero-description','home.feature-grid','home.feature-ev','home.feature-deduction','home.feature-themes','home.login-card','home.login-brand','home.login-heading','home.login-actions','home.login-assurances','home.footer'],
+                home:['home.topbar','home.main-layout','home.institutional-overview','home.institutional-badge','home.hero-title','home.hero-description','home.feature-grid','home.feature-ev','home.feature-deduction','home.feature-themes','home.login-card','home.login-brand','home.login-heading','home.login-actions','home.login-assurances','home.footer'],
                 admin:['admin.sidebar','admin.main-content','admin.design-studio','admin.overview','admin.inbox','admin.quizzes','admin.aigen','admin.resources','admin.students','admin.analytics','admin.payments','admin.csvimport','admin.scheduled.header','admin.scheduled.form','admin.scheduled.list']
               };
               const prefix=page+'::';
