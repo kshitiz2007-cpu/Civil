@@ -12,7 +12,7 @@ import ReactBitsStudio from '@/components/design-studio/ReactBitsStudio';
 import VisualBlockBuilder from '@/components/design-studio/VisualBlockBuilder';
 import CanvasStudio from '@/components/design-studio/CanvasStudio';
 
-type Panel = 'canvas' | 'global' | 'pages' | 'breakpoints' | 'structure' | 'layout' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder';
+type Panel = 'canvas' | 'global' | 'pages' | 'breakpoints' | 'structure' | 'layout' | 'components' | 'assets' | 'css' | 'reactbits' | 'builder' | 'layers' | 'audit';
 const PAGE_OPTIONS = [
   ['home','Home page','/'], ['dashboard','Dashboard','/dashboard'], ['quizzes','Quiz catalogue','/quizzes'],
   ['quiz','Quiz runner','/quiz/[id]'], ['history','Attempt history','/history'],
@@ -87,6 +87,11 @@ export default function DesignStudio() {
   const [textGradientColors,setTextGradientColors] = useState(['#f472b6','#a78bfa','#38bdf8','#34d399']);
   const [textGradientStopCount,setTextGradientStopCount] = useState<3|4>(3);
   const [componentChoice,setComponentChoice] = useState('studio-button');
+  const [previewLayers,setPreviewLayers] = useState<{selector:string;label:string;tag:string}[]>([]);
+  const [selectedLayerSelectors,setSelectedLayerSelectors] = useState<string[]>([]);
+  const [copiedElementStyles,setCopiedElementStyles] = useState<Record<string,string>|null>(null);
+  const [auditFindings,setAuditFindings] = useState<string[]>([]);
+  const [auditRan,setAuditRan] = useState(false);
   const pageName = PAGE_OPTIONS.find(p=>p[0]===page)?.[1] || page;
   const sections = config.structure[page] || STARTER_SECTIONS;
   const update = (key:string,value:string) => {
@@ -115,12 +120,48 @@ export default function DesignStudio() {
     }
     return [anchor,...parts].join(' > ');
   };
+  const scanPreview = () => {
+    const doc=previewFrame.current?.contentDocument;
+    if(!doc)return;
+    const candidates=Array.from(doc.querySelectorAll<HTMLElement>('main,header,footer,section,article,nav,h1,h2,h3,p,a,button,input,textarea,select,img,[data-studio-slot]'));
+    const layers=candidates.filter(el=>el.getClientRects().length>0).slice(0,180).map(el=>({
+      selector:selectorFor(el),
+      label:(el.dataset.studioSlot||el.getAttribute('aria-label')||el.innerText||el.getAttribute('alt')||el.tagName.toLowerCase()).replace(/\\s+/g,' ').trim().slice(0,64),
+      tag:el.tagName.toLowerCase()
+    }));
+    setPreviewLayers(layers);
+    const findings:string[]=[];
+    if(doc.documentElement.scrollWidth>doc.documentElement.clientWidth+2) findings.push('Horizontal overflow detected at the current preview width.');
+    if(!doc.querySelector('h1')) findings.push('No primary H1 heading was found on this page.');
+    doc.querySelectorAll('img').forEach((img,index)=>{if(!img.hasAttribute('alt'))findings.push('Image '+(index+1)+' is missing alt text.');});
+    doc.querySelectorAll('button,a').forEach((el,index)=>{const text=(el.textContent||'').trim();if(!text&&!el.getAttribute('aria-label')&&!el.querySelector('img[alt]'))findings.push((el.tagName.toLowerCase()==='button'?'Button ':'Link ')+(index+1)+' has no accessible name.');});
+    doc.querySelectorAll('input,select,textarea').forEach((el,index)=>{const id=el.id;const linked=id?doc.querySelector('label[for="'+CSS.escape(id)+'"]'):null;if(!linked&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby'))findings.push('Form control '+(index+1)+' may be missing an accessible label.');});
+    setAuditFindings(findings);
+    setAuditRan(true);
+  };
+  const selectPreviewLayer = (selector:string) => {
+    const doc=previewFrame.current?.contentDocument;
+    if(!doc)return;
+    try { const el=doc.querySelector(selector) as HTMLElement|null; if(el){el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:doc.defaultView}));} } catch {}
+  };
+  const pasteStylesToSelectedLayers = () => {
+    if(!copiedElementStyles||!selectedLayerSelectors.length)return;
+    const next={...(config.elementStyles||{})};
+    selectedLayerSelectors.forEach(selector=>{
+      const key=breakpoint==='desktop'?page+'::'+selector:page+'::@'+breakpoint+'::'+selector;
+      next[key]={...copiedElementStyles};
+    });
+    commit({...config,elementStyles:next});
+    const doc=previewFrame.current?.contentDocument;
+    selectedLayerSelectors.forEach(selector=>{try{doc?.querySelectorAll(selector).forEach(el=>Object.entries(copiedElementStyles).forEach(([key,value])=>(el as HTMLElement).style.setProperty(key,value)));}catch{}});
+  };
   const previewPath = page==='quiz' ? '/quiz/upsc-gs1-polity-01' : (PAGE_OPTIONS.find(p=>p[0]===page)?.[2] || '/');
   const previewUrl = `${previewPath}${previewPath.includes('?')?'&':'?'}studioPreview=1`;
   const handlePreviewLoad = () => {
     const doc=previewFrame.current?.contentDocument; if(!doc) return;
     const detected=Array.from(doc.querySelectorAll<HTMLElement>('[data-studio-slot]')).map(el=>el.dataset.studioSlot).filter((id):id is string=>!!id);
     setDiscoveredSlots(old=>({...old,[page]:Array.from(new Set(detected))}));
+    window.setTimeout(scanPreview,80);
     let style=doc.getElementById('studio-inspector-overlay') as HTMLStyleElement|null;
     if(!style){style=doc.createElement('style');style.id='studio-inspector-overlay';doc.head.appendChild(style);}
     style.textContent='[data-studio-hover]{outline:2px dashed #38bdf8!important;outline-offset:3px!important;cursor:crosshair!important}[data-studio-picked]{outline:2px solid #a78bfa!important;outline-offset:3px!important}';
@@ -166,7 +207,7 @@ export default function DesignStudio() {
     {id:'canvas',label:'Blank canvas studio',icon:Sparkles},{id:'global',label:'Design tokens',icon:Palette},{id:'pages',label:'Page styling',icon:SlidersHorizontal},
     {id:'structure',label:'Page blueprint',icon:Layers3},{id:'layout',label:'Layout & sizing',icon:Monitor},{id:'components',label:'Components',icon:Component},
     {id:'css',label:'Live CSS editor',icon:Code2},{id:'reactbits',label:'React Bits Studio',icon:Sparkles},
-    {id:'assets',label:'Asset library',icon:ImagePlus},
+    {id:'assets',label:'Asset library',icon:ImagePlus},{id:'layers',label:'Layers navigator',icon:Layers3},{id:'audit',label:'Design quality audit',icon:Eye},
   ];
   const tokenValues = panel==='breakpoints'
     ? (scope==='global'?config.breakpoints[breakpoint]:(config.pageBreakpoints[page]?.[breakpoint]||{}))
@@ -199,12 +240,12 @@ export default function DesignStudio() {
       <main className="min-w-0 space-y-4">
         <section className="theme-surface rounded-2xl p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold">{panel==='canvas'?'Canvas-first visual builder':panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page blueprint':panel==='layout'?'Live layout & sizing':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':'Asset management'}</h2>
+            <div><h2 className="font-bold">{panel==='canvas'?'Canvas-first visual builder':panel==='global'?'Global design tokens':panel==='pages'?'Individual page styling':panel==='breakpoints'? `${breakpoint[0].toUpperCase()+breakpoint.slice(1)} breakpoint overrides`:panel==='structure'?'Structural page blueprint':panel==='layout'?'Live layout & sizing':panel==='components'?'Reusable component recipes':panel==='css'?'Live CSS editor':panel==='reactbits'?'React Bits Component Studio':panel==='builder'?'Visual component builder':panel==='layers'?'Layers & multi-select':panel==='audit'?'Design quality audit':'Asset management'}</h2>
               <p className="mt-1 text-xs text-[var(--app-muted)]">{panel==='breakpoints'?'Overrides apply only at the selected viewport width.':'Changes save in this browser and are applied live to the application theme.'}</p></div>
             {(panel==='global'||panel==='pages'||panel==='breakpoints')&&<div className="flex gap-1 rounded-xl bg-[var(--app-surface-muted)] p-1"><button onClick={()=>setScope('global')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='global'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>Global</button><button onClick={()=>setScope('page')} className={`rounded-lg px-3 py-2 text-xs font-bold ${scope==='page'?'bg-[var(--app-panel-strong)] text-[var(--app-text)]':'text-[var(--app-muted)]'}`}>This page</button></div>}
           </div>
           {panel==='canvas'&&<div className="mt-5"><CanvasStudio /></div>}
-          {(panel==='pages'||panel==='structure'||panel==='layout'||panel==='breakpoints'||panel==='builder'||panel==='reactbits')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>{setPage(e.target.value);setSelectedElement(null);setElementStyles({});}} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
+          {(panel==='pages'||panel==='structure'||panel==='layout'||panel==='breakpoints'||panel==='builder'||panel==='reactbits'||panel==='layers'||panel==='audit')&&<div className="mt-4 flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-[var(--app-muted)]">Editing page</label><select value={page} onChange={e=>{setPage(e.target.value);setSelectedElement(null);setElementStyles({});}} className="glass-input min-w-48 text-xs">{PAGE_OPTIONS.map(p=><option key={p[0]} value={p[0]}>{p[1]} · {p[2]}</option>)}</select>{panel==='breakpoints'&&<span className="rounded-lg bg-[var(--app-accent-soft)] px-2.5 py-2 text-xs font-bold text-[var(--app-accent)]">{breakpoint} only</span>}</div>}
           {(panel==='global'||panel==='pages')&&<div className="mt-5 grid gap-3 lg:grid-cols-2">
             <section className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-3 space-y-3">
               <div><h3 className="text-sm font-bold">Multi-stop background gradient</h3><p className="mt-1 text-[10px] text-[var(--app-muted)]">Set 3 or 4 HEX colours for the application background token.</p></div>
@@ -288,6 +329,23 @@ export default function DesignStudio() {
           {panel==='css'&&<div className="mt-5"><CustomCssEditor /></div>}
           {panel==='reactbits'&&<div className="mt-5"><ReactBitsStudio page={page} config={config} save={save} previewUrl={previewUrl}/></div>}
           {panel==='builder'&&<div className="mt-5"><VisualBlockBuilder page={page} selectedSlot={selectedElement?.slotId} config={config} save={save}/></div>}
+          {panel==='layers'&&<div className="mt-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-[var(--app-muted)]">Preview DOM se visible headings, sections, controls aur images ki live layer list.</p><button onClick={scanPreview} className="theme-control text-xs">Refresh layers</button></div>
+            <div className="rounded-xl border border-[var(--app-border)] p-3">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><div><p className="text-sm font-bold">Multi-select layers</p><p className="text-[10px] text-[var(--app-muted)]">{selectedLayerSelectors.length} selected · {previewLayers.length} detected</p></div><button disabled={!copiedElementStyles||!selectedLayerSelectors.length} onClick={pasteStylesToSelectedLayers} className="theme-control text-xs disabled:opacity-40">Paste copied styles</button></div>
+              <div className="max-h-[520px] space-y-1 overflow-auto">{previewLayers.map((layer,index)=><div key={layer.selector+'-'+index} className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-[var(--app-surface-muted)]">
+                <input type="checkbox" aria-label={'Select '+layer.label} checked={selectedLayerSelectors.includes(layer.selector)} onChange={e=>setSelectedLayerSelectors(old=>e.target.checked?[...old,layer.selector]:old.filter(x=>x!==layer.selector))}/>
+                <button onClick={()=>selectPreviewLayer(layer.selector)} className="min-w-0 flex-1 text-left"><span className="mr-2 rounded bg-[var(--app-surface-muted)] px-1.5 py-1 font-mono text-[9px]">{layer.tag}</span><span className="text-xs">{layer.label||'Unnamed element'}</span><span className="block truncate pl-10 text-[9px] text-[var(--app-muted)]">{layer.selector}</span></button>
+              </div>)}</div>
+            </div>
+            <div className="flex flex-wrap gap-2"><button onClick={()=>setSelectedLayerSelectors(previewLayers.map(x=>x.selector))} className="theme-control text-xs">Select all detected</button><button onClick={()=>setSelectedLayerSelectors([])} className="theme-control text-xs">Clear selection</button><button disabled={!selectedElement} onClick={()=>setCopiedElementStyles({...elementStyles})} className="theme-control text-xs disabled:opacity-40">Copy selected element style</button></div>
+            {copiedElementStyles&&<p className="text-[10px] text-[var(--app-muted)]">Style copied ({Object.keys(copiedElementStyles).length} CSS properties). Select target layers and paste.</p>}
+          </div>}
+          {panel==='audit'&&<div className="mt-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-sm font-bold">Live preview checks</p><p className="text-xs text-[var(--app-muted)]">Current page aur selected viewport par basic responsive/accessibility checks.</p></div><button onClick={scanPreview} className="theme-control text-xs">Run audit</button></div>
+            {auditRan?<div className="rounded-xl border border-[var(--app-border)] p-4"><div className="mb-3 flex items-center gap-2"><span className="text-lg font-bold tabular-nums">{auditFindings.length===0?'✓':auditFindings.length}</span><span className="text-xs font-semibold">{auditFindings.length===0?'No basic issues detected':'Potential issues to review'}</span></div>{auditFindings.length===0?<p className="text-xs text-[var(--app-muted)]">Basic checks passed for this preview. This is not a full WCAG certification.</p>:<ul className="space-y-2">{auditFindings.map((finding,index)=><li key={index} className="rounded-lg bg-[var(--app-surface-muted)] p-2 text-xs">{finding}</li>)}</ul>}</div>:<p className="rounded-xl border border-dashed border-[var(--app-border)] p-5 text-center text-xs text-[var(--app-muted)]">Run audit to inspect the current page preview.</p>}
+            <p className="text-[10px] text-[var(--app-muted)]">Checks include horizontal overflow, H1 presence, image alt text and accessible names/labels for interactive controls. Contrast and keyboard-flow testing are not yet automated.</p>
+          </div>}
           {panel==='assets'&&<div className="mt-5 space-y-4">
             <div onClick={()=>fileRef.current?.click()} className="cursor-pointer rounded-2xl border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface-muted)] p-8 text-center"><Upload className="mx-auto mb-2 text-[var(--app-accent)]"/><p className="text-sm font-bold">Upload images, logos and visual assets</p><p className="mt-1 text-xs text-[var(--app-muted)]">Choose files from your device. Stored locally in this browser for this prototype.</p><input ref={fileRef} hidden type="file" multiple accept="image/*,image/svg+xml" onChange={e=>upload(e.target.files)}/></div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{config.assets.map(asset=><div key={asset.id} className="overflow-hidden rounded-xl border border-[var(--app-border)]"><div className="grid aspect-square place-items-center bg-[var(--app-surface-muted)]"><img src={asset.data} alt={asset.name} className="max-h-full max-w-full object-contain"/></div><div className="flex items-center gap-2 p-2"><span className="min-w-0 flex-1 truncate text-[10px]">{asset.name}</span><button onClick={async()=>{if(asset.path) await supabase.storage.from('design-assets').remove([asset.path]);commit({...config,assets:config.assets.filter(a=>a.id!==asset.id)});}} className="text-rose-400"><Trash2 size={13}/></button></div></div>)}</div>
