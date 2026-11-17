@@ -126,7 +126,7 @@ export default function DesignStudio() {
     const candidates=Array.from(doc.querySelectorAll<HTMLElement>('main,header,footer,section,article,nav,h1,h2,h3,p,a,button,input,textarea,select,img,[data-studio-slot]'));
     const layers=candidates.filter(el=>el.getClientRects().length>0).slice(0,180).map(el=>({
       selector:selectorFor(el),
-      label:(el.dataset.studioSlot||el.getAttribute('aria-label')||el.innerText||el.getAttribute('alt')||el.tagName.toLowerCase()).replace(/\\s+/g,' ').trim().slice(0,64),
+      label:(el.dataset.studioSlot||el.getAttribute('aria-label')||el.innerText||el.getAttribute('alt')||el.tagName.toLowerCase()).replace(/\s+/g,' ').trim().slice(0,64),
       tag:el.tagName.toLowerCase()
     }));
     setPreviewLayers(layers);
